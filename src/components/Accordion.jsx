@@ -27,7 +27,14 @@ function Accordion() {
 			<h2>Поширені питання (FAQ)</h2>
 			{faqData.map((item) => (
 				<div key={item.id} className="accordion-item">
-					<h3 onClick={() => setSelectedId(item.id)}>{item.question}</h3>
+					<h3
+						onClick={() => {
+							const newSelectedId = selectedId === item.id ? null : item.id;
+							setSelectedId(newSelectedId);
+						}}
+					>
+						{item.question}
+					</h3>
 					{selectedId === item.id && <p>{item.answer}</p>}
 				</div>
 			))}
