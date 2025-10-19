@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AccordionItem from "./AccordionItem";
 
 function Accordion() {
 	const faqData = [
@@ -26,17 +27,15 @@ function Accordion() {
 		<div className="accordion">
 			<h2>Поширені питання (FAQ)</h2>
 			{faqData.map((item) => (
-				<div key={item.id} className="accordion-item">
-					<h3
-						onClick={() => {
-							const newSelectedId = selectedId === item.id ? null : item.id;
-							setSelectedId(newSelectedId);
-						}}
-					>
-						{item.question}
-					</h3>
-					{selectedId === item.id && <p>{item.answer}</p>}
-				</div>
+				<AccordionItem
+					key={item.id}
+					item={item}
+					isActive={selectedId === item.id}
+					onToggle={() => {
+						const newSelectedId = selectedId === item.id ? null : item.id;
+						setSelectedId(newSelectedId);
+					}}
+				/>
 			))}
 		</div>
 	);
