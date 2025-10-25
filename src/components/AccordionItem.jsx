@@ -4,7 +4,7 @@ function AccordionItem({ item, isActive, onToggle }) {
 	return (
 		<div className="accordion-item">
 			<h3 onClick={onToggle}>{item.question}</h3>
-			{isActive && <p>{item.answer}</p>}
+			{isActive && <p>{item.shortAnswer}</p>}
 		</div>
 	);
 }
