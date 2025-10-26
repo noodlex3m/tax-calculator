@@ -1,3 +1,4 @@
+import "./Accordion.css";
 import { useState } from "react";
 import AccordionItem from "./AccordionItem";
 import faqData from "../data/faqData";
