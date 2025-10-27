@@ -6,6 +6,7 @@ function TaxCalculator() {
 	const [taxGroup, setTaxGroup] = useState("");
 	const [grossIncomeAmount, setGrossIncomeAmount] = useState("");
 	const [expenseAmount, setExpenseAmount] = useState("");
+	const [taxResult, setTaxResult] = useState(null);
 
 	const netProfit = (() => {
 		const gross = parseFloat(grossIncomeAmount) || 0;
@@ -18,9 +19,41 @@ function TaxCalculator() {
 		maximumFractionDigits: 2,
 	}).format(netProfit);
 
+	function handleSubmit(e) {
+		e.preventDefault();
+
+		const numIncome = parseFloat(income) || 0;
+
+		let tax = 0;
+		let esv = 2200;
+		let militaryTax = 0;
+
+		if (taxSystem === "simplified") {
+			if (taxGroup === "3") {
+				tax = numIncome * 0.05;
+				militaryTax = numIncome * 0.01;
+			} else if (taxGroup === "2") {
+				tax = 1400;
+			} else if (taxGroup === "1") {
+				tax = 302.8;
+			}
+		} else if (taxSystem === "general") {
+			if (netProfit > 0) {
+				tax = netProfit * 0.18;
+				militaryTax = netProfit * 0.05;
+			}
+		}
+		setTaxResult({
+			taxAmount: tax,
+			esvAmount: esv,
+			militaryTaxAmount: militaryTax,
+			totalAmount: tax + esv + militaryTax,
+		});
+	}
+
 	return (
 		<>
-			<form action="#">
+			<form onSubmit={handleSubmit}>
 				<h1>Калькулятор податів ФОП на 2025 рік</h1>
 				<fieldset>
 					<legend>Оберіть систему оподаткування</legend>
@@ -48,23 +81,38 @@ function TaxCalculator() {
 					</div>
 				</fieldset>
 				{taxSystem === "simplified" && (
-					<fieldset>
-						<legend>Оберіть групу єдиного податку</legend>
-						<select
-							value={taxGroup}
-							onChange={(e) => setTaxGroup(e.target.value)}
-						>
-							<option value="" disabled>
-								-- Оберіть групу --
-							</option>
-							<option value="1">I група</option>
-							<option value="2">II група</option>
-							<option value="3">III група 5%</option>
-							<option value="" disabled>
-								III група 3% з ПДВ
-							</option>
-						</select>
-					</fieldset>
+					<>
+						<fieldset>
+							<legend>Оберіть групу єдиного податку</legend>
+							<select
+								value={taxGroup}
+								onChange={(e) => setTaxGroup(e.target.value)}
+							>
+								<option value="" disabled>
+									-- Оберіть групу --
+								</option>
+								<option value="1">I група</option>
+								<option value="2">II група</option>
+								<option value="3">III група 5%</option>
+								<option value="" disabled>
+									III група 3% з ПДВ
+								</option>
+							</select>
+						</fieldset>
+						{taxGroup === "3" && (
+							<fieldset>
+								<legend>
+									Вкажіть орієнтовну суму доходу для 3-ї групи за рік
+								</legend>
+								<input
+									type="number"
+									id="income"
+									value={income}
+									onChange={(e) => setIncome(e.target.value)}
+								/>
+							</fieldset>
+						)}
+					</>
 				)}
 				{taxSystem === "general" && (
 					<fieldset>
@@ -97,19 +145,39 @@ function TaxCalculator() {
 						</div>
 					</fieldset>
 				)}
-				<fieldset>
-					<legend>Вкажіть орієнтовний дохід за рік</legend>
-					<input
-						type="number"
-						id="income"
-						value={income}
-						onChange={(e) => setIncome(e.target.value)}
-					/>
-				</fieldset>
+				<button type="submit">Розрахувати</button>
 			</form>
-			<p>Ви ввели: {income}</p>
-			<p>Обрана система оподаткування: {taxSystem}</p>
-			<p>Обрана група: {taxGroup}</p>
+			{taxResult && (
+				<div className="results">
+					<h3>Результати розрахунку (на місяць):</h3>
+					<p>
+						Єдиний Соціальний Внесок (ЄСВ): {taxResult.esvAmount.toFixed(2)} грн
+					</p>
+
+					{taxSystem === "general" && (
+						<>
+							<p>
+								Податок на доходи (ПДФО): {taxResult.taxAmount.toFixed(2)} грн
+							</p>
+							<p>
+								Військовий збір: {taxResult.militaryTaxAmount.toFixed(2)} грн
+							</p>
+						</>
+					)}
+
+					{taxSystem === "simplified" && (
+						<>
+							<p>Єдиний податок: {taxResult.taxAmount.toFixed(2)} грн</p>
+							<p>
+								Військовий збір: {taxResult.militaryTaxAmount.toFixed(2)} грн
+							</p>
+						</>
+					)}
+
+					<hr />
+					<h4>Разом до сплати: {taxResult.totalAmount.toFixed(2)} грн</h4>
+				</div>
+			)}
 		</>
 	);
 }
