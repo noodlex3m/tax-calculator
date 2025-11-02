@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./TaxCalculator.css";
 
 function TaxCalculator() {
 	const [income, setIncome] = useState("");
@@ -14,10 +15,14 @@ function TaxCalculator() {
 		return gross - expenses;
 	})();
 
-	const formattedNetProfit = new Intl.NumberFormat("uk-UA", {
-		minimumFractionDigits: 0,
+	const formatter = new Intl.NumberFormat("uk-UA", {
+		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
-	}).format(netProfit);
+	});
+
+	const formatMoney = (amount) => `${formatter.format(amount)} грн.`;
+
+	const formattedNetProfit = formatMoney(netProfit);
 
 	function handleSubmit(e) {
 		e.preventDefault();
@@ -54,7 +59,7 @@ function TaxCalculator() {
 	}
 
 	return (
-		<>
+		<div className="calculator-container">
 			<form onSubmit={handleSubmit}>
 				<h1>Калькулятор податів ФОП на 2025 рік</h1>
 				<fieldset>
@@ -145,31 +150,31 @@ function TaxCalculator() {
 						</div>
 					</fieldset>
 				)}
-				<button type="submit">Розрахувати</button>
+				<button type="submit" className="calculate-btn">
+					Розрахувати
+				</button>
 			</form>
 			{taxResult && (
-				<div className="results">
+				<div className="results-block">
 					<h3>Результати розрахунку (на місяць):</h3>
 					<p>
-						Єдиний Соціальний Внесок (ЄСВ): {taxResult.esvAmount.toFixed(2)} грн
+						Єдиний Соціальний Внесок (ЄСВ): {formatMoney(taxResult.esvAmount)}
 					</p>
 
 					{taxSystem === "general" && (
-						<p>
-							Податок на доходи (ПДФО): {taxResult.taxAmount.toFixed(2)} грн
-						</p>
+						<p>Податок на доходи (ПДФО): {formatMoney(taxResult.taxAmount)}</p>
 					)}
 
 					{taxSystem === "simplified" && (
-						<p>Єдиний податок: {taxResult.taxAmount.toFixed(2)} грн</p>
+						<p>Єдиний податок: {formatMoney(taxResult.taxAmount)}</p>
 					)}
-					<p>Військовий збір: {taxResult.militaryTaxAmount.toFixed(2)} грн</p>
+					<p>Військовий збір: {formatMoney(taxResult.militaryTaxAmount)}</p>
 
 					<hr />
-					<h4>Разом до сплати: {taxResult.totalAmount.toFixed(2)} грн</h4>
+					<h4>Разом до сплати: {formatMoney(taxResult.totalAmount)}</h4>
 				</div>
 			)}
-		</>
+		</div>
 	);
 }
 
