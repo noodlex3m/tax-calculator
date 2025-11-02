@@ -25,7 +25,7 @@ function TaxCalculator() {
 		const numIncome = parseFloat(income) || 0;
 
 		let tax = 0;
-		let esv = 2200;
+		let esv = 1760;
 		let militaryTax = 0;
 
 		if (taxSystem === "simplified") {
@@ -33,9 +33,11 @@ function TaxCalculator() {
 				tax = numIncome * 0.05;
 				militaryTax = numIncome * 0.01;
 			} else if (taxGroup === "2") {
-				tax = 1400;
+				tax = 1600;
+				militaryTax = 800;
 			} else if (taxGroup === "1") {
 				tax = 302.8;
+				militaryTax = 800;
 			}
 		} else if (taxSystem === "general") {
 			if (netProfit > 0) {
@@ -101,9 +103,7 @@ function TaxCalculator() {
 						</fieldset>
 						{taxGroup === "3" && (
 							<fieldset>
-								<legend>
-									Вкажіть орієнтовну суму доходу для 3-ї групи за рік
-								</legend>
+								<legend>Вкажіть орієнтовну суму доходу для 3-ї групи</legend>
 								<input
 									type="number"
 									id="income"
@@ -155,24 +155,15 @@ function TaxCalculator() {
 					</p>
 
 					{taxSystem === "general" && (
-						<>
-							<p>
-								Податок на доходи (ПДФО): {taxResult.taxAmount.toFixed(2)} грн
-							</p>
-							<p>
-								Військовий збір: {taxResult.militaryTaxAmount.toFixed(2)} грн
-							</p>
-						</>
+						<p>
+							Податок на доходи (ПДФО): {taxResult.taxAmount.toFixed(2)} грн
+						</p>
 					)}
 
 					{taxSystem === "simplified" && (
-						<>
-							<p>Єдиний податок: {taxResult.taxAmount.toFixed(2)} грн</p>
-							<p>
-								Військовий збір: {taxResult.militaryTaxAmount.toFixed(2)} грн
-							</p>
-						</>
+						<p>Єдиний податок: {taxResult.taxAmount.toFixed(2)} грн</p>
 					)}
+					<p>Військовий збір: {taxResult.militaryTaxAmount.toFixed(2)} грн</p>
 
 					<hr />
 					<h4>Разом до сплати: {taxResult.totalAmount.toFixed(2)} грн</h4>
