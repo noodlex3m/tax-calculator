@@ -24,6 +24,10 @@ function TaxCalculator() {
 
 	const formattedNetProfit = formatMoney(netProfit);
 
+	const INCOME_LIMIT = 9336000; // обсяг доходу не перевищує 1167 розмірів мінімальної заробітної плати, встановленої законом на 1 січня податкового (звітного) року.
+
+	const isOverLimit = (value) => parseFloat(value) > INCOME_LIMIT;
+
 	function handleSubmit(e) {
 		e.preventDefault();
 
@@ -32,10 +36,17 @@ function TaxCalculator() {
 		let tax = 0;
 		let esv = 1760;
 		let militaryTax = 0;
+		let excessTax = 0;
 
 		if (taxSystem === "simplified") {
 			if (taxGroup === "3") {
-				tax = numIncome * 0.05;
+				if (numIncome > INCOME_LIMIT) {
+					const excess = numIncome - INCOME_LIMIT;
+					excessTax = excess * 0.15;
+					tax = INCOME_LIMIT * 0.05;
+				} else {
+					tax = numIncome * 0.05;
+				}
 				militaryTax = numIncome * 0.01;
 			} else if (taxGroup === "2") {
 				tax = 1600;
@@ -54,6 +65,7 @@ function TaxCalculator() {
 			taxAmount: tax,
 			esvAmount: esv,
 			militaryTaxAmount: militaryTax,
+			excessTaxAmount: excessTax,
 			totalAmount: tax + esv + militaryTax,
 		});
 	}
@@ -114,7 +126,13 @@ function TaxCalculator() {
 									id="income"
 									value={income}
 									onChange={(e) => setIncome(e.target.value)}
+									className={isOverLimit(income) ? "over-limit" : ""}
 								/>
+								{isOverLimit(income) && (
+									<div className="warning-text">
+										<p>Увага: обсяг доходу перевищує 9 336 000 грн.</p>
+									</div>
+								)}
 							</fieldset>
 						)}
 					</>
@@ -166,7 +184,15 @@ function TaxCalculator() {
 					)}
 
 					{taxSystem === "simplified" && (
-						<p>Єдиний податок: {formatMoney(taxResult.taxAmount)}</p>
+						<>
+							<p>Єдиний податок: {formatMoney(taxResult.taxAmount)}</p>
+							{taxResult.excessTaxAmount > 0 && (
+								<p className="excess-tax">
+									Податок із суми перевищення (15%):
+									<span> {formatMoney(taxResult.excessTaxAmount)}</span>
+								</p>
+							)}
+						</>
 					)}
 					<p>Військовий збір: {formatMoney(taxResult.militaryTaxAmount)}</p>
 
