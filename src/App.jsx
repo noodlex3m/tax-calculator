@@ -2,10 +2,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import Accordion from "./components/Accordion";
 import "./App.css";
 import TaxCalculator from "./components/TaxCalculator";
-
-const News = () => {
-	return <h2>Останні Новини</h2>;
-};
+import News from "./components/News";
 
 function Home() {
 	return <h2>Вітаємо на сайті!</h2>;
