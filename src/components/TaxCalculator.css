@@ -93,12 +93,16 @@ fieldset > div label {
 	color: #eee;
 	margin: 0.5rem 0;
 }
+.results-block p.excess-tax {
+	color: #ff4444;
+	font-weight: bold;
+}
 .results-block h4 {
 	font-size: 1.3rem;
 	color: #fff;
 	margin-top: 1rem;
 }
-.income-over-limit {
+.over-limit {
 	color: #ff4444 !important;
 	border-color: #ff4444 !important;
 }
@@ -107,9 +111,4 @@ fieldset > div label {
 	color: #ff4444;
 	font-size: 0.9rem;
 	margin-top: 0.5rem;
-}
-
-.excess-tax span {
-	color: #ff4444;
-	font-weight: bold;
 }
