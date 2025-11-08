@@ -45,3 +45,8 @@
 	color: #888;
 	margin-top: 1rem;
 }
+
+.news-card-link {
+	text-decoration: none;
+	color: inherit;
+}

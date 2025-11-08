@@ -9,8 +9,12 @@ function News() {
 			<h1>Останні Новини</h1>
 			<div className="news-list">
 				{newsData.map((article) => (
-					<Link>
-						<div key={article.id} className="news-card">
+					<Link
+						key={article.id}
+						to={`/news/${article.id}`}
+						className="news-card-link"
+					>
+						<div className="news-card">
 							<span className="news-category">{article.category}</span>
 							<h3>{article.title}</h3>
 							<p>{article.summary}</p>
