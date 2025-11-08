@@ -3,6 +3,7 @@ import Accordion from "./components/Accordion";
 import "./App.css";
 import TaxCalculator from "./components/TaxCalculator";
 import News from "./components/News";
+import ArticlePage from "./components/ArticlePage";
 
 function Home() {
 	return <h2>Вітаємо на сайті!</h2>;
