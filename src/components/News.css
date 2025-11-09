@@ -50,3 +50,37 @@
 	text-decoration: none;
 	color: inherit;
 }
+
+.article-container {
+	max-width: 700px;
+	margin: 2rem auto;
+	text-align: left;
+}
+
+.article-container h1 {
+	color: #fff;
+	margin: 0.5rem 0;
+}
+
+.article-container .news-category,
+.article-container .news-date {
+	display: inline-block;
+	margin-right: 1rem;
+}
+
+.article-fulltext {
+	font-size: 1.1rem;
+	line-height: 1.7;
+	color: #ccc;
+	margin-top: 2rem;
+}
+
+.back-link {
+	display: inline-block;
+	margin-bottom: 1rem;
+	color: #a0cfff;
+	text-decoration: none;
+}
+.back-link:hover {
+	text-decoration: underline;
+}
