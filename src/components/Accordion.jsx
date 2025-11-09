@@ -6,14 +6,27 @@ import faqData from "../data/faqData";
 function Accordion() {
 	const [selectedId, setSelectedId] = useState(null);
 	const [searchTerm, setSearchTerm] = useState("");
+	const [selectedCategory, setSelectedCategory] = useState("Всі");
 
-	const filteredFaq = faqData.filter(
-		(item) =>
-			item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			item.shortAnswer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			item.fullAnswer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			item.category.toLowerCase().includes(searchTerm.toLowerCase())
-	);
+	const filteredFaq = faqData
+		.filter((item) => {
+			if (selectedCategory === "Всі") {
+				return true;
+			}
+			return item.category === selectedCategory;
+		})
+		.filter((item) => {
+			const searchTermLower = searchTerm.toLowerCase();
+			return (
+				item.question.toLowerCase().includes(searchTermLower) ||
+				item.shortAnswer.toLowerCase().includes(searchTermLower) ||
+				item.fullAnswer.toLowerCase().includes(searchTermLower) ||
+				item.category.toLowerCase().includes(searchTermLower)
+			);
+		});
+
+	const allCategories = faqData.map((item) => item.category);
+	const uniqueCategories = ["Всі", ...new Set(allCategories)];
 
 	return (
 		<div className="accordion">
@@ -25,6 +38,19 @@ function Accordion() {
 				value={searchTerm}
 				onChange={(e) => setSearchTerm(e.target.value)}
 			/>
+			<div className="category-filters">
+				{uniqueCategories.map((category) => (
+					<button
+						key={category}
+						className={`filter-btn ${
+							selectedCategory === category ? "active" : ""
+						}`}
+						onClick={() => setSelectedCategory(category)}
+					>
+						{category}
+					</button>
+				))}
+			</div>
 			{filteredFaq.map((item) => (
 				<AccordionItem
 					key={item.id}
