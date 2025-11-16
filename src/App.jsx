@@ -1,9 +1,11 @@
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Accordion from "./components/Accordion";
 import "./App.css";
 import TaxCalculator from "./components/TaxCalculator";
 import News from "./components/News";
 import ArticlePage from "./components/ArticlePage";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function Home() {
 	return <h2>Вітаємо на сайті!</h2>;
@@ -12,12 +14,7 @@ function Home() {
 function App() {
 	return (
 		<>
-			<nav>
-				<Link to="/">Головна</Link>
-				<Link to="/faq">Поширені Питання (FAQ)</Link>
-				<Link to="/calculator">Калькулятор</Link>
-				<Link to="/news">Новини</Link>
-			</nav>
+			<Header />
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/faq" element={<Accordion />} />
@@ -25,6 +22,7 @@ function App() {
 				<Route path="/news/:id" element={<ArticlePage />} />
 				<Route path="/news" element={<News />} />
 			</Routes>
+			<Footer />
 		</>
 	);
 }
