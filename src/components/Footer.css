@@ -30,3 +30,10 @@
 .social-links a:hover {
 	color: #a0cfff;
 }
+
+@media (max-width: 768px) {
+	.footer-container {
+		flex-direction: column;
+		gap: 1rem;
+	}
+}
