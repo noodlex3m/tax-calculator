@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { calculateTaxes, isIncomeOverLimit, calculateNetProfit } from "../utils/taxLogic";
+import { CALCULATED_CONSTANTS } from "../utils/taxConstants";
 import "./TaxCalculator.css";
 
 function TaxCalculator() {
@@ -9,11 +11,7 @@ function TaxCalculator() {
 	const [expenseAmount, setExpenseAmount] = useState("");
 	const [taxResult, setTaxResult] = useState(null);
 
-	const netProfit = (() => {
-		const gross = parseFloat(grossIncomeAmount) || 0;
-		const expenses = parseFloat(expenseAmount) || 0;
-		return gross - expenses;
-	})();
+	const netProfit = calculateNetProfit(grossIncomeAmount, expenseAmount);
 
 	const formatter = new Intl.NumberFormat("uk-UA", {
 		minimumFractionDigits: 2,
@@ -24,50 +22,12 @@ function TaxCalculator() {
 
 	const formattedNetProfit = formatMoney(netProfit);
 
-	const INCOME_LIMIT = 9336000; // обсяг доходу не перевищує 1167 розмірів мінімальної заробітної плати, встановленої законом на 1 січня податкового (звітного) року.
 
-	const isOverLimit = (value) => parseFloat(value) > INCOME_LIMIT;
 
 	function handleSubmit(e) {
 		e.preventDefault();
-
-		const numIncome = parseFloat(income) || 0;
-
-		let tax = 0;
-		let esv = 1760;
-		let militaryTax = 0;
-		let excessTax = 0;
-
-		if (taxSystem === "simplified") {
-			if (taxGroup === "3") {
-				if (numIncome > INCOME_LIMIT) {
-					const excess = numIncome - INCOME_LIMIT;
-					excessTax = excess * 0.15;
-					tax = INCOME_LIMIT * 0.05;
-				} else {
-					tax = numIncome * 0.05;
-				}
-				militaryTax = numIncome * 0.01;
-			} else if (taxGroup === "2") {
-				tax = 1600;
-				militaryTax = 800;
-			} else if (taxGroup === "1") {
-				tax = 302.8;
-				militaryTax = 800;
-			}
-		} else if (taxSystem === "general") {
-			if (netProfit > 0) {
-				tax = netProfit * 0.18;
-				militaryTax = netProfit * 0.05;
-			}
-		}
-		setTaxResult({
-			taxAmount: tax,
-			esvAmount: esv,
-			militaryTaxAmount: militaryTax,
-			excessTaxAmount: excessTax,
-			totalAmount: tax + esv + militaryTax,
-		});
+		const result = calculateTaxes(taxSystem, taxGroup, income, expenseAmount);
+		setTaxResult(result);
 	}
 
 	return (
@@ -126,11 +86,11 @@ function TaxCalculator() {
 									id="income"
 									value={income}
 									onChange={(e) => setIncome(e.target.value)}
-									className={isOverLimit(income) ? "over-limit" : ""}
+									className={isIncomeOverLimit(income) ? "over-limit" : ""}
 								/>
-								{isOverLimit(income) && (
+								{isIncomeOverLimit(income) && (
 									<div className="warning-text">
-										<p>Увага: обсяг доходу перевищує 9 336 000 грн.</p>
+										<p>Увага: обсяг доходу перевищує {formatMoney(CALCULATED_CONSTANTS.INCOME_LIMIT_GROUP_3)}</p>
 									</div>
 								)}
 							</fieldset>
