@@ -1,6 +1,6 @@
 .accordion {
 	width: 100%;
-	min-width: 700px;
+	max-width: 800px;
 	margin: 2rem auto;
 	text-align: left;
 }
