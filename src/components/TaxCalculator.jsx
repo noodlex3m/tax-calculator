@@ -26,7 +26,8 @@ function TaxCalculator() {
 
 	function handleSubmit(e) {
 		e.preventDefault();
-		const result = calculateTaxes(taxSystem, taxGroup, income, expenseAmount);
+		const incomeToUse = taxSystem === "general" ? grossIncomeAmount : income;
+		const result = calculateTaxes(taxSystem, taxGroup, incomeToUse, expenseAmount);
 		setTaxResult(result);
 	}
 

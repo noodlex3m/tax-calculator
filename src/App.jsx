@@ -6,10 +6,7 @@ import News from "./components/News";
 import ArticlePage from "./components/ArticlePage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
-function Home() {
-	return <h2>Вітаємо на сайті!</h2>;
-}
+import Home from "./components/Home";
 
 function App() {
 	return (
