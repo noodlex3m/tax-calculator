@@ -188,6 +188,26 @@ function TaxCalculator() {
 
 					<hr />
 					<h4>Разом до сплати: {formatMoney(taxResult.totalAmount)}</h4>
+					{history.length > 0 && (
+						<div className="history-block">
+							<h3>📜 Історія розрахунків</h3>
+							<button
+								onClick={() => setHistory([])}
+								className="clear-history-btn"
+							>
+								Очистити
+							</button>
+							<ul>
+								{history.map((item) => (
+									<li key={item.id}>
+										<strong>{item.date}</strong> — {item.system}
+										{item.group && ` (${item.group} група)`}:{" "}
+										<b>{formatMoney(item.total)}</b>
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
 				</div>
 			)}
 		</div>

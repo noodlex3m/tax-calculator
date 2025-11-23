@@ -7,6 +7,7 @@ import ArticlePage from "./components/ArticlePage";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./components/Home";
+import NotFound from "./components/NotFound";
 
 function App() {
 	return (
@@ -19,6 +20,7 @@ function App() {
 					<Route path="/calculator" element={<TaxCalculator />} />
 					<Route path="/news/:id" element={<ArticlePage />} />
 					<Route path="/news" element={<News />} />
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</main>
 			<Footer />

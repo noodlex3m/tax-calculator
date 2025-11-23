@@ -112,3 +112,35 @@ fieldset > div label {
 	font-size: 0.9rem;
 	margin-top: 0.5rem;
 }
+
+/* History block (localStorage users) */
+
+.history-block {
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid #444;
+}
+.history-block ul {
+	list-style: none;
+	padding: 0;
+}
+.history-block li {
+	background: #333;
+	margin-bottom: 0.5rem;
+	padding: 0.5rem;
+	border-radius: 4px;
+	font-size: 0.9rem;
+}
+.clear-history-btn {
+	background: transparent;
+	border: 1px solid #666;
+	color: #888;
+	padding: 0.2rem 0.5rem;
+	font-size: 0.8rem;
+	cursor: pointer;
+	margin-bottom: 1rem;
+}
+.clear-history-btn:hover {
+	border-color: #ff4d4d;
+	color: #ff4d4d;
+}
