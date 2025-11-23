@@ -84,3 +84,9 @@
 .back-link:hover {
 	text-decoration: underline;
 }
+/* Адаптивність для новин */
+@media (max-width: 768px) {
+	.news-list {
+		grid-template-columns: 1fr; /* Одна колонка на всю ширину */
+	}
+}

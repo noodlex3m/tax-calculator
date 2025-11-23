@@ -1,5 +1,9 @@
-import { useState } from "react";
-import { calculateTaxes, isIncomeOverLimit, calculateNetProfit } from "../utils/taxLogic";
+import { useState, useEffect } from "react";
+import {
+	calculateTaxes,
+	isIncomeOverLimit,
+	calculateNetProfit,
+} from "../utils/taxLogic";
 import { CALCULATED_CONSTANTS } from "../utils/taxConstants";
 import "./TaxCalculator.css";
 
@@ -10,6 +14,15 @@ function TaxCalculator() {
 	const [grossIncomeAmount, setGrossIncomeAmount] = useState("");
 	const [expenseAmount, setExpenseAmount] = useState("");
 	const [taxResult, setTaxResult] = useState(null);
+
+	const [history, setHistory] = useState(() => {
+		const saved = localStorage.getItem("taxHistory");
+		return saved ? JSON.parse(saved) : [];
+	});
+
+	useEffect(() => {
+		localStorage.setItem("taxHistory", JSON.stringify(history));
+	}, [history]);
 
 	const netProfit = calculateNetProfit(grossIncomeAmount, expenseAmount);
 
@@ -22,13 +35,26 @@ function TaxCalculator() {
 
 	const formattedNetProfit = formatMoney(netProfit);
 
-
-
 	function handleSubmit(e) {
 		e.preventDefault();
 		const incomeToUse = taxSystem === "general" ? grossIncomeAmount : income;
-		const result = calculateTaxes(taxSystem, taxGroup, incomeToUse, expenseAmount);
+		const result = calculateTaxes(
+			taxSystem,
+			taxGroup,
+			incomeToUse,
+			expenseAmount
+		);
 		setTaxResult(result);
+
+		const newRecord = {
+			id: Date.now(),
+			date: new Date().toLocaleDateString(),
+			system: taxSystem === "simplified" ? "Спрощена" : "Загальна",
+			group: taxGroup,
+			income: incomeToUse,
+			total: result.totalAmount,
+		};
+		setHistory((prev) => [newRecord, ...prev]);
 	}
 
 	return (
@@ -91,7 +117,10 @@ function TaxCalculator() {
 								/>
 								{isIncomeOverLimit(income) && (
 									<div className="warning-text">
-										<p>Увага: обсяг доходу перевищує {formatMoney(CALCULATED_CONSTANTS.INCOME_LIMIT_GROUP_3)}</p>
+										<p>
+											Увага: обсяг доходу перевищує{" "}
+											{formatMoney(CALCULATED_CONSTANTS.INCOME_LIMIT_GROUP_3)}
+										</p>
 									</div>
 								)}
 							</fieldset>
