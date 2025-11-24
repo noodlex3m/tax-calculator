@@ -3,6 +3,7 @@ import {
 	calculateTaxes,
 	isIncomeOverLimit,
 	calculateNetProfit,
+	isMinIncomeForVat,
 } from "../utils/taxLogic";
 import { CALCULATED_CONSTANTS } from "../utils/taxConstants";
 import "./TaxCalculator.css";
@@ -140,6 +141,9 @@ function TaxCalculator() {
 								id="incomeAmount"
 								value={grossIncomeAmount}
 								onChange={(e) => setGrossIncomeAmount(e.target.value)}
+								className={
+									isMinIncomeForVat(grossIncomeAmount) ? "over-limit" : ""
+								}
 							/>
 						</div>
 						<div id="expenses">
@@ -156,6 +160,14 @@ function TaxCalculator() {
 						<div id="netProfit">
 							<p>Сума чистого оподатковуваного доходу: {formattedNetProfit}</p>
 						</div>
+						{isMinIncomeForVat(grossIncomeAmount) && (
+							<div className="warning-text">
+								<p>
+									Увага: якщо дохід сукупно перевищує 1 000 000 гривень , така
+									особа зобов’язана зареєструватися як платник ПДВ
+								</p>
+							</div>
+						)}
 					</fieldset>
 				)}
 				<button type="submit" className="calculate-btn">
