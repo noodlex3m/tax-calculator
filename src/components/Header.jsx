@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "./Header.css";
+import ThemeToggle from "./ThemeToggle";
 
 function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +19,10 @@ function Header() {
 				<Link to="/" className="logo" onClick={closeMenu}>
 					Tax.Serh.One
 				</Link>
+				<div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+					<nav className={`main-nav ${isMenuOpen ? "active" : ""}`}></nav>
+					<ThemeToggle />
+				</div>
 				<div
 					className={`burger-icon ${isMenuOpen ? "open" : ""}`}
 					onClick={toggleMenu}

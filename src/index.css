@@ -1,21 +1,60 @@
 :root {
+	/* --- ТЕМНА ТЕМА (Default) --- */
+	--bg-body: #242424;
+	--bg-card: #2d2d2d;
+	--bg-input: #333;
+	--bg-block: #3a3a3a; /* Для результатів та історії */
+
+	--text-main: rgba(255, 255, 255, 0.87);
+	--text-secondary: #ccc;
+	--text-muted: #888;
+
+	--border-color: #555;
+	--border-light: #444;
+
+	--primary-color: #535bf2;
+	--primary-hover: #434acf;
+
+	--accent-color: #a0cfff; /* Колір заголовків груп */
+	--danger-color: #ff4444;
+
+	/* Інші налаштування */
 	font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 	line-height: 1.5;
 	font-weight: 400;
-
-	color-scheme: light dark;
-	color: rgba(255, 255, 255, 0.87);
-	background-color: #242424;
-
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	color-scheme: dark;
 }
+
+/* --- СВІТЛА ТЕМА --- */
+[data-theme="light"] {
+	--bg-body: #f0f2f5;
+	--bg-card: #ffffff;
+	--bg-input: #ffffff;
+	--bg-block: #f9f9f9;
+
+	--text-main: #213547;
+	--text-secondary: #555;
+	--text-muted: #666;
+
+	--border-color: #ccc;
+	--border-light: #ddd;
+
+	--primary-color: #535bf2; /* Можна залишити той самий */
+	--primary-hover: #434acf;
+
+	--accent-color: #0055cc; /* Темніший синій для контрасту */
+	--danger-color: #d32f2f;
+
+	color-scheme: light;
+}
+
 body {
 	margin: 0;
 	min-width: 320px;
 	min-height: 100vh;
+	background-color: var(--bg-body);
+	color: var(--text-main);
+	transition: background-color 0.3s, color 0.3s; /* Плавний перехід */
 }
 
 *,

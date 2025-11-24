@@ -1,25 +1,25 @@
 .hero-section {
 	padding: 4rem 1rem;
 	text-align: center;
-	background: linear-gradient(to bottom, #2d2d2d, #242424);
+	background: linear-gradient(to bottom, var(--bg-card), var(--bg-body));
 	border-radius: 8px;
 	margin-bottom: 3rem;
 }
 .hero-section h1 {
 	font-size: 2.5rem;
 	margin-bottom: 1rem;
-	color: #fff;
+	color: var(--text-main);
 }
 .hero-section p {
 	font-size: 1.2rem;
-	color: #ccc;
+	color: var(--text-secondary);
 	max-width: 600px;
 	margin: 0 auto 2rem auto;
 }
 .cta-button {
 	display: inline-block;
 	background-color: #535bf2;
-	color: white;
+	background-color: var(--primary-color);
 	padding: 0.8rem 2rem;
 	font-size: 1.1rem;
 	font-weight: bold;
@@ -28,7 +28,7 @@
 	transition: background-color 0.2s;
 }
 .cta-button:hover {
-	background-color: #434acf;
+	background-color: var(--primary-hover);
 }
 .features-section {
 	display: grid;
@@ -37,26 +37,26 @@
 	text-align: left;
 }
 .feature-card {
-	background-color: #2d2d2d;
+	background-color: var(--bg-card);
 	padding: 1.5rem;
 	border-radius: 8px;
-	border: 1px solid #444;
+	border: 1px solid var(--border-light);
 	transition: transform 0.2s;
 }
 .feature-card:hover {
 	transform: translateY(-5px);
-	border-color: #535bf2;
+	border-color: var(--primary-color);
 }
 .feature-card h3 {
 	margin-top: 0;
-	color: #fff;
+	color: var(--text-main);
 }
 .feature-card p {
-	color: #ccc;
+	color: var(--text-secondary);
 	margin-bottom: 1.5rem;
 }
 .feature-card a {
-	color: #a0cfff;
+	color: var(--accent-color);
 	text-decoration: none;
 	font-weight: bold;
 }

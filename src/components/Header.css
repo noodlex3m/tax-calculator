@@ -1,6 +1,6 @@
 .site-header {
-	background-color: #2d2d2d;
-	border-bottom: 1px solid #444;
+	background-color: var(--bg-card);
+	border-bottom: 1px solid var(--border-light);
 	padding: 1rem 0;
 	position: sticky;
 	top: 0;
@@ -20,7 +20,7 @@
 .logo {
 	font-size: 1.5rem;
 	font-weight: bold;
-	color: #fff;
+	color: var(--text-main);
 	text-decoration: none;
 	z-index: 1001;
 }
@@ -32,7 +32,7 @@
 
 .main-nav a {
 	text-decoration: none;
-	color: #ccc;
+	color: var(--text-secondary);
 	font-weight: 500;
 	padding-bottom: 0.25rem;
 	border-bottom: 2px solid transparent;
@@ -40,12 +40,12 @@
 }
 
 .main-nav a:hover {
-	color: #fff;
+	color: var(--text-main);
 }
 
 .main-nav a.active {
-	color: #a0cfff;
-	border-bottom-color: #a0cfff;
+	color: var(--accent-color);
+	border-bottom-color: var(--accent-color);
 }
 
 /* Стилі для іконки бургера (за замовчуванням прихована) */
@@ -64,7 +64,7 @@
 	display: block;
 	height: 3px;
 	width: 100%;
-	background-color: #fff;
+	background-color: var(--text-main);
 	border-radius: 3px;
 	transition: all 0.3s ease;
 }
@@ -79,8 +79,8 @@
 		top: 100%;
 		left: 0;
 		width: 100%;
-		background-color: #2d2d2d;
-		border-bottom: 1px solid #444;
+		background-color: var(--bg-card);
+		border-bottom: 1px solid var(--border-light);
 		flex-direction: column;
 		align-items: center;
 		padding: 0;
@@ -100,7 +100,7 @@
 		border-bottom: none;
 	}
 	.main-nav a:hover {
-		background-color: #3a3a3a;
+		background-color: var(--bg-input);
 	}
 	.burger-icon.open span:nth-child(1) {
 		transform: translateY(9px) rotate(45deg);
