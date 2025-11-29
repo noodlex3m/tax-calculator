@@ -130,10 +130,7 @@ function TaxCalculator() {
 				)}
 				{taxSystem === "general" && (
 					<fieldset>
-						<legend>
-							Відображення доходів та витрат від провадження господарської
-							діяльності
-						</legend>
+						<legend>Відображення доходів та витрат</legend>
 						<div id="grossIncome">
 							<label htmlFor="incomeAmount">Сума одержаного доходу: </label>
 							<input
@@ -163,8 +160,9 @@ function TaxCalculator() {
 						{isMinIncomeForVat(grossIncomeAmount) && (
 							<div className="warning-text">
 								<p>
-									Увага: якщо дохід сукупно перевищує 1 000 000 гривень , така
-									особа зобов’язана зареєструватися як платник ПДВ
+									Увага: якщо протягом останніх 12 календарних місяців дохід
+									перевищує 1 млн. &#8372; &rarr; необхідно зареєструватися
+									платником ПДВ
 								</p>
 							</div>
 						)}
@@ -178,7 +176,7 @@ function TaxCalculator() {
 				<div className="results-block">
 					<h3>Результати розрахунку (на місяць):</h3>
 					<p>
-						Єдиний Соціальний Внесок (ЄСВ): {formatMoney(taxResult.esvAmount)}
+						Єдиний соціальний внесок (ЄСВ): {formatMoney(taxResult.esvAmount)}
 					</p>
 
 					{taxSystem === "general" && (
@@ -187,16 +185,18 @@ function TaxCalculator() {
 
 					{taxSystem === "simplified" && (
 						<>
-							<p>Єдиний податок: {formatMoney(taxResult.taxAmount)}</p>
+							<p>Єдиний податок (ЄП): {formatMoney(taxResult.taxAmount)}</p>
 							{taxResult.excessTaxAmount > 0 && (
 								<p className="excess-tax">
-									Податок із суми перевищення (15%):
+									ЄП до суми перевищення обсягу доходу (15%):
 									<span> {formatMoney(taxResult.excessTaxAmount)}</span>
 								</p>
 							)}
 						</>
 					)}
-					<p>Військовий збір: {formatMoney(taxResult.militaryTaxAmount)}</p>
+					<p>
+						Військовий збір (ВЗ): {formatMoney(taxResult.militaryTaxAmount)}
+					</p>
 
 					<hr />
 					<h4>Разом до сплати: {formatMoney(taxResult.totalAmount)}</h4>

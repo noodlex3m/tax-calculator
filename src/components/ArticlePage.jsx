@@ -10,7 +10,14 @@ function ArticlePage() {
 	const article = newsData.find((article) => article.id === Number(id));
 
 	if (!article) {
-		return <h2>Статтю не знайдено</h2>;
+		return (
+			<>
+				<h2>Статтю не знайдено</h2>
+				<Link to="/news" className="back-link">
+					&larr; Назад до новин
+				</Link>
+			</>
+		);
 	}
 
 	return (
