@@ -1,26 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import "./ThemeToggle.css";
+import { ThemeContext } from "../context/ThemeContext";
 
 function ThemeToggle() {
-	const [theme, setTheme] = useState(() => {
-		const savedTheme = localStorage.getItem("site-item");
-		if (
-			!savedTheme &&
-			window.matchMedia("(prefers-color-scheme: light)").matches
-		) {
-			return "light";
-		}
-		return savedTheme || "dark";
-	});
-
-	useEffect(() => {
-		document.body.setAttribute("data-theme", theme);
-		localStorage.setItem("site-theme", theme);
-	}, [theme]);
-
-	const toggleTheme = () => {
-		setTheme((prev) => (prev === "dark" ? "light" : "dark"));
-	};
+	const { theme, toggleTheme } = useContext(ThemeContext);
 
 	return (
 		<button
