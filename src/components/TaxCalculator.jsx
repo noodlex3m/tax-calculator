@@ -1,15 +1,8 @@
 import { useState, useEffect } from "react";
-import {
-	calculateTaxes,
-	isIncomeOverLimit,
-	calculateNetProfit,
-	isMinIncomeForVat,
-} from "../utils/taxLogic";
+import { calculateTaxes, calculateNetProfit } from "../utils/taxLogic";
 import ResultsChart from "./ResultsChart";
-// import "chart.js/auto";
-import { CALCULATED_CONSTANTS } from "../utils/taxConstants";
-import { LIMITS } from "../utils/taxConstants";
 import LimitIndicator from "./LimitIndicator";
+import { LIMITS } from "../utils/taxConstants";
 import "./TaxCalculator.css";
 
 function TaxCalculator() {
@@ -35,14 +28,14 @@ function TaxCalculator() {
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
 	});
-
 	const formatMoney = (amount) => `${formatter.format(amount)} грн.`;
-
-	const formattedNetProfit = formatMoney(netProfit);
 
 	function handleSubmit(e) {
 		e.preventDefault();
 		const incomeToUse = taxSystem === "general" ? grossIncomeAmount : income;
+
+		if (!incomeToUse) return;
+
 		const result = calculateTaxes(
 			taxSystem,
 			taxGroup,
@@ -51,15 +44,14 @@ function TaxCalculator() {
 		);
 		setTaxResult(result);
 
-		const newRecord = {
-			id: Date.now(),
+		const newItem = {
 			date: new Date().toLocaleDateString(),
-			system: taxSystem === "simplified" ? "Спрощена" : "Загальна",
-			group: taxGroup,
-			income: incomeToUse,
+			system:
+				taxSystem === "general" ? "Загальна" : `Спрощена (${taxGroup} гр.)`,
+			income: parseFloat(incomeToUse),
 			total: result.totalAmount,
 		};
-		setHistory((prev) => [newRecord, ...prev]);
+		setHistory((prev) => [newItem, ...prev].slice(0, 5));
 	}
 
 	const incomeForChart =
@@ -70,20 +62,10 @@ function TaxCalculator() {
 	return (
 		<div className="calculator-container">
 			<form onSubmit={handleSubmit}>
-				<h1>Калькулятор податів ФОП на 2025 рік</h1>
+				<h1>Калькулятор податків ФОП на 2025 рік</h1>
+
 				<fieldset>
 					<legend>Оберіть систему оподаткування</legend>
-					<div>
-						<input
-							type="radio"
-							id="general"
-							name="system"
-							value="general"
-							checked={taxSystem === "general"}
-							onChange={(e) => setTaxSystem(e.target.value)}
-						/>
-						<label htmlFor="general">Загальна</label>
-					</div>
 					<div>
 						<input
 							type="radio"
@@ -91,77 +73,77 @@ function TaxCalculator() {
 							name="system"
 							value="simplified"
 							checked={taxSystem === "simplified"}
-							onChange={(e) => setTaxSystem(e.target.value)}
+							onChange={(e) => {
+								setTaxSystem(e.target.value);
+								setTaxResult(null);
+							}}
 						/>
 						<label htmlFor="simplified">Спрощена</label>
 					</div>
+					<div>
+						<input
+							type="radio"
+							id="general"
+							name="system"
+							value="general"
+							checked={taxSystem === "general"}
+							onChange={(e) => {
+								setTaxSystem(e.target.value);
+								setTaxResult(null);
+							}}
+						/>
+						<label htmlFor="general">Загальна</label>
+					</div>
 				</fieldset>
+
 				{taxSystem === "simplified" && (
 					<>
 						<fieldset>
-							<legend>Оберіть групу єдиного податку</legend>
+							<legend>Оберіть групу</legend>
 							<select
 								value={taxGroup}
 								onChange={(e) => setTaxGroup(e.target.value)}
 							>
-								<option value="" disabled>
-									-- Оберіть групу --
-								</option>
+								<option value="">-- Оберіть групу --</option>
 								<option value="1">I група</option>
 								<option value="2">II група</option>
 								<option value="3">III група 5%</option>
-								<option value="" disabled>
-									III група 3% з ПДВ
-								</option>
 							</select>
 						</fieldset>
-						{taxGroup === "3" && (
-							<fieldset>
-								<legend>Вкажіть орієнтовну суму доходу для 3-ї групи</legend>
-								<input
-									type="number"
-									id="income"
-									value={income}
-									onChange={(e) => setIncome(e.target.value)}
-									className={isIncomeOverLimit(income) ? "over-limit" : ""}
+
+						<fieldset>
+							<legend>Вкажіть орієнтовний дохід за рік</legend>
+							<input
+								type="number"
+								value={income}
+								onChange={(e) => setIncome(e.target.value)}
+								placeholder="Наприклад: 500000"
+							/>
+
+							{taxGroup && income && (
+								<LimitIndicator
+									currentIncome={parseFloat(income)}
+									limit={LIMITS[taxGroup]}
 								/>
-								{taxSystem === "simplified" && taxGroup && (
-									<LimitIndicator
-										currentIncome={parseFloat(income) || 0}
-										limit={LIMITS[taxGroup]}
-									/>
-								)}
-								{isIncomeOverLimit(income) && (
-									<div className="warning-text">
-										<p>
-											Увага: обсяг доходу перевищує{" "}
-											{formatMoney(CALCULATED_CONSTANTS.INCOME_LIMIT_GROUP_3)}
-										</p>
-									</div>
-								)}
-							</fieldset>
-						)}
+							)}
+						</fieldset>
 					</>
 				)}
+
 				{taxSystem === "general" && (
 					<fieldset>
-						<legend>Відображення доходів та витрат</legend>
+						<legend>Доходи та витрати</legend>
 						<div id="grossIncome">
-							<label htmlFor="incomeAmount">Сума одержаного доходу: </label>
+							<label htmlFor="incomeAmount">Сума доходу:</label>
 							<input
 								type="number"
 								id="incomeAmount"
 								value={grossIncomeAmount}
 								onChange={(e) => setGrossIncomeAmount(e.target.value)}
-								className={
-									isMinIncomeForVat(grossIncomeAmount) ? "over-limit" : ""
-								}
 							/>
 						</div>
 						<div id="expenses">
-							<label htmlFor="expenseAmount">
-								Вартість документально підтверджених витрат:
-							</label>
+							<label htmlFor="expenseAmount">Сума витрат:</label>
 							<input
 								type="number"
 								id="expenseAmount"
@@ -169,61 +151,68 @@ function TaxCalculator() {
 								onChange={(e) => setExpenseAmount(e.target.value)}
 							/>
 						</div>
-						<div id="netProfit">
-							<p>Сума чистого оподатковуваного доходу: {formattedNetProfit}</p>
+						<div id="netProfit" style={{ marginTop: "1rem" }}>
+							<p>
+								Чистий дохід: <strong>{formatMoney(netProfit)}</strong>
+							</p>
 						</div>
-						{isMinIncomeForVat(grossIncomeAmount) && (
-							<div className="warning-text">
-								<p>
-									Увага: якщо протягом останніх 12 календарних місяців дохід
-									перевищує 1 млн. &#8372; &rarr; необхідно зареєструватися
-									платником ПДВ
-								</p>
-							</div>
-						)}
 					</fieldset>
 				)}
+
 				<button type="submit" className="calculate-btn">
 					Розрахувати
 				</button>
 			</form>
+
 			{taxResult && (
 				<div className="results-block">
-					<h3>Результати розрахунку (на місяць):</h3>
+					<h3>Результати (місяць):</h3>
+
 					<p>
-						Єдиний соціальний внесок (ЄСВ): {formatMoney(taxResult.esvAmount)}
+						Єдиний Соціальний Внесок (ЄСВ):{" "}
+						<strong>{formatMoney(taxResult.esvAmount)}</strong>
 					</p>
 
 					{taxSystem === "general" && (
-						<p>Податок на доходи (ПДФО): {formatMoney(taxResult.taxAmount)}</p>
+						<p>
+							Податок на доходи (ПДФО):{" "}
+							<strong>{formatMoney(taxResult.taxAmount)}</strong>
+						</p>
 					)}
 
 					{taxSystem === "simplified" && (
 						<>
-							<p>Єдиний податок (ЄП): {formatMoney(taxResult.taxAmount)}</p>
+							<p>
+								Єдиний податок:{" "}
+								<strong>{formatMoney(taxResult.taxAmount)}</strong>
+							</p>
 							{taxResult.excessTaxAmount > 0 && (
 								<p className="excess-tax">
-									ЄП до суми перевищення обсягу доходу (15%):
+									Податок з перевищення (15%):
 									<span> {formatMoney(taxResult.excessTaxAmount)}</span>
 								</p>
 							)}
 						</>
 					)}
+
 					<p>
-						Військовий збір (ВЗ): {formatMoney(taxResult.militaryTaxAmount)}
+						Військовий збір:{" "}
+						<strong>{formatMoney(taxResult.militaryTaxAmount)}</strong>
 					</p>
 
 					<hr />
 					<h4>Разом до сплати: {formatMoney(taxResult.totalAmount)}</h4>
+
 					<ResultsChart
 						taxAmount={taxResult.taxAmount + (taxResult.excessTaxAmount || 0)}
 						esvAmount={taxResult.esvAmount}
 						militaryTaxAmount={taxResult.militaryTaxAmount}
 						netProfit={cleanIncome}
 					/>
+
 					{history.length > 0 && (
 						<div className="history-block">
-							<h3>📜 Історія розрахунків</h3>
+							<h3>📜 Історія</h3>
 							<button
 								onClick={() => setHistory([])}
 								className="clear-history-btn"
@@ -231,11 +220,12 @@ function TaxCalculator() {
 								Очистити
 							</button>
 							<ul>
-								{history.map((item) => (
-									<li key={item.id}>
-										<strong>{item.date}</strong> — {item.system}
-										{item.group && ` (${item.group} група)`}:{" "}
-										<b>{formatMoney(item.total)}</b>
+								{history.map((item, index) => (
+									<li key={index}>
+										<span>
+											{item.date} | {item.system}
+										</span>
+										<strong>{formatMoney(item.total)}</strong>
 									</li>
 								))}
 							</ul>

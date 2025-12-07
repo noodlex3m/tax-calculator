@@ -5,41 +5,42 @@ function LimitIndicator({ currentIncome, limit }) {
 
 	const percentage = Math.min((currentIncome / limit) * 100, 100);
 
-	let color = "#00e676";
-	if (percentage > 80) color = "#ff9800";
-	if (percentage >= 100) color = "#f44446";
+	let progressBarColor = "#00e676";
+	if (percentage > 80) progressBarColor = "#ff9800";
+	if (percentage >= 100) progressBarColor = "#f44336";
 
 	const formatMoney = (amount) => new Intl.NumberFormat("uk-UA").format(amount);
 
 	return (
-		<div style={{ marginTop: "1.5rem", marginBottom: "1.5rem" }}>
+		<div style={{ marginTop: "1rem", marginBottom: "1.5rem" }}>
 			<div
 				style={{
 					display: "flex",
 					justifyContent: "space-between",
 					marginBottom: "0.5rem",
-					fontSize: "0.9rem",
-					color: "#ccc",
+					fontSize: "0.85rem",
+					color: "var(--text-secondary)",
 				}}
 			>
-				<span>Поточний дохід: {formatMoney(currentIncome)} грн</span>
+				<span>Дохід: {formatMoney(currentIncome)} грн</span>
 				<span>Ліміт: {formatMoney(limit)} грн</span>
 			</div>
 
 			<div
 				style={{
-					height: "10px",
+					height: "8px",
 					width: "100%",
-					backgroundColor: "#444",
-					borderRadius: "5px",
+					backgroundColor: "var(--bg-input)",
+					borderRadius: "4px",
 					overflow: "hidden",
+					border: "1px solid var(--border-color)",
 				}}
 			>
 				<div
 					style={{
 						height: "100%",
 						width: `${percentage}%`,
-						backgroundColor: color,
+						backgroundColor: progressBarColor,
 						transition: "width 0.5s ease-in-out, background-color 0.3s",
 					}}
 				></div>
@@ -47,7 +48,12 @@ function LimitIndicator({ currentIncome, limit }) {
 
 			{percentage >= 100 && (
 				<p
-					style={{ color: "#f44336", fontSize: "0.85rem", marginTop: "0.5rem" }}
+					style={{
+						color: "#f44336",
+						fontSize: "0.85rem",
+						marginTop: "0.5rem",
+						fontWeight: "bold",
+					}}
 				>
 					⚠️ Увага! Ви перевищили ліміт доходу для вашої групи.
 				</p>
