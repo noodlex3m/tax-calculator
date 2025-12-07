@@ -18,7 +18,7 @@ function ResultsChart({ taxAmount, esvAmount, militaryTaxAmount, netProfit }) {
 			{
 				label: "Сума (грн)",
 				data: [netProfit, taxAmount, esvAmount, militaryTaxAmount],
-				backgroundColor: ["#4caf50", "#ff9800", "#9c27b0"],
+				backgroundColor: ["#00e676", "#ff9800", "#f44336", "#29b6f6"],
 				borderColor: borderColor,
 				borderWidth: 2,
 			},
