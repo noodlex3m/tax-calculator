@@ -8,6 +8,8 @@ import {
 import ResultsChart from "./ResultsChart";
 // import "chart.js/auto";
 import { CALCULATED_CONSTANTS } from "../utils/taxConstants";
+import { LIMITS } from "../utils/taxConstants";
+import LimitIndicator from "./LimitIndicator";
 import "./TaxCalculator.css";
 
 function TaxCalculator() {
@@ -123,6 +125,12 @@ function TaxCalculator() {
 									onChange={(e) => setIncome(e.target.value)}
 									className={isIncomeOverLimit(income) ? "over-limit" : ""}
 								/>
+								{taxSystem === "simplified" && taxGroup && (
+									<LimitIndicator
+										currentIncome={parseFloat(income) || 0}
+										limit={LIMITS[taxGroup]}
+									/>
+								)}
 								{isIncomeOverLimit(income) && (
 									<div className="warning-text">
 										<p>
