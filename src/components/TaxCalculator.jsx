@@ -5,6 +5,8 @@ import {
 	calculateNetProfit,
 	isMinIncomeForVat,
 } from "../utils/taxLogic";
+import ResultsChart from "./ResultsChart";
+// import "chart.js/auto";
 import { CALCULATED_CONSTANTS } from "../utils/taxConstants";
 import "./TaxCalculator.css";
 
@@ -57,6 +59,11 @@ function TaxCalculator() {
 		};
 		setHistory((prev) => [newRecord, ...prev]);
 	}
+
+	const incomeForChart =
+		taxSystem === "general" ? netProfit : parseFloat(income) || 0;
+
+	const cleanIncome = taxResult ? incomeForChart - taxResult.totalAmount : 0;
 
 	return (
 		<div className="calculator-container">
@@ -200,6 +207,12 @@ function TaxCalculator() {
 
 					<hr />
 					<h4>Разом до сплати: {formatMoney(taxResult.totalAmount)}</h4>
+					<ResultsChart
+						taxAmount={taxResult.taxAmount + (taxResult.excessTaxAmount || 0)}
+						esvAmount={taxResult.esvAmount}
+						militaryTaxAmount={taxResult.militaryTaxAmount}
+						netProfit={cleanIncome}
+					/>
 					{history.length > 0 && (
 						<div className="history-block">
 							<h3>📜 Історія розрахунків</h3>
