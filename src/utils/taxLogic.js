@@ -65,11 +65,6 @@ export function calculateTaxes(system, group, income, expenses) {
 	};
 }
 
-export function isIncomeOverLimit(income, group) {
-	const limit = LIMITS[group];
-	return limit ? parseFloat(income) > limit : false;
-}
-
 export function isMinIncomeForVat(income) {
 	return parseFloat(income) > TAX_CONSTANTS_2025.MIN_INCOME_FOR_VAT;
 }

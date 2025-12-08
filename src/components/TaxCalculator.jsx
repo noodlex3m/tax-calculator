@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { calculateTaxes, calculateNetProfit } from "../utils/taxLogic";
+import {
+	calculateTaxes,
+	calculateNetProfit,
+	isMinIncomeForVat,
+} from "../utils/taxLogic";
 import ResultsChart from "./ResultsChart";
 import LimitIndicator from "./LimitIndicator";
 import { LIMITS } from "../utils/taxConstants";
@@ -29,6 +33,12 @@ function TaxCalculator() {
 		maximumFractionDigits: 2,
 	});
 	const formatMoney = (amount) => `${formatter.format(amount)} грн.`;
+
+	const handleKeyDown = (e) => {
+		if (["-", "+", "e", "E"].includes(e.key)) {
+			e.preventDefault();
+		}
+	};
 
 	function handleSubmit(e) {
 		e.preventDefault();
@@ -118,6 +128,7 @@ function TaxCalculator() {
 								value={income}
 								onChange={(e) => setIncome(e.target.value)}
 								placeholder="Наприклад: 500000"
+								onKeyDown={handleKeyDown}
 							/>
 
 							{taxGroup && income && (
@@ -135,11 +146,20 @@ function TaxCalculator() {
 						<legend>Доходи та витрати</legend>
 						<div id="grossIncome">
 							<label htmlFor="incomeAmount">Сума доходу:</label>
+							{isMinIncomeForVat(grossIncomeAmount) && (
+								<div className="warning-text">
+									<p>
+										Увага: якщо дохід сукупно перевищує 1 млн. грн., така особа
+										зобов’язана зареєструватися як платник ПДВ
+									</p>
+								</div>
+							)}
 							<input
 								type="number"
 								id="incomeAmount"
 								value={grossIncomeAmount}
 								onChange={(e) => setGrossIncomeAmount(e.target.value)}
+								onKeyDown={handleKeyDown}
 							/>
 						</div>
 						<div id="expenses">
@@ -149,6 +169,7 @@ function TaxCalculator() {
 								id="expenseAmount"
 								value={expenseAmount}
 								onChange={(e) => setExpenseAmount(e.target.value)}
+								onKeyDown={handleKeyDown}
 							/>
 						</div>
 						<div id="netProfit" style={{ marginTop: "1rem" }}>

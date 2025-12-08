@@ -18,9 +18,9 @@ export const TAX_CONSTANTS_2025 = {
 // 2 група: 834 МЗП
 // 3 група: 1167 МЗП
 export const LIMITS = {
-	1: 1336000,
-	2: 6672000,
-	3: 9336000,
+	1: TAX_CONSTANTS_2025.MIN_SALARY * 167,
+	2: TAX_CONSTANTS_2025.MIN_SALARY * 834,
+	3: TAX_CONSTANTS_2025.MIN_SALARY * 1167,
 };
 
 export const CALCULATED_CONSTANTS = {
