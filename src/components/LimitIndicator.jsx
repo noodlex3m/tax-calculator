@@ -20,6 +20,7 @@ function LimitIndicator({ currentIncome, limit }) {
 					marginBottom: "0.5rem",
 					fontSize: "0.85rem",
 					color: "var(--text-secondary)",
+					gap: "1rem", // 👈 ДОДАНО: гарантований відступ між текстом
 				}}
 			>
 				<span>Дохід: {formatMoney(currentIncome)} грн</span>

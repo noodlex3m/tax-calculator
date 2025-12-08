@@ -1,17 +1,26 @@
 export const TAX_CONSTANTS_2025 = {
 	MIN_SALARY: 8000,
-	MIN_INCOME_FOR_VAT: 1000000, // відповідно до пункту 1 статті 181 Податкового кодексу України - загальна сума від здійснення операцій з постачання товарів/послуг, сукупно перевищує 1000000 гривень, зареєструватися як платник ПДВ
 	LIVING_WAGE: 3028,
 	ESV_RATE: 0.22,
-	GROUP_1_TAX_RATE: 0.1, // 10% of Living Wage
-	GROUP_2_TAX_RATE: 0.2, // 20% of Min Salary
+	GROUP_1_TAX_RATE: 0.1, // 10% від прожиткового мінімуму
+	GROUP_2_TAX_RATE: 0.2, // 20% від мінімальної зарплати
 	GROUP_3_TAX_RATE: 0.05,
-	GROUP_3_EXCESS_TAX_RATE: 0.15,
-	MILITARY_TAX_RATE_FIXED: 0.1, // 10% of Min Salary for Group 1 & 2
+	EXCESS_TAX_RATE: 0.15, // Єдина ставка для всіх груп при перевищенні
+	MILITARY_TAX_RATE_FIXED: 0.1, // 10% від МЗП для 1-2 груп
 	MILITARY_TAX_RATE_GROUP_3: 0.01,
 	MILITARY_TAX_RATE_GENERAL: 0.05,
 	GENERAL_TAX_RATE: 0.18,
-	INCOME_LIMIT_MULTIPLIER: 1167,
+	MIN_INCOME_FOR_VAT: 1000000,
+};
+
+// Ліміти доходу на 2025 рік (МЗП * коефіцієнт)
+// 1 група: 167 МЗП
+// 2 група: 834 МЗП
+// 3 група: 1167 МЗП
+export const LIMITS = {
+	1: 1336000,
+	2: 6672000,
+	3: 9336000,
 };
 
 export const CALCULATED_CONSTANTS = {
@@ -22,12 +31,5 @@ export const CALCULATED_CONSTANTS = {
 		TAX_CONSTANTS_2025.MIN_SALARY * TAX_CONSTANTS_2025.GROUP_2_TAX_RATE,
 	MILITARY_TAX_FIXED:
 		TAX_CONSTANTS_2025.MIN_SALARY * TAX_CONSTANTS_2025.MILITARY_TAX_RATE_FIXED,
-	INCOME_LIMIT_GROUP_3:
-		TAX_CONSTANTS_2025.MIN_SALARY * TAX_CONSTANTS_2025.INCOME_LIMIT_MULTIPLIER,
-};
-
-export const LIMITS = {
-	1: 1336000,
-	2: 6672000,
-	3: 9336000,
+	INCOME_LIMIT_GROUP_3: LIMITS[3], // Adding this back for backward compatibility if needed, though previously it was calculated
 };
