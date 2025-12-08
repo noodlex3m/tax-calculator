@@ -1,5 +1,6 @@
 import "./Accordion.css";
 import { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import AccordionItem from "./AccordionItem";
 import faqData from "../data/faqData";
 
@@ -30,6 +31,14 @@ function Accordion() {
 
 	return (
 		<div className="accordion">
+			<Helmet>
+				<title>Поширені питання з оподаткування — Tax.Serh.One</title>
+				<meta
+					name="description"
+					content="Розрахуйте єдиний податок та ЄСВ для 1, 2 та 3 групи ФОП. Актуальні ставки 2025 року."
+				/>
+				<link rel="canonical" href="https://tax.serh.one/calculator" />
+			</Helmet>
 			<h2>Поширені питання (FAQ)</h2>
 			<input
 				type="text"

@@ -1,10 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import "./Home.css";
 
 function Home() {
 	return (
 		<div className="home-container">
+			<Helmet>
+				<title>Все про податки ФОП — Tax.Serh.One</title>
+				<meta
+					name="description"
+					content="Розрахуйте єдиний податок та ЄСВ для 1, 2 та 3 групи ФОП. Актуальні ставки 2025 року."
+				/>
+				<link rel="canonical" href="https://tax.serh.one/calculator" />
+			</Helmet>
 			<section className="hero-section">
 				<h1>Податковий помічник ФОП</h1>
 				<p>
