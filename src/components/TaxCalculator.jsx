@@ -225,7 +225,7 @@ function TaxCalculator() {
 										<span>
 											{item.date} | {item.system}
 										</span>
-										<strong>{formatMoney(item.total)}</strong>
+										<strong> {formatMoney(item.total)}</strong>
 									</li>
 								))}
 							</ul>
