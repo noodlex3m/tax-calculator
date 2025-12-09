@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import newsData from "../data/newsData";
+import { Helmet } from "react-helmet-async";
 
 import "./News.css";
 
@@ -22,6 +23,14 @@ function ArticlePage() {
 
 	return (
 		<div className="article-container">
+			<Helmet>
+				<title>{article.title} — Tax.Serh.One</title>
+				<meta name="description" content={article.summary} />
+				<link
+					rel="canonical"
+					href={`https://tax.serh.one/news/${article.id}`}
+				/>
+			</Helmet>
 			<Link to="/news" className="back-link">
 				&larr; Назад до новин
 			</Link>

@@ -37,7 +37,7 @@ function Accordion() {
 					name="description"
 					content="Розрахуйте єдиний податок та ЄСВ для 1, 2 та 3 групи ФОП. Актуальні ставки 2025 року."
 				/>
-				<link rel="canonical" href="https://tax.serh.one/calculator" />
+				<link rel="canonical" href="https://tax.serh.one/faq" />
 			</Helmet>
 			<h2>Поширені питання (FAQ)</h2>
 			<input
