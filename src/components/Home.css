@@ -18,8 +18,9 @@
 }
 .cta-button {
 	display: inline-block;
-	background-color: #535bf2;
 	background-color: var(--primary-color);
+	color: #ffffff;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 	padding: 0.8rem 2rem;
 	font-size: 1.1rem;
 	font-weight: bold;
@@ -29,6 +30,7 @@
 }
 .cta-button:hover {
 	background-color: var(--primary-hover);
+	transform: translateY(-2px);
 }
 .features-section {
 	display: grid;

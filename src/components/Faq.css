@@ -1,10 +1,10 @@
-.accordion {
+.faq-container {
 	width: 100%;
 	max-width: 800px;
 	margin: 2rem auto;
 	text-align: left;
 }
-.accordion-item {
+.faq-item {
 	border-bottom: 1px solid var(--border-color);
 	padding: 1rem 0.5rem;
 }
@@ -47,10 +47,10 @@
 .item-content p {
 	margin: 0.5rem 0;
 }
-.accordion-item.active .item-header h3 {
+.faq-item.active .item-header h3 {
 	color: var(--primary-color);
 }
-.accordion-item.active .item-icon {
+.faq-item.active .item-icon {
 	color: var(--text-main);
 }
 .search-bar {

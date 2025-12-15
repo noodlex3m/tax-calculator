@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import Accordion from "./components/Accordion";
+import Faq from "./components/Faq";
 import "./App.css";
 import TaxCalculator from "./components/TaxCalculator";
 import News from "./components/News";
@@ -16,7 +16,7 @@ function App() {
 			<main className="main-content">
 				<Routes>
 					<Route path="/" element={<Home />} />
-					<Route path="/faq" element={<Accordion />} />
+					<Route path="/faq" element={<Faq />} />
 					<Route path="/calculator" element={<TaxCalculator />} />
 					<Route path="/news/:id" element={<ArticlePage />} />
 					<Route path="/news" element={<News />} />

@@ -1,10 +1,10 @@
-import "./Accordion.css";
+import "./Faq.css";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import AccordionItem from "./AccordionItem";
+import FaqItem from "./FaqItem";
 import faqData from "../data/faqData";
 
-function Accordion() {
+function Faq() {
 	const [selectedId, setSelectedId] = useState(null);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("Всі");
@@ -30,7 +30,7 @@ function Accordion() {
 	const uniqueCategories = ["Всі", ...new Set(allCategories)];
 
 	return (
-		<div className="accordion">
+		<div className="faq-container">
 			<Helmet>
 				<title>Поширені питання з оподаткування — Tax.Serh.One</title>
 				<meta
@@ -61,7 +61,7 @@ function Accordion() {
 				))}
 			</div>
 			{filteredFaq.map((item) => (
-				<AccordionItem
+				<FaqItem
 					key={item.id}
 					item={item}
 					isActive={selectedId === item.id}
@@ -75,4 +75,4 @@ function Accordion() {
 	);
 }
 
-export default Accordion;
+export default Faq;

@@ -1,8 +1,8 @@
 import React from "react";
 
-function AccordionItem({ item, isActive, onToggle }) {
+function FaqItem({ item, isActive, onToggle }) {
 	return (
-		<div className={`accordion-item ${isActive ? "active" : ""}`}>
+		<div className={`faq-item ${isActive ? "active" : ""}`}>
 			<div className="item-header" onClick={onToggle}>
 				<span className="item-category">{item.category}</span>
 				<h3>{item.question}</h3>
@@ -22,4 +22,4 @@ function AccordionItem({ item, isActive, onToggle }) {
 	);
 }
 
-export default AccordionItem;
+export default FaqItem;
