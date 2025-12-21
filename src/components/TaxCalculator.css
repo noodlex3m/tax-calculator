@@ -145,3 +145,54 @@ input.over-limit {
 	border-color: var(--danger-color);
 	color: var(--danger-color);
 }
+
+/* New Table Styles */
+.results-table-container {
+	overflow-x: auto;
+	margin-top: 1rem;
+}
+
+.results-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 2rem;
+}
+
+.results-table th,
+.results-table td {
+	padding: 0.75rem 0.5rem;
+	border-bottom: 1px solid var(--border-light);
+	text-align: right;
+}
+
+.results-table th:first-child,
+.results-table td:first-child {
+	text-align: left;
+}
+
+.results-table th {
+	font-weight: bold;
+	color: var(--text-secondary);
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.results-table td {
+	color: var(--text-main);
+	font-size: 1rem;
+}
+
+.results-table .total-row td {
+	font-weight: bold;
+	color: var(--primary-color);
+	font-size: 1.1rem;
+	border-top: 2px solid var(--primary-color);
+	border-bottom: none;
+	padding-top: 1rem;
+}
+
+.results-table .excess-row td {
+	color: var(--danger-color);
+	font-weight: bold;
+}

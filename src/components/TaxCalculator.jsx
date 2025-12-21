@@ -60,7 +60,7 @@ function TaxCalculator() {
 			system:
 				taxSystem === "general" ? "Загальна" : `Спрощена (${taxGroup} гр.)`,
 			income: parseFloat(incomeToUse),
-			total: result.totalAmount,
+			total: result.yearly.total,
 		};
 		setHistory((prev) => [newItem, ...prev].slice(0, 5));
 	}
@@ -68,7 +68,7 @@ function TaxCalculator() {
 	const incomeForChart =
 		taxSystem === "general" ? netProfit : parseFloat(income) || 0;
 
-	const cleanIncome = taxResult ? incomeForChart - taxResult.totalAmount : 0;
+	const cleanIncome = taxResult ? incomeForChart - taxResult.yearly.total : 0;
 
 	return (
 		<div className="calculator-container">
@@ -196,53 +196,61 @@ function TaxCalculator() {
 
 			{taxResult && (
 				<div className="results-block">
-					<h3>Результати (місяць):</h3>
+					<h3>📊 Результати розрахунку</h3>
 
-					<p>
-						Єдиний Соціальний Внесок (ЄСВ):{" "}
-						<strong>{formatMoney(taxResult.esvAmount)}</strong>
-					</p>
-
-					{taxSystem === "general" && (
-						<p>
-							Податок на доходи (ПДФО):{" "}
-							<strong>{formatMoney(taxResult.taxAmount)}</strong>
-						</p>
-					)}
-
-					{taxSystem === "simplified" && (
-						<>
-							<p>
-								Єдиний податок:{" "}
-								<strong>{formatMoney(taxResult.taxAmount)}</strong>
-							</p>
-							{taxResult.excessTaxAmount > 0 && (
-								<p className="excess-tax">
-									Податок з перевищення (15%):
-									<span> {formatMoney(taxResult.excessTaxAmount)}</span>
-								</p>
-							)}
-						</>
-					)}
-
-					<p>
-						Військовий збір:{" "}
-						<strong>{formatMoney(taxResult.militaryTaxAmount)}</strong>
-					</p>
-
-					<hr />
-					<h4>Разом до сплати: {formatMoney(taxResult.totalAmount)}</h4>
+					<div className="results-table-container">
+						<table className="results-table">
+							<thead>
+								<tr>
+									<th>Податок</th>
+									<th>За місяць</th>
+									<th>За рік</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>ЄСВ</td>
+									<td>{formatMoney(taxResult.monthly.esv)}</td>
+									<td>{formatMoney(taxResult.yearly.esv)}</td>
+								</tr>
+								<tr>
+									<td>
+										{taxSystem === "general" ? "ПДФО (18%)" : "Єдиний податок"}
+									</td>
+									<td>{formatMoney(taxResult.monthly.tax)}</td>
+									<td>{formatMoney(taxResult.yearly.tax)}</td>
+								</tr>
+								<tr>
+									<td>Військовий збір</td>
+									<td>{formatMoney(taxResult.monthly.military)}</td>
+									<td>{formatMoney(taxResult.yearly.military)}</td>
+								</tr>
+								{taxResult.yearly.excess > 0 && (
+									<tr className="excess-row">
+										<td>⚠️ Податок з перевищення</td>
+										<td>{formatMoney(taxResult.monthly.excess)}</td>
+										<td>{formatMoney(taxResult.yearly.excess)}</td>
+									</tr>
+								)}
+								<tr className="total-row">
+									<td>РАЗОМ до сплати</td>
+									<td>{formatMoney(taxResult.monthly.total)}</td>
+									<td>{formatMoney(taxResult.yearly.total)}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 
 					<ResultsChart
-						taxAmount={taxResult.taxAmount + (taxResult.excessTaxAmount || 0)}
-						esvAmount={taxResult.esvAmount}
-						militaryTaxAmount={taxResult.militaryTaxAmount}
+						taxAmount={taxResult.yearly.tax + taxResult.yearly.excess}
+						esvAmount={taxResult.yearly.esv}
+						militaryTaxAmount={taxResult.yearly.military}
 						netProfit={cleanIncome}
 					/>
 
 					{history.length > 0 && (
 						<div className="history-block">
-							<h3>📜 Історія</h3>
+							<h3>📜 Історія запитів</h3>
 							<button
 								onClick={() => setHistory([])}
 								className="clear-history-btn"
@@ -255,7 +263,7 @@ function TaxCalculator() {
 										<span>
 											{item.date} | {item.system}
 										</span>
-										<strong> {formatMoney(item.total)}</strong>
+										<strong> {formatMoney(item.total)} / рік</strong>
 									</li>
 								))}
 							</ul>

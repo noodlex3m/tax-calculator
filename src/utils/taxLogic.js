@@ -13,7 +13,6 @@ export function calculateTaxes(system, group, income, expenses) {
 	let esv = CALCULATED_CONSTANTS.ESV;
 	let militaryTax = 0;
 	let excessTax = 0; // Податок з перевищення
-	let totalAmount = 0;
 
 	if (system === "simplified") {
 		// 1. Спочатку рахуємо перевищення ліміту (спільна логіка для 1, 2, 3 груп)
@@ -50,14 +49,46 @@ export function calculateTaxes(system, group, income, expenses) {
 		}
 	}
 
-	totalAmount = tax + esv + militaryTax + excessTax;
+	// --- Normalization ---
+	// We need to support both Monthly and Yearly views.
+	// Some taxes are fixed per month (Group 1, 2), others are calculated yearly (Group 3, General).
+
+	let monthly = {};
+	let yearly = {};
+
+	// 1. ESV (ЄСВ) - Usually minimal fixed amount per month
+	monthly.esv = esv;
+	yearly.esv = esv * 12;
+
+	// 2. Main Tax (ЄП or ПДФО) & Military Tax (ВЗ)
+	if (system === "simplified" && (group === "1" || group === "2")) {
+		// Fixed monthly rates
+		monthly.tax = tax;
+		yearly.tax = tax * 12;
+
+		monthly.military = militaryTax;
+		yearly.military = militaryTax * 12;
+	} else {
+		// Calculated based on Yearly Income (Group 3, General)
+		// We assume 'tax' and 'militaryTax' calculated above are for the YEAR (based on input income)
+		yearly.tax = tax;
+		monthly.tax = tax / 12;
+
+		yearly.military = militaryTax;
+		monthly.military = militaryTax / 12;
+	}
+
+	// 3. Excess Tax (Податок з перевищення) - Always yearly event
+	yearly.excess = excessTax;
+	monthly.excess = excessTax / 12; // Averaged for month view
+
+	// 4. Totals
+	monthly.total = monthly.tax + monthly.esv + monthly.military + monthly.excess;
+	yearly.total = yearly.tax + yearly.esv + yearly.military + yearly.excess;
 
 	return {
-		taxAmount: tax,
-		esvAmount: esv,
-		militaryTaxAmount: militaryTax,
-		excessTaxAmount: excessTax,
-		totalAmount: totalAmount,
+		monthly,
+		yearly,
 	};
 }
 
