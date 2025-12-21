@@ -1,8 +1,4 @@
-import {
-	TAX_CONSTANTS_2025,
-	CALCULATED_CONSTANTS,
-	LIMITS,
-} from "./taxConstants";
+import { TAX_CONSTANTS, CALCULATED_CONSTANTS, LIMITS } from "./taxConstants";
 
 export function calculateNetProfit(income, expenses) {
 	const numIncome = parseFloat(income) || 0;
@@ -25,7 +21,7 @@ export function calculateTaxes(system, group, income, expenses) {
 
 		if (currentLimit && numIncome > currentLimit) {
 			const excessAmount = numIncome - currentLimit;
-			excessTax = excessAmount * TAX_CONSTANTS_2025.EXCESS_TAX_RATE; // 15%
+			excessTax = excessAmount * TAX_CONSTANTS.EXCESS_TAX_RATE; // 15%
 		}
 
 		// 2. Рахуємо основний податок та ВЗ залежно від групи
@@ -40,8 +36,8 @@ export function calculateTaxes(system, group, income, expenses) {
 			// Якщо є перевищення, то 5% береться з ліміту, а решта обкладається 15% (вже пораховано вище)
 			const incomeForBaseTax = numIncome > LIMITS[3] ? LIMITS[3] : numIncome;
 
-			tax = incomeForBaseTax * TAX_CONSTANTS_2025.GROUP_3_TAX_RATE;
-			militaryTax = numIncome * TAX_CONSTANTS_2025.MILITARY_TAX_RATE_GROUP_3;
+			tax = incomeForBaseTax * TAX_CONSTANTS.GROUP_3_TAX_RATE;
+			militaryTax = numIncome * TAX_CONSTANTS.MILITARY_TAX_RATE_GROUP_3;
 		}
 	} else if (system === "general") {
 		// Логіка для загальної системи
@@ -49,8 +45,8 @@ export function calculateTaxes(system, group, income, expenses) {
 		const netProfit = numIncome - numExpenses;
 
 		if (netProfit > 0) {
-			tax = netProfit * TAX_CONSTANTS_2025.GENERAL_TAX_RATE; // 18%
-			militaryTax = netProfit * TAX_CONSTANTS_2025.MILITARY_TAX_RATE_GENERAL; // 5%
+			tax = netProfit * TAX_CONSTANTS.GENERAL_TAX_RATE; // 18%
+			militaryTax = netProfit * TAX_CONSTANTS.MILITARY_TAX_RATE_GENERAL; // 5%
 		}
 	}
 
@@ -66,5 +62,5 @@ export function calculateTaxes(system, group, income, expenses) {
 }
 
 export function isMinIncomeForVat(income) {
-	return parseFloat(income) > TAX_CONSTANTS_2025.MIN_INCOME_FOR_VAT;
+	return parseFloat(income) > TAX_CONSTANTS.MIN_INCOME_FOR_VAT;
 }

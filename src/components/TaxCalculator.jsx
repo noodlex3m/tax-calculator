@@ -73,15 +73,15 @@ function TaxCalculator() {
 	return (
 		<div className="calculator-container">
 			<Helmet>
-				<title>Калькулятор податків ФОП 2025 — Tax.Serh.One</title>
+				<title>Калькулятор податків ФОП 2026 — Tax.Serh.One</title>
 				<meta
 					name="description"
-					content="Розрахуйте єдиний податок та ЄСВ для 1, 2 та 3 групи ФОП. Актуальні ставки 2025 року."
+					content="Розрахуйте єдиний податок та ЄСВ для 1, 2 та 3 групи ФОП. Актуальні ставки 2026 року."
 				/>
 				<link rel="canonical" href="https://tax.serh.one/calculator" />
 			</Helmet>
 			<form onSubmit={handleSubmit}>
-				<h1>Калькулятор податків ФОП на 2025 рік</h1>
+				<h1>Калькулятор податків ФОП на 2026 рік</h1>
 
 				<fieldset>
 					<legend>Оберіть систему оподаткування</legend>
