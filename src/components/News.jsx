@@ -8,7 +8,7 @@ function News() {
 	return (
 		<div className="news-container">
 			<Helmet>
-				<title>Новини податкового законодавства ФОП 2025 — Tax.Serh.One</title>
+				<title>Новини податкового законодавства ФОП 2026 — Tax.Serh.One</title>
 				<meta
 					name="description"
 					content="Актуальні новини для ФОП: зміни в податках, нові рахунки ЄСВ, ліміти доходів та роз'яснення законодавства. Будьте в курсі змін!"
