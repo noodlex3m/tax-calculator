@@ -1,0 +1,72 @@
+.tax-advice-container {
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.advice-alert {
+	padding: 1rem;
+	border-radius: 6px;
+	margin-bottom: 1rem;
+	font-size: 0.95rem;
+}
+
+.advice-danger {
+	background-color: rgba(255, 68, 68, 0.1);
+	border: 1px solid var(--danger-color);
+	color: var(--danger-color);
+}
+
+.advice-warning {
+	background-color: rgba(255, 193, 7, 0.1);
+	border: 1px solid #ffc107;
+	color: #ffc107;
+}
+
+.advice-details {
+	background-color: var(--bg-block);
+	border-radius: 6px;
+	border: 1px solid var(--border-color);
+}
+
+.advice-details summary {
+	padding: 1rem;
+	cursor: pointer;
+	font-weight: bold;
+	list-style: none;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.advice-details summary:hover {
+	background-color: var(--bg-input);
+}
+
+.advice-content {
+	padding: 1rem;
+	border-top: 1px solid var(--border-color);
+	font-size: 0.9rem;
+	color: var(--text-secondary);
+}
+
+.advice-section {
+	margin-bottom: 1rem;
+}
+
+.advice-section h4 {
+	margin-top: 0;
+	margin-bottom: 0.5rem;
+	color: var(--text-main);
+}
+
+.advice-section ul {
+	padding-left: 1.2rem;
+	margin: 0;
+}
+
+.advice-note {
+	background-color: var(--bg-card);
+	padding: 0.75rem;
+	border-left: 3px solid var(--accent-color);
+	margin-bottom: 1rem;
+}

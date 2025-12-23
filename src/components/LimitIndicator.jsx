@@ -56,7 +56,7 @@ function LimitIndicator({ currentIncome, limit }) {
 						fontWeight: "bold",
 					}}
 				>
-					⚠️ Увага! Ви перевищили ліміт доходу для вашої групи.
+					⚠️ Увага! Ви перевищили ліміт доходу для Вашої групи.
 				</p>
 			)}
 		</div>

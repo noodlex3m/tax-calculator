@@ -8,6 +8,7 @@ import ResultsChart from "./ResultsChart";
 import LimitIndicator from "./LimitIndicator";
 import { LIMITS } from "../utils/taxConstants";
 import { Helmet } from "react-helmet-async";
+import TaxAdvice from "./TaxAdvice";
 import "./TaxCalculator.css";
 
 function TaxCalculator() {
@@ -227,7 +228,7 @@ function TaxCalculator() {
 								</tr>
 								{taxResult.yearly.excess > 0 && (
 									<tr className="excess-row">
-										<td>⚠️ Податок з перевищення</td>
+										<td>⚠️ ЄП з перевищення</td>
 										<td>{formatMoney(taxResult.monthly.excess)}</td>
 										<td>{formatMoney(taxResult.yearly.excess)}</td>
 									</tr>
@@ -246,6 +247,13 @@ function TaxCalculator() {
 						esvAmount={taxResult.yearly.esv}
 						militaryTaxAmount={taxResult.yearly.military}
 						netProfit={cleanIncome}
+					/>
+
+					<TaxAdvice
+						taxSystem={taxSystem}
+						taxGroup={taxGroup}
+						income={grossIncomeAmount}
+						isExcess={taxResult.yearly.excess > 0}
 					/>
 
 					{history.length > 0 && (
