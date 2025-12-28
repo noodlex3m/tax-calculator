@@ -31,10 +31,12 @@ function TaxCalculator() {
 	const netProfit = calculateNetProfit(grossIncomeAmount, expenseAmount);
 
 	const formatter = new Intl.NumberFormat("uk-UA", {
+		style: "currency",
+		currency: "UAH",
 		minimumFractionDigits: 2,
 		maximumFractionDigits: 2,
 	});
-	const formatMoney = (amount) => `${formatter.format(amount)} грн.`;
+	const formatMoney = (amount) => formatter.format(amount);
 
 	const handleKeyDown = (e) => {
 		if (["-", "+", "e", "E"].includes(e.key)) {

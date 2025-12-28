@@ -9,7 +9,12 @@ function LimitIndicator({ currentIncome, limit }) {
 	if (percentage > 80) progressBarColor = "#ff9800";
 	if (percentage >= 100) progressBarColor = "#f44336";
 
-	const formatMoney = (amount) => new Intl.NumberFormat("uk-UA").format(amount);
+	const formatMoney = (amount) =>
+		new Intl.NumberFormat("uk-UA", {
+			style: "currency",
+			currency: "UAH",
+			maximumFractionDigits: 0,
+		}).format(amount);
 
 	return (
 		<div style={{ marginTop: "1rem", marginBottom: "1.5rem" }}>
@@ -20,11 +25,11 @@ function LimitIndicator({ currentIncome, limit }) {
 					marginBottom: "0.5rem",
 					fontSize: "0.85rem",
 					color: "var(--text-secondary)",
-					gap: "1rem", // 👈 ДОДАНО: гарантований відступ між текстом
+					gap: "1rem",
 				}}
 			>
-				<span>Дохід: {formatMoney(currentIncome)} грн</span>
-				<span>Ліміт: {formatMoney(limit)} грн</span>
+				<span>Дохід: {formatMoney(currentIncome)}</span>
+				<span>Ліміт: {formatMoney(limit)}</span>
 			</div>
 
 			<div
