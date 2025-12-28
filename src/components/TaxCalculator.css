@@ -196,3 +196,21 @@ input.over-limit {
 	color: var(--danger-color);
 	font-weight: bold;
 }
+
+/* Mobile Optimization for Table */
+@media (max-width: 600px) {
+	.results-table th,
+	.results-table td {
+		padding: 0.5rem 0.25rem; /* Зменшуємо відступи */
+		font-size: 0.9rem; /* Трохи менший шрифт */
+	}
+
+	.results-table th {
+		font-size: 0.75rem; /* Менший заголовок */
+	}
+
+	/* Якщо цифри все одно не влазять, можна трохи зменшити їх ще */
+	.results-table td {
+		white-space: nowrap; /* Щоб цифри не переносились на новий рядок */
+	}
+}
