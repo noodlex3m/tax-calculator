@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, test, expect } from "vitest";
 import { calculateNetProfit, calculateTaxes } from "./taxLogic";
-import { LIMITS } from "./taxConstants";
+import { LIMITS, CALCULATED_CONSTANTS } from "./taxConstants";
 
 describe("Калькулятор податків (taxLogic)", () => {
 	// Тест 1: Чистий прибуток
@@ -41,7 +41,11 @@ describe("Калькулятор податків (taxLogic)", () => {
 
 		// Перевіряємо повну суму: (Ліміт * 5%) + (Перевищення * 15%)
 		expect(result.yearly.tax + result.yearly.excess).toBe(
-			limit * 0.05 + excessAmount * 0.15
+			limit * 0.05 + excessAmount * 0.15,
 		);
+	});
+	test("правильно рахує фіксований податок для 2 групи", () => {
+		const result = calculateTaxes("simplified", "2", 5000, 0);
+		expect(result.monthly.tax).toBe(CALCULATED_CONSTANTS.GROUP_2_TAX);
 	});
 });
