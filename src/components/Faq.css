@@ -53,30 +53,3 @@
 .faq-item.active .item-icon {
 	color: var(--text-main);
 }
-.category-filters {
-	margin-bottom: 1.5rem;
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.5rem;
-}
-.filter-btn {
-	padding: 0.5rem 1rem;
-	font-size: 0.9rem;
-	font-weight: 500;
-	color: var(--text-secondary);
-	background-color: var(--bg-input);
-	border: 1px solid var(--border-color);
-	border-radius: 20px;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-.filter-btn:hover {
-	background-color: var(--bg-block);
-	border-color: var(--text-muted);
-	color: var(--text-main);
-}
-.filter-btn.active {
-	background-color: var(--primary-color);
-	border-color: var(--primary-color);
-	color: #fff;
-}

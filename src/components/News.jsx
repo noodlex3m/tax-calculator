@@ -7,17 +7,28 @@ import { Helmet } from "react-helmet-async";
 
 function News() {
 	const [searchTerm, setSearchTerm] = useState("");
-	const filteredNews = newsData.filter(
-		(article) =>
+	const [selectedCategory, setSelectedCategory] = useState("Всі");
+	const filteredNews = newsData.filter((article) => {
+		// 1. Перевірка категорії
+		const matchesCategory =
+			selectedCategory === "Всі" || article.category === selectedCategory;
+		// 2. Перевірка пошуку
+		const matchesSearch =
 			article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			article.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			article.fullText.toLowerCase().includes(searchTerm.toLowerCase()),
-	);
+			article.fullText.toLowerCase().includes(searchTerm.toLowerCase());
+		// 3. Повертаємо true, тільки якщо ОБИДВІ умови виконуються
+		return matchesCategory && matchesSearch;
+	});
 	const sortedNews = [...filteredNews].sort((a, b) => {
 		const dateA = a.date.split(".").reverse().join("-");
 		const dateB = b.date.split(".").reverse().join("-");
 		return new Date(dateB) - new Date(dateA);
 	});
+
+	const allCategories = newsData.map((item) => item.category);
+	const uniqueCategories = ["Всі", ...new Set(allCategories)];
+
 	return (
 		<div className="news-container">
 			<Helmet>
@@ -36,6 +47,19 @@ function News() {
 				value={searchTerm}
 				onChange={(e) => setSearchTerm(e.target.value)}
 			/>
+			<div className="category-filters">
+				{uniqueCategories.map((category) => (
+					<button
+						key={category}
+						className={`filter-btn ${
+							selectedCategory === category ? "active" : ""
+						}`}
+						onClick={() => setSelectedCategory(category)}
+					>
+						{category}
+					</button>
+				))}
+			</div>
 			<div className="news-list">
 				{sortedNews.map((article) => (
 					<Link
