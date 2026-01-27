@@ -55,6 +55,24 @@ const TaxAdvice = ({ taxSystem, taxGroup, income, isExcess }) => {
 						</ul>
 					</div>
 
+					{/* Військовий збір */}
+					{details.militaryTax && (
+						<div className="advice-section">
+							<h4>🎖️ Військовий збір</h4>
+							<p>{details.militaryTax.description}</p>
+							<p>
+								<strong>Сплата:</strong> {details.militaryTax.payment}
+							</p>
+							{details.militaryTax.notes && (
+								<ul>
+									{details.militaryTax.notes.map((note, idx) => (
+										<li key={idx}>{note}</li>
+									))}
+								</ul>
+							)}
+						</div>
+					)}
+
 					{/* Дозволи/Заборони */}
 					<div className="advice-section">
 						<h4>📋 Діяльність</h4>
