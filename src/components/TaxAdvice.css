@@ -17,9 +17,9 @@
 }
 
 .advice-warning {
-	background-color: rgba(255, 193, 7, 0.1);
-	border: 1px solid #ffc107;
-	color: #ffc107;
+	background-color: color-mix(in srgb, var(--warning-color), transparent 90%);
+	border: 1px solid var(--warning-color);
+	color: var(--warning-color);
 }
 
 .advice-details {

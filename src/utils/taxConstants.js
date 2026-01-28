@@ -31,3 +31,5 @@ export const CALCULATED_CONSTANTS = {
 		TAX_CONSTANTS.MIN_SALARY * TAX_CONSTANTS.MILITARY_TAX_RATE_FIXED,
 	INCOME_LIMIT_GROUP_3: LIMITS[3], // Adding this back for backward compatibility if needed, though previously it was calculated
 };
+
+export const VAT_REGISTRATION_LIMIT = 1000000;

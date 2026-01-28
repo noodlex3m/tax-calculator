@@ -1,7 +1,7 @@
 import React from "react";
 import { GROUP_DETAILS } from "../data/taxDetails";
 import "./TaxAdvice.css";
-
+import { VAT_REGISTRATION_LIMIT } from "../utils/taxConstants";
 const TaxAdvice = ({ taxSystem, taxGroup, income, isExcess }) => {
 	const detailsKey = taxSystem === "simplified" ? taxGroup : "general";
 
@@ -20,7 +20,7 @@ const TaxAdvice = ({ taxSystem, taxGroup, income, isExcess }) => {
 
 			{/* Ризик для загальної системи (ПДВ > 1 млн) */}
 			{taxSystem === "general" &&
-				parseFloat(income) > 1000000 &&
+				parseFloat(income) > VAT_REGISTRATION_LIMIT &&
 				details.risks?.vat_mandatory && (
 					<div className="advice-alert advice-warning">
 						<strong>⚠️ ПДВ:</strong> {details.risks.vat_mandatory}
