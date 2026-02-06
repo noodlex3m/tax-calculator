@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import newsData from "../data/newsData";
 import "./News.css";
@@ -8,7 +9,13 @@ import { Helmet } from "react-helmet-async";
 function News() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("Всі");
-	const filteredNews = newsData.filter((article) => {
+	const [articles, setArticles] = useState([]);
+
+	useEffect(() => {
+		setArticles(newsData);
+	}, []);
+
+	const filteredNews = articles.filter((article) => {
 		// 1. Перевірка категорії
 		const matchesCategory =
 			selectedCategory === "Всі" || article.category === selectedCategory;
