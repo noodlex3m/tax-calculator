@@ -1,14 +1,52 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import newsData from "../data/newsData";
 import { Helmet } from "react-helmet-async";
-
+import Skeleton from "./Skeleton";
 import "./News.css";
 
 function ArticlePage() {
 	const { id } = useParams();
+	const [article, setArticle] = useState(null);
+	const [isLoading, setIsLoading] = useState(true);
 
-	const article = newsData.find((article) => article.id === Number(id));
+	useEffect(() => {
+		// Імітуємо затримку завантаження (1 секунда)
+		const timer = setTimeout(() => {
+			const foundArticle = newsData.find((item) => item.id === Number(id));
+			setArticle(foundArticle);
+			setIsLoading(false);
+		}, 1000);
+
+		return () => clearTimeout(timer);
+	}, [id]);
+
+	// 👇 БЛОК ЗАВАНТАЖЕННЯ (SKELETON)
+	if (isLoading) {
+		return (
+			<div className="article-container">
+				<Helmet>
+					<title>Завантаження...</title>
+				</Helmet>
+				{/* Імітуємо заголовок */}
+				<h1>
+					<Skeleton width="70%" height="40px" />
+				</h1>
+				{/* Імітуємо дату та категорію */}
+				<div style={{ display: "flex", gap: "1rem", margin: "1rem 0" }}>
+					<Skeleton width="100px" height="24px" />
+					<Skeleton width="120px" height="24px" />
+				</div>
+				{/* Імітуємо текст статті (кілька ліній) */}
+				<div className="article-fulltext" style={{ marginTop: "2rem" }}>
+					<Skeleton width="100%" height="20px" />
+					<Skeleton width="95%" height="20px" />
+					<Skeleton width="90%" height="20px" />
+					<Skeleton width="100%" height="20px" />
+				</div>
+			</div>
+		);
+	}
 
 	// 👇 БЛОК ПОМИЛКИ (якщо статті немає)
 	if (!article) {
