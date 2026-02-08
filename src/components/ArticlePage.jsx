@@ -1,25 +1,15 @@
-import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import newsData from "../data/newsData";
 import { Helmet } from "react-helmet-async";
 import Skeleton from "./Skeleton";
 import "./News.css";
+import { useSimulatedApi } from "../hooks/useSimulatedApi";
 
 function ArticlePage() {
 	const { id } = useParams();
-	const [article, setArticle] = useState(null);
-	const [isLoading, setIsLoading] = useState(true);
-
-	useEffect(() => {
-		// Імітуємо затримку завантаження (1 секунда)
-		const timer = setTimeout(() => {
-			const foundArticle = newsData.find((item) => item.id === Number(id));
-			setArticle(foundArticle);
-			setIsLoading(false);
-		}, 1000);
-
-		return () => clearTimeout(timer);
-	}, [id]);
+	const { data: article, isLoading } = useSimulatedApi(
+		newsData.find((item) => item.id === Number(id)),
+	);
 
 	// 👇 БЛОК ЗАВАНТАЖЕННЯ (SKELETON)
 	if (isLoading) {

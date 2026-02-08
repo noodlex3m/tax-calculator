@@ -1,29 +1,17 @@
-import React from "react";
-import { useEffect } from "react";
 import { useState } from "react";
 import newsData from "../data/newsData";
 import "./News.css";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Skeleton from "./Skeleton";
+import { useSimulatedApi } from "../hooks/useSimulatedApi";
 
 function News() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("Всі");
-	const [articles, setArticles] = useState([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const { data: articles, isLoading } = useSimulatedApi(newsData);
 
-	useEffect(() => {
-		// Імітуємо затримку в 1000 мілісекунд (1 секунду)
-		const timer = setTimeout(() => {
-			setArticles(newsData); // Дані прийшли
-			setIsLoading(false); // Завантаження завершено
-		}, 1000);
-		// Очищуємо таймер при розмонтуванні компонента
-		return () => clearTimeout(timer);
-	}, []);
-
-	const filteredNews = articles.filter((article) => {
+	const filteredNews = (articles || []).filter((article) => {
 		// 1. Перевірка категорії
 		const matchesCategory =
 			selectedCategory === "Всі" || article.category === selectedCategory;
@@ -32,7 +20,7 @@ function News() {
 			article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			article.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			article.fullText.toLowerCase().includes(searchTerm.toLowerCase());
-		// 3. Повертаємо true, тільки якщо ОБИДВІ умови виконуються
+		// 3. Повертаємо true, тільки якщо ОБІДВІ умови виконуються
 		return matchesCategory && matchesSearch;
 	});
 	const sortedNews = [...filteredNews].sort((a, b) => {
