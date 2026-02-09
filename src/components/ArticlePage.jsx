@@ -7,9 +7,11 @@ import { useSimulatedApi } from "../hooks/useSimulatedApi";
 
 function ArticlePage() {
 	const { id } = useParams();
-	const { data: article, isLoading } = useSimulatedApi(
-		newsData.find((item) => item.id === Number(id)),
-	);
+	const {
+		data: article,
+		isLoading,
+		error,
+	} = useSimulatedApi(newsData.find((item) => item.id === Number(id)));
 
 	// 👇 БЛОК ЗАВАНТАЖЕННЯ (SKELETON)
 	if (isLoading) {
@@ -34,6 +36,28 @@ function ArticlePage() {
 					<Skeleton width="90%" height="20px" />
 					<Skeleton width="100%" height="20px" />
 				</div>
+			</div>
+		);
+	}
+
+	// 👇 БЛОК СИСТЕМНОЇ ПОМИЛКИ (Server Error)
+	if (error) {
+		return (
+			<div
+				className="article-container"
+				style={{ textAlign: "center", color: "red" }}
+			>
+				<Helmet>
+					<title>Помилка — Tax.Serh.One</title>
+				</Helmet>
+				<h2>Ой, халепа! 💥</h2>
+				<p>{error}</p>
+				<p style={{ color: "#666", fontSize: "0.9rem" }}>
+					Спробуйте оновити сторінку.
+				</p>
+				<Link to="/news" className="back-link">
+					&larr; Повернутися до новин
+				</Link>
 			</div>
 		);
 	}
