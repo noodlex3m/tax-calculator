@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router-dom";
-import newsData from "../data/newsData";
 import { Helmet } from "react-helmet-async";
 import Skeleton from "./Skeleton";
 import "./News.css";
@@ -7,11 +6,7 @@ import { useSimulatedApi } from "../hooks/useSimulatedApi";
 
 function ArticlePage() {
 	const { id } = useParams();
-	const {
-		data: article,
-		isLoading,
-		error,
-	} = useSimulatedApi(newsData.find((item) => item.id === Number(id)));
+	const { data: article, isLoading, error } = useSimulatedApi(id);
 
 	// 👇 БЛОК ЗАВАНТАЖЕННЯ (SKELETON)
 	if (isLoading) {
