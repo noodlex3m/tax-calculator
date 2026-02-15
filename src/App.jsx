@@ -6,6 +6,7 @@ import { lazy, Suspense } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Skeleton from "./components/Skeleton";
+import FeedbackForm from "./components/FeedbackForm";
 
 const TaxCalculator = lazy(() => import("./components/TaxCalculator"));
 const News = lazy(() => import("./components/News"));
@@ -38,6 +39,7 @@ function App() {
 						<Route path="/calculator" element={<TaxCalculator />} />
 						<Route path="/news/:id" element={<ArticlePage />} />
 						<Route path="/news" element={<News />} />
+						<Route path="/feedback" element={<FeedbackForm />} />
 						<Route path="*" element={<NotFound />} />
 					</Routes>
 				</Suspense>

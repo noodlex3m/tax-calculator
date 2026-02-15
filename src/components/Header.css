@@ -89,7 +89,7 @@
 		transition: max-height 0.3s ease-in-out;
 	}
 	.main-nav.active {
-		max-height: 300px;
+		max-height: 400px;
 		padding: 1rem 0;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 	}

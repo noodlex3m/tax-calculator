@@ -45,6 +45,9 @@ function Header() {
 					<NavLink to="/news" onClick={closeMenu}>
 						Новини
 					</NavLink>
+					<NavLink to="/feedback" onClick={closeMenu}>
+						Зв'язок
+					</NavLink>
 				</nav>
 			</div>
 		</header>

@@ -1,0 +1,72 @@
+/* src/components/FeedbackForm.css */
+
+.feedback-form {
+	max-width: 600px;
+	margin: 2rem auto; /* Центруємо по горизонталі */
+	padding: 2rem;
+	background-color: var(--bg-card); /* Використовуємо твою змінну фону */
+	border-radius: 12px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	border: 1px solid var(--border-light);
+}
+
+.feedback-form form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem; /* Відступ між елементами */
+}
+
+.feedback-form label {
+	font-weight: 500;
+	color: var(--text-secondary);
+	text-align: left;
+}
+
+.feedback-form input,
+.feedback-form select,
+.feedback-form textarea {
+	padding: 0.75rem;
+	border-radius: 8px;
+	border: 1px solid var(--border-color);
+	background-color: var(--bg-input); /* Важливо для темної теми */
+	color: var(--text-main);
+	font-size: 1rem;
+	font-family: inherit;
+	transition: border-color 0.2s;
+}
+
+.feedback-form input:focus,
+.feedback-form select:focus,
+.feedback-form textarea:focus {
+	outline: none;
+	border-color: var(--primary-color);
+}
+
+.feedback-form textarea {
+	min-height: 150px;
+	resize: vertical; /* Дозволяє розтягувати тільки вниз */
+}
+
+.feedback-form button {
+	margin-top: 1rem;
+	padding: 0.75rem;
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: bold;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.feedback-form button:hover {
+	background-color: var(--primary-hover);
+}
+
+@media (max-width: 600px) {
+	.feedback-form {
+		margin: 1rem; /* Відступи з усіх боків на мобільному */
+		padding: 1.5rem; /* Трохи менше внутрішнього простору */
+	}
+}
