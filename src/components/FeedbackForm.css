@@ -42,6 +42,12 @@
 	border-color: var(--primary-color);
 }
 
+/* Виправлення для option в темній темі */
+.feedback-form select option {
+	background-color: var(--bg-card);
+	color: var(--text-main);
+}
+
 .feedback-form textarea {
 	min-height: 150px;
 	resize: vertical; /* Дозволяє розтягувати тільки вниз */
