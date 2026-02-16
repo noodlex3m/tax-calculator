@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./FeedbackForm.css";
+import emailjs from "@emailjs/browser";
 
 const FeedbackForm = () => {
 	const [formData, setFormData] = useState({
@@ -54,45 +55,51 @@ const FeedbackForm = () => {
 			return;
 		}
 
-		// 1. Вмикаємо режим завантаження (блокуємо інтерфейс)
+		// 1. Вмикаємо режим завантаження (блокуємо кнопку)
 		setIsSubmitting(true);
 
-		// 2. Імітуємо затримку сервера (2000 мілісекунд = 2 секунди)
-		setTimeout(() => {
-			console.log("Дані відправлено:", formData);
+		// 2. Відправляємо дані через EmailJS
+		emailjs
+			.send(
+				"service_wkqjzot", // Твій Service ID
+				"template_i39qui9", // Твій Template ID
+				formData, // Дані з форми (вони підставляться в {{...}})
+				"Y6HpGTZalkozZvTvm", // Твій Public Key
+			)
+			.then(
+				() => {
+					// УСПІХ: Цей код виконається, якщо лист пішов
+					console.log("Успішно відправлено!");
 
-			// 3. Все пройшло успішно: очищаємо форму
-			setFormData({
-				name: "",
-				email: "",
-				userType: "",
-				topicOfTheAppeal: "",
-				message: "",
-			});
+					// Очищаємо форму
+					setFormData({
+						name: "",
+						email: "",
+						userType: "",
+						topicOfTheAppeal: "",
+						message: "",
+					});
 
-			// Показуємо повідомлення користувачу
-			alert("Дякуємо! Ваше повідомлення відправлено (demo).");
+					// Показуємо повідомлення
+					alert("Дякуємо! Ваше повідомлення успішно відправлено.");
 
-			// 4. Вимикаємо режим завантаження
-			setIsSubmitting(false);
-		}, 2000);
+					// Розблокуємо кнопку
+					setIsSubmitting(false);
+				},
+				(error) => {
+					// ПОМИЛКА: Цей код виконається, якщо щось пішло не так
+					console.error("Помилка відправки:", error);
+
+					alert("Сталася помилка при відправці. Спробуйте пізніше.");
+
+					// Розблокуємо кнопку, щоб можна було спробувати ще раз
+					setIsSubmitting(false);
+				},
+			);
 	};
+
 	return (
 		<div className="feedback-form">
-			<div
-				style={{
-					backgroundColor: "rgba(255, 193, 7, 0.1)",
-					border: "1px solid #ffc107",
-					color: "#ffc107",
-					padding: "1rem",
-					borderRadius: "8px",
-					marginBottom: "1.5rem",
-					textAlign: "center",
-				}}
-			>
-				🛠️ <strong>Увага!</strong> Ця форма знаходиться в розробці. Функціонал
-				відправки повідомлень поки що не активний.
-			</div>
 			<form action="" onSubmit={handleSubmit}>
 				<label htmlFor="name">Ім'я</label>
 				<input
@@ -104,6 +111,7 @@ const FeedbackForm = () => {
 					className={errorData.name ? "error-border" : ""}
 				/>
 				{errorData.name && <p className="error">{errorData.name}</p>}
+
 				<label htmlFor="email">Email</label>
 				<input
 					type="email"
@@ -114,6 +122,7 @@ const FeedbackForm = () => {
 					className={errorData.email ? "error-border" : ""}
 				/>
 				{errorData.email && <p className="error">{errorData.email}</p>}
+
 				<label htmlFor="userType">Тип користувача</label>
 				<select
 					name="userType"
@@ -130,6 +139,7 @@ const FeedbackForm = () => {
 					<option value="other">Інше</option>
 				</select>
 				{errorData.userType && <p className="error">{errorData.userType}</p>}
+
 				<label htmlFor="topicOfTheAppeal">Тема звернення</label>
 				<select
 					name="topicOfTheAppeal"
@@ -148,6 +158,7 @@ const FeedbackForm = () => {
 				{errorData.topicOfTheAppeal && (
 					<p className="error">{errorData.topicOfTheAppeal}</p>
 				)}
+
 				<label htmlFor="message">Повідомлення</label>
 				<textarea
 					id="message"
@@ -159,6 +170,7 @@ const FeedbackForm = () => {
 					className={errorData.message ? "error-border" : ""}
 				></textarea>
 				{errorData.message && <p className="error">{errorData.message}</p>}
+
 				<button type="submit" disabled={isSubmitting}>
 					{isSubmitting ? "Відправка..." : "Відправити"}
 				</button>
