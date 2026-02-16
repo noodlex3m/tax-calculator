@@ -70,3 +70,18 @@
 		padding: 1.5rem; /* Трохи менше внутрішнього простору */
 	}
 }
+
+.feedback-form .error {
+	color: var(--danger-color); /* Червоний колір з твоїх налаштувань */
+	font-size: 0.85rem; /* Трохи менший шрифт */
+	margin-top: 0.25rem; /* Відступ від поля вводу */
+	margin-bottom: 0.5rem; /* Відступ від наступного елемента */
+	text-align: left; /* Вирівнювання по лівому краю */
+}
+
+.feedback-form input.error-border,
+.feedback-form select.error-border,
+.feedback-form textarea.error-border {
+	border-color: var(--danger-color);
+	background-color: rgba(255, 0, 0, 0.02); /* Легкий червоний фон */
+}
