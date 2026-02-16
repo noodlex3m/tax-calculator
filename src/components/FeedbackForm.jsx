@@ -18,6 +18,8 @@ const FeedbackForm = () => {
 		message: "",
 	});
 
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
 	const newErrors = {};
 
 	const validateForm = () => {
@@ -45,20 +47,35 @@ const FeedbackForm = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const errors = validateForm();
+
+		// Якщо є помилки — зупиняємось
 		if (Object.keys(errors).length > 0) {
 			setErrorData(errors);
 			return;
 		}
-		console.log("Form Data Submitted:", formData);
-		// Очищення форми після успішної відправки (імітація)
-		setFormData({
-			name: "",
-			email: "",
-			userType: "",
-			topicOfTheAppeal: "",
-			message: "",
-		});
-		alert("Дякуємо! Ваше повідомлення відправлено (demo).");
+
+		// 1. Вмикаємо режим завантаження (блокуємо інтерфейс)
+		setIsSubmitting(true);
+
+		// 2. Імітуємо затримку сервера (2000 мілісекунд = 2 секунди)
+		setTimeout(() => {
+			console.log("Дані відправлено:", formData);
+
+			// 3. Все пройшло успішно: очищаємо форму
+			setFormData({
+				name: "",
+				email: "",
+				userType: "",
+				topicOfTheAppeal: "",
+				message: "",
+			});
+
+			// Показуємо повідомлення користувачу
+			alert("Дякуємо! Ваше повідомлення відправлено (demo).");
+
+			// 4. Вимикаємо режим завантаження
+			setIsSubmitting(false);
+		}, 2000);
 	};
 	return (
 		<div className="feedback-form">
@@ -142,7 +159,9 @@ const FeedbackForm = () => {
 					className={errorData.message ? "error-border" : ""}
 				></textarea>
 				{errorData.message && <p className="error">{errorData.message}</p>}
-				<button type="submit">Відправити</button>
+				<button type="submit" disabled={isSubmitting}>
+					{isSubmitting ? "Відправка..." : "Відправити"}
+				</button>
 			</form>
 		</div>
 	);
