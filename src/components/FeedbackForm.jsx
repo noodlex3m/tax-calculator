@@ -61,10 +61,10 @@ const FeedbackForm = () => {
 		// 2. Відправляємо дані через EmailJS
 		emailjs
 			.send(
-				"service_wkqjzot", // Твій Service ID
-				"template_i39qui9", // Твій Template ID
+				import.meta.env.VITE_SERVICE_ID, // Твій Service ID
+				import.meta.env.VITE_TEMPLATE_ID, // Твій Template ID
 				formData, // Дані з форми (вони підставляться в {{...}})
-				"Y6HpGTZalkozZvTvm", // Твій Public Key
+				import.meta.env.VITE_PUBLIC_KEY, // Твій Public Key
 			)
 			.then(
 				() => {
