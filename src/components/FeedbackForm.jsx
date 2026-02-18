@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./FeedbackForm.css";
 import emailjs from "@emailjs/browser";
+import toast from "react-hot-toast";
 
 const FeedbackForm = () => {
 	const [formData, setFormData] = useState({
@@ -81,7 +82,7 @@ const FeedbackForm = () => {
 					});
 
 					// Показуємо повідомлення
-					alert("Дякуємо! Ваше повідомлення успішно відправлено.");
+					toast.success("Дякуємо! Ваше повідомлення успішно відправлено.");
 
 					// Розблокуємо кнопку
 					setIsSubmitting(false);
@@ -90,7 +91,7 @@ const FeedbackForm = () => {
 					// ПОМИЛКА: Цей код виконається, якщо щось пішло не так
 					console.error("Помилка відправки:", error);
 
-					alert("Сталася помилка при відправці. Спробуйте пізніше.");
+					toast.error("Сталася помилка при відправці. Спробуйте пізніше.");
 
 					// Розблокуємо кнопку, щоб можна було спробувати ще раз
 					setIsSubmitting(false);

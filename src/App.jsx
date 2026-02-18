@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Home from "./components/Home";
+import { Toaster } from "react-hot-toast";
 
 import { lazy, Suspense } from "react";
 import Header from "./components/Header";
@@ -17,6 +18,7 @@ const NotFound = lazy(() => import("./components/NotFound"));
 function App() {
 	return (
 		<>
+			<Toaster position="top-right" reverseOrder={false} />
 			<Header />
 			<main className="main-content">
 				<Suspense
