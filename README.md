@@ -10,6 +10,8 @@
 
 🔗 **Live Demo:** [tax.serh.one](https://tax.serh.one/)
 
+![Tax Calculator Shortcut](https://raw.githubusercontent.com/noodlex3m/tax-calculator/main/public/screenshot.png)
+
 ---
 
 ## 🚀 Основний функціонал (Features)
