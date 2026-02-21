@@ -3,6 +3,8 @@ import { Helmet } from "react-helmet-async";
 import Skeleton from "./Skeleton";
 import "./News.css";
 import { useSimulatedApi } from "../hooks/useSimulatedApi";
+import Comments from "./Comments";
+import commentsData from "../data/commentsData";
 
 function ArticlePage() {
 	const { id } = useParams();
@@ -106,6 +108,24 @@ function ArticlePage() {
 			<div className="article-fulltext" style={{ whiteSpace: "pre-wrap" }}>
 				{article.fullText}
 			</div>
+			<br></br>
+			<div className="comments-form">
+				<div
+					style={{
+						backgroundColor: "rgba(255, 193, 7, 0.1)",
+						border: "1px solid #ffc107",
+						color: "#ffc107",
+						padding: "1rem",
+						borderRadius: "8px",
+						marginBottom: "1.5rem",
+						textAlign: "center",
+					}}
+				>
+					🛠️ <strong>Увага!</strong> Розділ коментарів знаходиться в стадії
+					розробки.
+				</div>
+			</div>
+			<Comments comments={commentsData.filter((c) => c.postId === id)} />
 		</div>
 	);
 }
