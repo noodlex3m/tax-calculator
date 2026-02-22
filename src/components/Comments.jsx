@@ -25,7 +25,8 @@ const Comments = ({ comments }) => {
 					style={{
 						width: "40px",
 						height: "40px",
-						background: "#ddd",
+						background: "var(--bg-input)",
+						border: "1px solid var(--border-color)",
 						borderRadius: "50%",
 						display: "flex",
 						alignItems: "center",
@@ -39,7 +40,14 @@ const Comments = ({ comments }) => {
 						id="newComment"
 						placeholder="Приєднатися до обговорення…"
 						rows="3"
-						style={{ width: "100%", padding: "0.5rem", borderRadius: "8px" }}
+						style={{
+							width: "100%",
+							padding: "0.5rem",
+							borderRadius: "8px",
+							background: "var(--bg-input)",
+							color: "var(--text-main)",
+							border: "1px solid var(--border-color)",
+						}}
 					></textarea>
 					<div
 						className="composer-controls"
@@ -62,7 +70,8 @@ const Comments = ({ comments }) => {
 						key={comment.id}
 						style={{
 							marginBottom: "1.5rem",
-							background: "#f9f9f9",
+							background: "var(--bg-card)",
+							border: "1px solid var(--border-color)",
 							padding: "1rem",
 							borderRadius: "8px",
 						}}
