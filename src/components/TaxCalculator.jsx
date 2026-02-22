@@ -54,7 +54,7 @@ function TaxCalculator() {
 			taxSystem,
 			taxGroup,
 			incomeToUse,
-			expenseAmount
+			expenseAmount,
 		);
 		setTaxResult(result);
 
