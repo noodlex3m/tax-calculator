@@ -1,6 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 
 const Comments = ({ comments }) => {
+	// Створюємо стан для тексту нового коментаря
+	const [newCommentText, setNewCommentText] = useState("");
+	const [commentList, setCommentList] = useState(comments); // Створюємо стан для коментарів
+	const handleAddComment = () => {
+		// Якщо текст порожній (або лише пробіли) — нічого не робимо
+		if (!newCommentText.trim()) return;
+		// Створюємо новий об'єкт коментаря
+		const newComment = {
+			id: `cmt_${Date.now()}`, // Генеруємо тимчасовий унікальний ID
+			postId: "1",
+			content: newCommentText,
+			author: {
+				id: "user_me",
+				username: "Гість", // Поки що будемо Гістем
+				role: "user",
+			},
+			createdAt: new Date().toISOString(), // Поточна дата
+			parentId: null,
+			likesCount: 0,
+			dislikesCount: 0,
+			userHasLiked: false,
+			userHasDisliked: false,
+		};
+
+		setCommentList((prevComments) => [...prevComments, newComment]); // Додаємо новий коментар до списку
+
+		// Очищаємо поле вводу
+		setNewCommentText("");
+	};
+
 	return (
 		<section
 			className="comments-panel"
@@ -40,6 +70,8 @@ const Comments = ({ comments }) => {
 						id="newComment"
 						placeholder="Приєднатися до обговорення…"
 						rows="3"
+						value={newCommentText}
+						onChange={(event) => setNewCommentText(event.target.value)}
 						style={{
 							width: "100%",
 							padding: "0.5rem",
@@ -58,14 +90,16 @@ const Comments = ({ comments }) => {
 							marginTop: "0.5rem",
 						}}
 					>
-						<button className="btn">Опублікувати</button>
+						<button className="btn" onClick={handleAddComment}>
+							Опублікувати
+						</button>
 					</div>
 				</div>
 			</div>
 
 			{/* Список коментарів */}
 			<ul className="comments-list" style={{ listStyle: "none", padding: 0 }}>
-				{comments.map((comment) => (
+				{commentList.map((comment) => (
 					<li
 						key={comment.id}
 						style={{
@@ -78,6 +112,15 @@ const Comments = ({ comments }) => {
 					>
 						<div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>
 							{comment.author.username}
+							<span
+								style={{
+									fontSize: "0.8rem",
+									color: "var(--text-secondary)",
+									marginLeft: "0.5rem",
+								}}
+							>
+								{new Date(comment.createdAt).toLocaleString("uk-UA")}
+							</span>
 						</div>
 						<p style={{ margin: 0 }}>{comment.content}</p>
 					</li>
