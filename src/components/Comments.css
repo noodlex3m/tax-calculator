@@ -24,3 +24,90 @@
 .comment-action-btn.active {
 	color: var(--primary-color);
 }
+
+.comments-panel {
+	margin-top: 3rem;
+	border-top: 1px solid var(--border-color);
+	padding-top: 2rem;
+}
+
+.comments-header {
+	margin-bottom: 1.5rem;
+}
+
+.composer {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+
+.comment-avatar {
+	width: 40px;
+	height: 40px;
+	background: var(--bg-input);
+	border: 1px solid var(--border-color);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.comment-input {
+	width: 100%;
+	padding: 0.5rem;
+	border-radius: 8px;
+	background: var(--bg-input);
+	color: var(--text-main);
+	border: 1px solid var(--border-color);
+	font-family: inherit;
+	resize: vertical;
+}
+
+.comment-input:focus {
+	outline: none;
+	border-color: var(--primary-color);
+}
+
+.composer-controls {
+	display: flex;
+	justify-content: flex-end;
+	gap: 1rem;
+	margin-top: 0.5rem;
+}
+
+.comments-list {
+	list-style: none;
+	padding: 0;
+}
+
+.comment-card {
+	margin-bottom: 1.5rem;
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
+	padding: 1rem;
+	border-radius: 8px;
+}
+
+.comment-author {
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+}
+
+.comment-date {
+	font-size: 0.8rem;
+	color: var(--text-secondary);
+	margin-left: 0.5rem;
+	font-weight: normal;
+}
+
+.comment-text {
+	margin: 0;
+	white-space: pre-wrap;
+}
+
+.comment-actions {
+	display: flex;
+	gap: 1rem;
+	margin-top: 0.5rem;
+}
