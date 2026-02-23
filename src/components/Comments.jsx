@@ -5,6 +5,30 @@ const Comments = ({ comments }) => {
 	// Створюємо стан для тексту нового коментаря
 	const [newCommentText, setNewCommentText] = useState("");
 	const [commentList, setCommentList] = useState(comments); // Створюємо стан для коментарів
+	const [editingCommentId, setEditingCommentId] = useState(null); // ID коментаря, який редагується
+	const [editingText, setEditingText] = useState(""); // Текст коментаря, який редагується
+
+	const handleEditStart = (comment) => {
+		setEditingCommentId(comment.id);
+		setEditingText(comment.content);
+	};
+
+	const handleEditSave = (id) => {
+		setCommentList((prevComments) =>
+			prevComments.map((comment) => {
+				if (comment.id === id) {
+					return {
+						...comment,
+						content: editingText,
+					};
+				}
+				return comment;
+			}),
+		);
+		setEditingCommentId(null);
+		setEditingText("");
+	};
+
 	const handleAddComment = () => {
 		// Якщо текст порожній (або лише пробіли) — нічого не робимо
 		if (!newCommentText.trim()) return;
@@ -133,7 +157,15 @@ const Comments = ({ comments }) => {
 								{new Date(comment.createdAt).toLocaleString("uk-UA")}
 							</span>
 						</div>
-						<p className="comment-text">{comment.content}</p>
+						{editingCommentId === comment.id ? (
+							<textarea
+								className="comment-input"
+								value={editingText}
+								onChange={(e) => setEditingText(e.target.value)}
+							></textarea>
+						) : (
+							<p className="comment-text">{comment.content}</p>
+						)}
 						<div className="comment-actions">
 							<button
 								onClick={() => handleLike(comment.id)}
@@ -149,15 +181,43 @@ const Comments = ({ comments }) => {
 									comment.userHasDisliked ? "active" : ""
 								}`}
 							>
-								👎 {comment.dislikesCount}
+								� {comment.dislikesCount}
 							</button>
+
 							{comment.author.id === "user_me" && (
-								<button
-									onClick={() => handleDeleteComment(comment.id)}
-									className="comment-delete-btn"
-								>
-									🗑️ Видалити
-								</button>
+								<div className="comment-author-actions">
+									{editingCommentId === comment.id ? (
+										<>
+											<button
+												onClick={() => handleEditSave(comment.id)}
+												className="comment-save-btn"
+											>
+												💾 Зберегти
+											</button>
+											<button
+												onClick={() => setEditingCommentId(null)}
+												className="comment-cancel-btn"
+											>
+												❌ Скасувати
+											</button>
+										</>
+									) : (
+										<>
+											<button
+												onClick={() => handleEditStart(comment)}
+												className="comment-edit-btn"
+											>
+												✏️ Редагувати
+											</button>
+											<button
+												onClick={() => handleDeleteComment(comment.id)}
+												className="comment-delete-btn"
+											>
+												🗑️ Видалити
+											</button>
+										</>
+									)}
+								</div>
 							)}
 						</div>
 					</li>

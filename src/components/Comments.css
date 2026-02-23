@@ -112,11 +112,19 @@
 	margin-top: 0.5rem;
 }
 
-.comment-delete-btn {
+.comment-author-actions {
+	margin-left: auto;
+	display: flex;
+	gap: 0.5rem;
+}
+
+.comment-delete-btn,
+.comment-edit-btn,
+.comment-save-btn,
+.comment-cancel-btn {
 	background: transparent;
 	border: 1px solid transparent;
 	cursor: pointer;
-	color: #e02424;
 	padding: 0.2rem 0.6rem;
 	border-radius: 8px;
 	display: inline-flex;
@@ -125,10 +133,40 @@
 	font-size: 0.85rem;
 	font-weight: 500;
 	transition: all 0.2s ease;
-	margin-left: auto;
+}
+
+.comment-delete-btn {
+	color: #e02424;
 }
 
 .comment-delete-btn:hover {
 	border-color: #e02424;
 	background-color: rgba(224, 36, 36, 0.05);
+}
+
+.comment-edit-btn {
+	color: var(--primary-color);
+}
+
+.comment-edit-btn:hover {
+	border-color: var(--primary-color);
+	background-color: rgba(83, 91, 242, 0.05); /* Легкий синій */
+}
+
+.comment-save-btn {
+	color: #059669; /* Зелений колір */
+}
+
+.comment-save-btn:hover {
+	border-color: #059669;
+	background-color: rgba(5, 150, 105, 0.05);
+}
+
+.comment-cancel-btn {
+	color: var(--text-secondary);
+}
+
+.comment-cancel-btn:hover {
+	border-color: var(--text-secondary);
+	background-color: rgba(100, 116, 139, 0.05);
 }
