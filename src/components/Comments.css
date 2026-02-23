@@ -111,3 +111,24 @@
 	gap: 1rem;
 	margin-top: 0.5rem;
 }
+
+.comment-delete-btn {
+	background: transparent;
+	border: 1px solid transparent;
+	cursor: pointer;
+	color: #e02424;
+	padding: 0.2rem 0.6rem;
+	border-radius: 8px;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	font-size: 0.85rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	margin-left: auto;
+}
+
+.comment-delete-btn:hover {
+	border-color: #e02424;
+	background-color: rgba(224, 36, 36, 0.05);
+}

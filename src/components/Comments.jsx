@@ -90,6 +90,12 @@ const Comments = ({ comments }) => {
 		);
 	};
 
+	const handleDeleteComment = (id) => {
+		setCommentList((prevComments) =>
+			prevComments.filter((comment) => comment.id !== id),
+		);
+	};
+
 	return (
 		<section className="comments-panel">
 			<header className="comments-header">
@@ -145,6 +151,14 @@ const Comments = ({ comments }) => {
 							>
 								👎 {comment.dislikesCount}
 							</button>
+							{comment.author.id === "user_me" && (
+								<button
+									onClick={() => handleDeleteComment(comment.id)}
+									className="comment-delete-btn"
+								>
+									🗑️ Видалити
+								</button>
+							)}
 						</div>
 					</li>
 				))}
