@@ -200,3 +200,16 @@
 	cursor: not-allowed;
 	filter: grayscale(0.5);
 }
+
+.comment-replies {
+	margin-left: 2rem;
+	padding-left: 1rem;
+	border-left: 2px solid var(--border-color);
+	margin-top: 1rem;
+}
+
+.reply-form-container {
+	margin-top: 1rem;
+	padding-left: 1rem;
+	border-left: 2px solid var(--primary-color);
+}
