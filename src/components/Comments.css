@@ -1,0 +1,26 @@
+.comment-action-btn {
+	background: transparent;
+	/* Додаємо прозору рамку за замовчуванням, щоб при наведенні кнопка не "смикалася" (не міняла розмір) */
+	border: 1px solid transparent;
+	cursor: pointer;
+	color: var(--text-secondary);
+	padding: 0.2rem 0.6rem; /* Трохи відступів, щоб рамка мала гарний вигляд */
+	border-radius: 8px;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	font-size: 0.95rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+}
+
+/* Ефект при наведенні мишкою */
+.comment-action-btn:hover {
+	border-color: var(--primary-color);
+	background-color: rgba(83, 91, 242, 0.05); /* Легкий фон для підсвітки */
+}
+
+/* Клас для натиснутої кнопки (лайк/дизлайк) */
+.comment-action-btn.active {
+	color: var(--primary-color);
+}

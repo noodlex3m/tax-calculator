@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./Comments.css";
 
 const Comments = ({ comments }) => {
 	// Створюємо стан для тексту нового коментаря
@@ -168,41 +169,17 @@ const Comments = ({ comments }) => {
 						<div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
 							<button
 								onClick={() => handleLike(comment.id)}
-								style={{
-									background: "transparent",
-									border: "none",
-									cursor: "pointer",
-									color: comment.userHasLiked
-										? "var(--primary-color)"
-										: "var(--text-secondary)",
-									padding: "0",
-									display: "inline-flex",
-									alignItems: "center",
-									gap: "0.25rem",
-									fontSize: "0.95rem",
-									fontWeight: "500",
-									transition: "color 0.2s ease",
-								}}
+								className={`comment-action-btn ${
+									comment.userHasLiked ? "active" : ""
+								}`}
 							>
 								👍 {comment.likesCount}
 							</button>
 							<button
 								onClick={() => handleDislike(comment.id)}
-								style={{
-									background: "transparent",
-									border: "none",
-									cursor: "pointer",
-									color: comment.userHasDisliked
-										? "var(--primary-color)"
-										: "var(--text-secondary)",
-									padding: "0",
-									display: "inline-flex",
-									alignItems: "center",
-									gap: "0.25rem",
-									fontSize: "0.95rem",
-									fontWeight: "500",
-									transition: "color 0.2s ease",
-								}}
+								className={`comment-action-btn ${
+									comment.userHasDisliked ? "active" : ""
+								}`}
 							>
 								👎 {comment.dislikesCount}
 							</button>
