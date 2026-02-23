@@ -52,6 +52,27 @@ const Comments = ({ comments }) => {
 		);
 	};
 
+	const handleDislike = (id) => {
+		setCommentList((prevComments) =>
+			prevComments.map((comment) => {
+				// Шукаємо коментар, на який клікнули
+				if (comment.id === id) {
+					// Перевіряємо, чи стоїть вже лайк від нас
+					const isDisliked = comment.userHasDisliked;
+					return {
+						...comment,
+						// Якщо лайк вже стояв — забираємо (-1), якщо ні — додаємо (+1)
+						dislikesCount: isDisliked
+							? comment.dislikesCount - 1
+							: comment.dislikesCount + 1,
+						userHasDisliked: !isDisliked, // Змінюємо стан на протилежний
+					};
+				}
+				return comment; // Повертаємо без змін, якщо це не наш коментар
+			}),
+		);
+	};
+
 	return (
 		<section
 			className="comments-panel"
@@ -144,27 +165,48 @@ const Comments = ({ comments }) => {
 							</span>
 						</div>
 						<p style={{ margin: 0 }}>{comment.content}</p>
-						<button
-							onClick={() => handleLike(comment.id)}
-							style={{
-								background: "transparent",
-								border: "none",
-								cursor: "pointer",
-								color: comment.userHasLiked
-									? "var(--primary-color)"
-									: "var(--text-secondary)",
-								padding: "0",
-								marginTop: "0.5rem",
-								display: "inline-flex",
-								alignItems: "center",
-								gap: "0.25rem",
-								fontSize: "0.95rem",
-								fontWeight: "500",
-								transition: "color 0.2s ease",
-							}}
-						>
-							👍 {comment.likesCount}
-						</button>
+						<div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
+							<button
+								onClick={() => handleLike(comment.id)}
+								style={{
+									background: "transparent",
+									border: "none",
+									cursor: "pointer",
+									color: comment.userHasLiked
+										? "var(--primary-color)"
+										: "var(--text-secondary)",
+									padding: "0",
+									display: "inline-flex",
+									alignItems: "center",
+									gap: "0.25rem",
+									fontSize: "0.95rem",
+									fontWeight: "500",
+									transition: "color 0.2s ease",
+								}}
+							>
+								👍 {comment.likesCount}
+							</button>
+							<button
+								onClick={() => handleDislike(comment.id)}
+								style={{
+									background: "transparent",
+									border: "none",
+									cursor: "pointer",
+									color: comment.userHasDisliked
+										? "var(--primary-color)"
+										: "var(--text-secondary)",
+									padding: "0",
+									display: "inline-flex",
+									alignItems: "center",
+									gap: "0.25rem",
+									fontSize: "0.95rem",
+									fontWeight: "500",
+									transition: "color 0.2s ease",
+								}}
+							>
+								👎 {comment.dislikesCount}
+							</button>
+						</div>
 					</li>
 				))}
 			</ul>
