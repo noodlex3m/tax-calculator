@@ -37,8 +37,10 @@ const Comments = ({ comments }) => {
 			prevComments.map((comment) => {
 				// Шукаємо коментар, на який клікнули
 				if (comment.id === id) {
-					// Перевіряємо, чи стоїть вже лайк від нас
+					// Перевіряємо, чи стоїть вже лайк/дизлайк від нас
 					const isLiked = comment.userHasLiked;
+					const isDisliked = comment.userHasDisliked;
+
 					return {
 						...comment,
 						// Якщо лайк вже стояв — забираємо (-1), якщо ні — додаємо (+1)
@@ -46,6 +48,12 @@ const Comments = ({ comments }) => {
 							? comment.likesCount - 1
 							: comment.likesCount + 1,
 						userHasLiked: !isLiked, // Змінюємо стан на протилежний
+						// Якщо ми ставимо лайк, а стояв дизлайк - знімаємо його
+						dislikesCount:
+							!isLiked && isDisliked
+								? comment.dislikesCount - 1
+								: comment.dislikesCount,
+						userHasDisliked: !isLiked && isDisliked ? false : isDisliked,
 					};
 				}
 				return comment; // Повертаємо без змін, якщо це не наш коментар
@@ -58,15 +66,23 @@ const Comments = ({ comments }) => {
 			prevComments.map((comment) => {
 				// Шукаємо коментар, на який клікнули
 				if (comment.id === id) {
-					// Перевіряємо, чи стоїть вже лайк від нас
+					// Перевіряємо, чи стоїть вже лайк/дизлайк від нас
+					const isLiked = comment.userHasLiked;
 					const isDisliked = comment.userHasDisliked;
+
 					return {
 						...comment,
-						// Якщо лайк вже стояв — забираємо (-1), якщо ні — додаємо (+1)
+						// Якщо дизлайк вже стояв — забираємо (-1), якщо ні — додаємо (+1)
 						dislikesCount: isDisliked
 							? comment.dislikesCount - 1
 							: comment.dislikesCount + 1,
 						userHasDisliked: !isDisliked, // Змінюємо стан на протилежний
+						// Якщо ми ставимо дизлайк, а стояв лайк - знімаємо його
+						likesCount:
+							!isDisliked && isLiked
+								? comment.likesCount - 1
+								: comment.likesCount,
+						userHasLiked: !isDisliked && isLiked ? false : isLiked,
 					};
 				}
 				return comment; // Повертаємо без змін, якщо це не наш коментар
