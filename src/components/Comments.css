@@ -170,3 +170,33 @@
 	border-color: var(--text-secondary);
 	background-color: rgba(100, 116, 139, 0.05);
 }
+
+.comment-submit-btn {
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	padding: 0.6rem 1.5rem;
+	border-radius: 8px;
+	font-size: 0.95rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.comment-submit-btn:hover:not(:disabled) {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+	filter: brightness(1.1);
+}
+
+.comment-submit-btn:active:not(:disabled) {
+	transform: translateY(0);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.comment-submit-btn:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	filter: grayscale(0.5);
+}

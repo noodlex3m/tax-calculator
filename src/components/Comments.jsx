@@ -140,8 +140,12 @@ const Comments = ({ comments }) => {
 						onChange={(event) => setNewCommentText(event.target.value)}
 					></textarea>
 					<div className="composer-controls">
-						<button className="btn" onClick={handleAddComment}>
-							Опублікувати
+						<button
+							className="comment-submit-btn"
+							onClick={handleAddComment}
+							disabled={!newCommentText.trim()}
+						>
+							✈️ Опублікувати
 						</button>
 					</div>
 				</div>
