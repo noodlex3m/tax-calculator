@@ -31,6 +31,27 @@ const Comments = ({ comments }) => {
 		setNewCommentText("");
 	};
 
+	const handleLike = (id) => {
+		setCommentList((prevComments) =>
+			prevComments.map((comment) => {
+				// Шукаємо коментар, на який клікнули
+				if (comment.id === id) {
+					// Перевіряємо, чи стоїть вже лайк від нас
+					const isLiked = comment.userHasLiked;
+					return {
+						...comment,
+						// Якщо лайк вже стояв — забираємо (-1), якщо ні — додаємо (+1)
+						likesCount: isLiked
+							? comment.likesCount - 1
+							: comment.likesCount + 1,
+						userHasLiked: !isLiked, // Змінюємо стан на протилежний
+					};
+				}
+				return comment; // Повертаємо без змін, якщо це не наш коментар
+			}),
+		);
+	};
+
 	return (
 		<section
 			className="comments-panel"
@@ -123,6 +144,27 @@ const Comments = ({ comments }) => {
 							</span>
 						</div>
 						<p style={{ margin: 0 }}>{comment.content}</p>
+						<button
+							onClick={() => handleLike(comment.id)}
+							style={{
+								background: "transparent",
+								border: "none",
+								cursor: "pointer",
+								color: comment.userHasLiked
+									? "var(--primary-color)"
+									: "var(--text-secondary)",
+								padding: "0",
+								marginTop: "0.5rem",
+								display: "inline-flex",
+								alignItems: "center",
+								gap: "0.25rem",
+								fontSize: "0.95rem",
+								fontWeight: "500",
+								transition: "color 0.2s ease",
+							}}
+						>
+							👍 {comment.likesCount}
+						</button>
 					</li>
 				))}
 			</ul>
