@@ -181,7 +181,7 @@ const Comments = ({ comments }) => {
 									comment.userHasDisliked ? "active" : ""
 								}`}
 							>
-								� {comment.dislikesCount}
+								👎 {comment.dislikesCount}
 							</button>
 
 							{comment.author.id === "user_me" && (
