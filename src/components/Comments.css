@@ -17,7 +17,7 @@
 /* Ефект при наведенні мишкою */
 .comment-action-btn:hover {
 	border-color: var(--primary-color);
-	background-color: rgba(83, 91, 242, 0.05); /* Легкий фон для підсвітки */
+	background-color: var(--btn-hover-bg); /* Легкий фон для підсвітки */
 }
 
 /* Клас для натиснутої кнопки (лайк/дизлайк) */
@@ -141,7 +141,7 @@
 
 .comment-delete-btn:hover {
 	border-color: #e02424;
-	background-color: rgba(224, 36, 36, 0.05);
+	background-color: var(--danger-hover-bg);
 }
 
 .comment-edit-btn {
@@ -150,7 +150,7 @@
 
 .comment-edit-btn:hover {
 	border-color: var(--primary-color);
-	background-color: rgba(83, 91, 242, 0.05); /* Легкий синій */
+	background-color: var(--btn-hover-bg); /* Легкий синій */
 }
 
 .comment-save-btn {
@@ -159,7 +159,7 @@
 
 .comment-save-btn:hover {
 	border-color: #059669;
-	background-color: rgba(5, 150, 105, 0.05);
+	background-color: var(--success-hover-bg);
 }
 
 .comment-cancel-btn {
@@ -168,7 +168,7 @@
 
 .comment-cancel-btn:hover {
 	border-color: var(--text-secondary);
-	background-color: rgba(100, 116, 139, 0.05);
+	background-color: var(--muted-hover-bg);
 }
 
 .comment-submit-btn {
