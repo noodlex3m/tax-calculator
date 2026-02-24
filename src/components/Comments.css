@@ -35,6 +35,60 @@
 	margin-bottom: 1.5rem;
 }
 
+/* Header layout: title + meta on a single row, responsive */
+.header-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+/* Сортування: контрол для вибору порядку відображення */
+.sort-controls {
+	display: flex;
+ 	align-items: center;
+ 	gap: 0.5rem;
+}
+
+.sort-controls label {
+ 	font-size: 0.9rem;
+ 	color: var(--text-secondary);
+}
+
+.sort-select {
+ 	padding: 0.35rem 0.6rem;
+ 	border-radius: 8px;
+ 	border: 1px solid var(--border-color);
+ 	background: var(--bg-input);
+ 	color: var(--text-main);
+ 	cursor: pointer;
+ 	font-size: 0.95rem;
+ 	transition: all 0.15s ease;
+}
+
+.sort-select:hover {
+ 	background: var(--btn-hover-bg);
+ 	border-color: var(--primary-color);
+}
+
+.sort-select:focus {
+ 	outline: none;
+ 	box-shadow: 0 0 0 4px rgba(83, 91, 242, 0.08);
+ 	border-color: var(--primary-color);
+}
+
+@media (max-width: 600px) {
+ 	.header-top {
+ 		flex-direction: column;
+ 		align-items: flex-start;
+ 	}
+
+ 	.sort-controls {
+ 		width: 100%;
+ 		justify-content: flex-start;
+ 	}
+}
+
 .composer {
 	display: flex;
 	gap: 1rem;
