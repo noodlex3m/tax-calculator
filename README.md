@@ -43,7 +43,8 @@
 
 ### Frontend
 
-- **Framework:** React 19, Vite
+- **Framework:** React 19 (see `package.json` for exact version)
+- **Bundler / Dev server:** Vite (scripts: `dev`, `build`, `preview`)
 - **Routing:** React Router DOM v7
 - **State/UX:** React Helmet Async, React Hot Toast
 - **Visuals:** Chart.js + React-Chartjs-2
@@ -58,37 +59,71 @@
 
 - **Unit Testing:** Vitest
 
+Run tests:
+
+```bash
+npm test
+```
+
 ---
 
 ## 💻 Як запустити проєкт (Installation)
 
 1.  **Клонуйте репозиторій:**
 
-    ```bash
-    git clone https://github.com/noodlex3m/tax-calculator.git
-    cd tax-calculator
-    ```
+```bash
+git clone https://github.com/noodlex3m/tax-calculator.git
+cd tax-calculator
+```
 
 2.  **Встановіть залежності:**
 
-    ```bash
-    npm install
-    ```
+```bash
+npm install
+```
 
 3.  **Налаштуйте змінні середовища:**
-    Створіть файл `.env` у корені проєкту та додайте ключі для EmailJS (отримайте їх на [emailjs.com](https://www.emailjs.com/)):
+    Створіть файл `.env` у корені проєкту та додайте ключи для EmailJS (отримайте їх на [emailjs.com](https://www.emailjs.com/)):
 
-    ```env
-    VITE_SERVICE_ID=your_service_id
-    VITE_TEMPLATE_ID=your_template_id
-    VITE_PUBLIC_KEY=your_public_key
-    ```
+```env
+VITE_SERVICE_ID=your_service_id
+VITE_TEMPLATE_ID=your_template_id
+VITE_PUBLIC_KEY=your_public_key
+```
 
-4.  **Запустіть режим розробки:**
-    ```bash
-    npm run dev
-    ```
-    Відкрийте [http://localhost:5173](http://localhost:5173) у вашому браузері.
+4.  **Команди для розробки, збірки та перевірки (збігаються зі `package.json`):**
+
+- Запуск у режимі розробки (Vite dev server):
+
+```bash
+npm run dev
+```
+
+- Збірка для продакшну:
+
+```bash
+npm run build
+```
+
+- Перегляд зібраного бандла локально (preview):
+
+```bash
+npm run preview
+```
+
+- Запуск ESLint перевірки коду:
+
+```bash
+npm run lint
+```
+
+- Запуск юніт-тестів (Vitest):
+
+```bash
+npm test
+```
+
+Відкрийте [http://localhost:5173](http://localhost:5173) у вашому браузері після `npm run dev`.
 
 ---
 
