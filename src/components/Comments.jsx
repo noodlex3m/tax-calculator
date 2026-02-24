@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import "./Comments.css";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
 
-const Comments = ({ comments }) => {
+const Comments = ({ comments = [] }) => {
 	const [commentList, setCommentList] = useState(() => {
 		try {
 			const saved = localStorage.getItem("comments");
-			return saved ? JSON.parse(saved) : comments || [];
+			return saved ? JSON.parse(saved) : comments;
 		} catch (e) {
-			return comments || [];
+			return comments;
 		}
 	});
 
@@ -106,6 +106,9 @@ const Comments = ({ comments }) => {
 
 	// --- Логіка перетворення плоского списку в деревооб'єкт (Tree Structure) ---
 	const buildCommentTree = (commentsFlatList) => {
+		if (!Array.isArray(commentsFlatList) || commentsFlatList.length === 0)
+			return [];
+
 		const tree = [];
 		const lookup = {};
 
@@ -130,7 +133,10 @@ const Comments = ({ comments }) => {
 		return tree;
 	};
 
-	const commentTree = buildCommentTree(commentList);
+	const commentTree = useMemo(
+		() => buildCommentTree(commentList),
+		[commentList],
+	);
 
 	return (
 		<section className="comments-panel">
