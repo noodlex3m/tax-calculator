@@ -9,6 +9,7 @@ const Comments = ({ comments = [] }) => {
 			const saved = localStorage.getItem("comments");
 			return saved ? JSON.parse(saved) : comments;
 		} catch (_err) {
+			void _err;
 			return comments;
 		}
 	});
