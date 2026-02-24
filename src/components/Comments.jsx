@@ -14,6 +14,8 @@ const Comments = ({ comments = [] }) => {
 		}
 	});
 
+	const [sortBy, setSortBy] = useState("newest");
+
 	useEffect(() => {
 		localStorage.setItem("comments", JSON.stringify(commentList));
 	}, [commentList]);
@@ -139,11 +141,42 @@ const Comments = ({ comments = [] }) => {
 		[commentList],
 	);
 
+	// 👇 Магія сортування тут
+	const sortedComments = [...commentTree].sort((a, b) => {
+		if (sortBy === "newest") {
+			return new Date(b.createdAt) - new Date(a.createdAt);
+		}
+		if (sortBy === "oldest") {
+			return new Date(a.createdAt) - new Date(b.createdAt);
+		}
+		if (sortBy === "popular") {
+			return b.likesCount - a.likesCount;
+		}
+		return 0;
+	});
+
 	return (
 		<section className="comments-panel">
 			<header className="comments-header">
-				<h2>Коментарі</h2>
-				<div className="comments-meta">{commentList.length} Коментарів</div>
+				<div className="header-top">
+					<h2>Коментарі</h2>
+					<div className="comments-meta">{commentList.length} Коментарів</div>
+				</div>
+
+				{/* 👇 Випадаючий список для сортування */}
+				<div className="sort-controls">
+					<label htmlFor="sort-select">Сортувати:</label>
+					<select
+						id="sort-select"
+						value={sortBy}
+						onChange={(e) => setSortBy(e.target.value)}
+						className="sort-select"
+					>
+						<option value="newest">Найновіші</option>
+						<option value="oldest">Найстаріші</option>
+						<option value="popular">Популярні</option>
+					</select>
+				</div>
 			</header>
 
 			{/* Форма головного рівня (без parentId) */}
@@ -152,7 +185,7 @@ const Comments = ({ comments = [] }) => {
 			</div>
 
 			<ul className="comments-list">
-				{commentTree.map((comment) => (
+				{sortedComments.map((comment) => (
 					<CommentItem
 						key={comment.id}
 						comment={comment}
