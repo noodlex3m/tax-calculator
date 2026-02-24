@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Comments.css";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
 
 const Comments = ({ comments }) => {
-	const [commentList, setCommentList] = useState(comments);
+	const [commentList, setCommentList] = useState(() => {
+		try {
+			const saved = localStorage.getItem("comments");
+			return saved ? JSON.parse(saved) : comments || [];
+		} catch (e) {
+			return comments || [];
+		}
+	});
+
+	useEffect(() => {
+		localStorage.setItem("comments", JSON.stringify(commentList));
+	}, [commentList]);
 
 	const handleAddComment = (text, parentId = null) => {
 		const newComment = {
