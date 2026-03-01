@@ -9,12 +9,20 @@ const CommentForm = ({
 	onCancel,
 }) => {
 	const [text, setText] = useState(initialValue);
+	const [error, setError] = useState(null); // Додаємо стан помилки
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (!text.trim()) return;
-		onSubmit(text);
-		setText("");
+
+		// onSubmit тепер може повернути об'єкт { error: 'Помилка' }
+		const result = onSubmit(text);
+		if (result && result.error) {
+			setError(result.error);
+		} else {
+			setText("");
+			setError(null);
+		}
 	};
 
 	return (
@@ -31,9 +39,29 @@ const CommentForm = ({
 					placeholder={placeholder}
 					rows="3"
 					value={text}
-					onChange={(event) => setText(event.target.value)}
+					onChange={(event) => {
+						setText(event.target.value);
+						if (error) setError(null); // Очищаємо помилку при введенні нового тексту
+					}}
 					autoFocus={autoFocus}
 				></textarea>
+
+				{/* Відображення тексту помилки, якщо вона є */}
+				{error && (
+					<div
+						className="comment-error"
+						style={{
+							color: "red",
+							fontSize: "0.875rem",
+							marginTop: "0.25rem",
+							marginBottom: "0.5rem",
+							fontWeight: "bold",
+						}}
+					>
+						⚠️ {error}
+					</div>
+				)}
+
 				<div className="composer-controls">
 					{onCancel && (
 						<button

@@ -14,12 +14,18 @@ const CommentItem = ({
 	const [isEditing, setIsEditing] = useState(false);
 
 	const handleReplySubmit = (text) => {
-		onAddComment(text, comment.id);
+		const result = onAddComment(text, comment.id);
+		if (result && result.error) {
+			return result; // Повертаємо помилку назад у CommentForm
+		}
 		setIsReplying(false);
 	};
 
 	const handleEditSubmit = (text) => {
-		onEdit(comment.id, text);
+		const result = onEdit(comment.id, text);
+		if (result && result.error) {
+			return result; // Повертаємо помилку назад у CommentForm
+		}
 		setIsEditing(false);
 	};
 

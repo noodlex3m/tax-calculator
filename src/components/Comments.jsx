@@ -33,12 +33,11 @@ const Comments = ({ comments = [] }) => {
 		);
 
 		if (hasBadWords) {
-			// Якщо знайшли погане слово - показуємо повідомлення
-			alert(
-				"Ваш коментар містить заборонені слова і не може бути опублікований!",
-			);
-			// 3. Зупиняємо функцію (return), щоб коментар не додався
-			return;
+			// Повертаємо об'єкт з помилкою замість alert
+			return {
+				error:
+					"Ваш коментар містить заборонені слова і не може бути опублікований!",
+			};
 		}
 
 		// Якщо заборонених слів немає - продовжуємо створювати коментар
@@ -63,6 +62,15 @@ const Comments = ({ comments = [] }) => {
 	};
 
 	const handleEdit = (id, newText) => {
+		const bannedWords = ["спам", "реклама", "лайка", "дурень", "ідіот"];
+		const hasBadWords = bannedWords.some((word) =>
+			newText.toLowerCase().includes(word),
+		);
+
+		if (hasBadWords) {
+			return { error: "Змінений коментар містить заборонені слова!" };
+		}
+
 		setCommentList((prevComments) =>
 			prevComments.map((comment) =>
 				comment.id === id ? { ...comment, content: newText } : comment,
