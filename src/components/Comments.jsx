@@ -3,6 +3,17 @@ import "./Comments.css";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
 
+// Функція повертає текст помилки, якщо є погані слова, або null, якщо все чисто
+const validateComment = (text) => {
+	const bannedWords = ["спам", "реклама", "лайка", "дурень", "ідіот"];
+	const hasBadWords = bannedWords.some((word) =>
+		text.toLowerCase().includes(word),
+	);
+	return hasBadWords
+		? "Коментар містить заборонені слова і не може бути опублікований."
+		: null;
+};
+
 const Comments = ({ comments = [] }) => {
 	const [commentList, setCommentList] = useState(() => {
 		try {
@@ -24,20 +35,12 @@ const Comments = ({ comments = [] }) => {
 		// Якщо текст порожній (або лише пробіли) — нічого не робимо
 		if (!text.trim()) return;
 
-		// 1. Створюємо список заборонених слів
-		const bannedWords = ["спам", "реклама", "лайка", "дурень", "ідіот"];
+		// 1. Перевіряємо текст коментаря функцією
+		const errorMessage = validateComment(text);
 
-		// 2. Перевіряємо текст коментаря на наявність хоча б одного забороненого слова
-		const hasBadWords = bannedWords.some((word) =>
-			text.toLowerCase().includes(word),
-		);
-
-		if (hasBadWords) {
-			// Повертаємо об'єкт з помилкою замість alert
-			return {
-				error:
-					"Ваш коментар містить заборонені слова і не може бути опублікований!",
-			};
+		// 2. Якщо є помилка - повертаємо її
+		if (errorMessage) {
+			return { error: errorMessage };
 		}
 
 		// Якщо заборонених слів немає - продовжуємо створювати коментар
@@ -62,13 +65,10 @@ const Comments = ({ comments = [] }) => {
 	};
 
 	const handleEdit = (id, newText) => {
-		const bannedWords = ["спам", "реклама", "лайка", "дурень", "ідіот"];
-		const hasBadWords = bannedWords.some((word) =>
-			newText.toLowerCase().includes(word),
-		);
+		const errorMessage = validateComment(newText);
 
-		if (hasBadWords) {
-			return { error: "Змінений коментар містить заборонені слова!" };
+		if (errorMessage) {
+			return { error: errorMessage };
 		}
 
 		setCommentList((prevComments) =>
