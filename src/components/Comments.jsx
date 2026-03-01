@@ -21,6 +21,27 @@ const Comments = ({ comments = [] }) => {
 	}, [commentList]);
 
 	const handleAddComment = (text, parentId = null) => {
+		// Якщо текст порожній (або лише пробіли) — нічого не робимо
+		if (!text.trim()) return;
+
+		// 1. Створюємо список заборонених слів
+		const bannedWords = ["спам", "реклама", "лайка", "дурень", "ідіот"];
+
+		// 2. Перевіряємо текст коментаря на наявність хоча б одного забороненого слова
+		const hasBadWords = bannedWords.some((word) =>
+			text.toLowerCase().includes(word),
+		);
+
+		if (hasBadWords) {
+			// Якщо знайшли погане слово - показуємо повідомлення
+			alert(
+				"Ваш коментар містить заборонені слова і не може бути опублікований!",
+			);
+			// 3. Зупиняємо функцію (return), щоб коментар не додався
+			return;
+		}
+
+		// Якщо заборонених слів немає - продовжуємо створювати коментар
 		const newComment = {
 			id: `cmt_${Date.now()}`,
 			postId: "1",
