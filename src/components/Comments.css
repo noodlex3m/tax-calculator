@@ -175,6 +175,7 @@
 
 .comment-actions {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 1rem;
 	margin-top: 0.5rem;
 }
@@ -182,7 +183,10 @@
 .comment-author-actions {
 	margin-left: auto;
 	display: flex;
+	flex-wrap: wrap;
 	gap: 0.5rem;
+	justify-content: flex-end;
+	min-width: 0;
 }
 
 .comment-delete-btn,
