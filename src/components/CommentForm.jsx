@@ -32,7 +32,7 @@ const CommentForm = ({
 			style={{ marginBottom: "1rem" }}
 		>
 			<div className="comment-avatar">S</div>
-			<div className="composer-body" style={{ flex: 1 }}>
+			<div className="composer-body">
 				<textarea
 					id="newComment"
 					className="comment-input"
