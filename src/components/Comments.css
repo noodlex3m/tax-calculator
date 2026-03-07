@@ -106,6 +106,14 @@
 	display: flex;
 	gap: 1rem;
 	margin-bottom: 2rem;
+	flex-wrap: wrap;
+	min-width: 0;
+}
+
+/* Flex item shrink trick: allow textarea to shrink inside flex container */
+.composer-body {
+	flex: 1 1 0;
+	min-width: 0;
 }
 
 .comment-avatar {
