@@ -5,15 +5,18 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeProvider";
 import { HelmetProvider } from "react-helmet-async";
+import { AuthProvider } from "./context/AuthContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
 		<HelmetProvider>
 			<ThemeProvider>
 				<BrowserRouter>
-					<App />
+					<AuthProvider>
+						<App />
+					</AuthProvider>
 				</BrowserRouter>
 			</ThemeProvider>
 		</HelmetProvider>
-	</React.StrictMode>
+	</React.StrictMode>,
 );
