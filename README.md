@@ -2,7 +2,7 @@
 
 ![Project Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Netlify Status](https://api.netlify.com/api/v1/badges/b5b5b5b5-b5b5-b5b5-b5b5-b5b5b5b5b5b5/deploy-status)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/7befe562-184a-4a06-b150-cb1df32fd7f1/deploy-status)](https://app.netlify.com/projects/fascinating-alpaca-f89633/deploys)
 
 > **[UA]** Калькулятор ФОП на загальній та спрощеній (1, 2 та 3 групи) системі оподаткування. Актуальні ліміти та ставки на 2026 рік.
 >
