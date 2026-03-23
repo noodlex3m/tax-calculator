@@ -8,6 +8,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Skeleton from "./components/Skeleton";
 import FeedbackForm from "./components/FeedbackForm";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import Dashboard from "./components/Dashboard";
+import Login from "./components/Login";
 
 const TaxCalculator = lazy(() => import("./components/TaxCalculator"));
 const News = lazy(() => import("./components/News"));
@@ -43,6 +46,15 @@ function App() {
 						<Route path="/news" element={<News />} />
 						<Route path="/feedback" element={<FeedbackForm />} />
 						<Route path="*" element={<NotFound />} />
+						<Route
+							path="/dashboard"
+							element={
+								<ProtectedRoute>
+									<Dashboard />
+								</ProtectedRoute>
+							}
+						/>
+						<Route path="/login" element={<Login />} />
 					</Routes>
 				</Suspense>
 			</main>

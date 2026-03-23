@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import "./Header.css";
 import ThemeToggle from "./ThemeToggle";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
+	const { isAuthenticated } = useAuth();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const toggleMenu = () => {
 		setIsMenuOpen(!isMenuOpen);
@@ -48,6 +50,15 @@ function Header() {
 					<NavLink to="/feedback" onClick={closeMenu}>
 						Зв'язок
 					</NavLink>
+					{isAuthenticated ? (
+						<NavLink to="/dashboard" onClick={closeMenu}>
+							Кабінет
+						</NavLink>
+					) : (
+						<NavLink to="/login" onClick={closeMenu}>
+							Увійти
+						</NavLink>
+					)}
 				</nav>
 			</div>
 		</header>
