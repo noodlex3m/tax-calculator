@@ -59,10 +59,13 @@ function TaxCalculator() {
 		setTaxResult(result);
 
 		const newItem = {
-			date: new Date().toLocaleDateString(),
+			date: new Date().toISOString(),
 			system:
 				taxSystem === "general" ? "Загальна" : `Спрощена (${taxGroup} гр.)`,
 			income: parseFloat(incomeToUse),
+			tax: result.yearly.tax + (result.yearly.excess || 0),
+			esv: result.yearly.esv,
+			military: result.yearly.military || 0,
 			total: result.yearly.total,
 		};
 		setHistory((prev) => [newItem, ...prev].slice(0, 5));

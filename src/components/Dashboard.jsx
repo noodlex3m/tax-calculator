@@ -5,6 +5,7 @@ import "./Dashboard.css";
 const Dashboard = () => {
 	const { user, logout } = useAuth();
 	const [history, setHistory] = useState([]);
+	const [activeTab, setActiveTab] = useState("history");
 
 	useEffect(() => {
 		// 1. Беремо дані з localStorage за ключем "taxHistory"
@@ -48,31 +49,49 @@ const Dashboard = () => {
 							<div className="history-card" key={index}>
 								<div className="history-date">
 									📅{" "}
-									{new Date(item.date).toLocaleString("uk-UA", {
-										day: "2-digit",
-										month: "long",
-										year: "numeric",
-										hour: "2-digit",
-										minute: "2-digit",
-									})}
+									{isNaN(new Date(item.date).getTime()) 
+										? item.date 
+										: new Date(item.date).toLocaleString("uk-UA", {
+											day: "2-digit",
+											month: "long",
+											year: "numeric",
+											hour: "2-digit",
+											minute: "2-digit",
+										})}
 								</div>
 								<div className="history-details">
 									<div className="history-item">
-										<span>Дохід:</span>
+										<span>Система:</span>
+										<strong>{item.system}</strong>
+									</div>
+									<div className="history-item">
+										<span>Введений дохід:</span>
 										<strong>
 											{Number(item.income).toLocaleString("uk-UA")} ₴
 										</strong>
 									</div>
 									<div className="history-item">
-										<span>Єдиний податок:</span>
+										<span>Податок (ЄП / ПДФО):</span>
 										<strong>
-											{Number(item.tax).toLocaleString("uk-UA")} ₴
+											{item.tax !== undefined ? Number(item.tax).toLocaleString("uk-UA") : "Невідомо"} ₴
 										</strong>
 									</div>
 									<div className="history-item">
 										<span>ЄСВ:</span>
 										<strong>
-											{Number(item.social).toLocaleString("uk-UA")} ₴
+											{item.esv !== undefined ? Number(item.esv).toLocaleString("uk-UA") : "Невідомо"} ₴
+										</strong>
+									</div>
+									<div className="history-item">
+										<span>ВЗ (Військовий Збір):</span>
+										<strong>
+											{item.military !== undefined ? Number(item.military).toLocaleString("uk-UA") : "Невідомо"} ₴
+										</strong>
+									</div>
+									<div className="history-item" style={{ borderTop: "1px dashed var(--border-color)", paddingTop: "0.5rem" }}>
+										<span>Разом до сплати:</span>
+										<strong>
+											{item.total !== undefined ? Number(item.total).toLocaleString("uk-UA") : "Невідомо"} ₴
 										</strong>
 									</div>
 								</div>
