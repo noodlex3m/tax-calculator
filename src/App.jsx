@@ -11,6 +11,7 @@ import FeedbackForm from "./components/FeedbackForm";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
+import Register from "./components/Register";
 
 const TaxCalculator = lazy(() => import("./components/TaxCalculator"));
 const News = lazy(() => import("./components/News"));
@@ -55,6 +56,7 @@ function App() {
 							}
 						/>
 						<Route path="/login" element={<Login />} />
+						<Route path="/register" element={<Register />} />
 					</Routes>
 				</Suspense>
 			</main>

@@ -24,8 +24,10 @@ const Dashboard = () => {
 			<div className="dashboard-header">
 				<div>
 					<h1>Особистий кабінет</h1>
-					<p style={{ marginTop: "0.5rem", color: "var(--text-muted, #64748b)" }}>
-						Ласкаво просимо, <strong>{user?.user}</strong>!
+					<p
+						style={{ marginTop: "0.5rem", color: "var(--text-muted, #64748b)" }}
+					>
+						Ласкаво просимо, <strong>{user?.name}</strong>!
 					</p>
 				</div>
 				<button className="dashboard-logout-btn" onClick={logout}>
@@ -45,23 +47,33 @@ const Dashboard = () => {
 						{history.map((item, index) => (
 							<div className="history-card" key={index}>
 								<div className="history-date">
-									📅 {new Date(item.date).toLocaleString("uk-UA", {
-										day: '2-digit', month: 'long', year: 'numeric',
-										hour: '2-digit', minute: '2-digit'
+									📅{" "}
+									{new Date(item.date).toLocaleString("uk-UA", {
+										day: "2-digit",
+										month: "long",
+										year: "numeric",
+										hour: "2-digit",
+										minute: "2-digit",
 									})}
 								</div>
 								<div className="history-details">
 									<div className="history-item">
 										<span>Дохід:</span>
-										<strong>{Number(item.income).toLocaleString("uk-UA")} ₴</strong>
+										<strong>
+											{Number(item.income).toLocaleString("uk-UA")} ₴
+										</strong>
 									</div>
 									<div className="history-item">
 										<span>Єдиний податок:</span>
-										<strong>{Number(item.tax).toLocaleString("uk-UA")} ₴</strong>
+										<strong>
+											{Number(item.tax).toLocaleString("uk-UA")} ₴
+										</strong>
 									</div>
 									<div className="history-item">
 										<span>ЄСВ:</span>
-										<strong>{Number(item.social).toLocaleString("uk-UA")} ₴</strong>
+										<strong>
+											{Number(item.social).toLocaleString("uk-UA")} ₴
+										</strong>
 									</div>
 								</div>
 							</div>

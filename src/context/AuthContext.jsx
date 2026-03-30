@@ -30,6 +30,22 @@ export const AuthProvider = ({ children }) => {
 		);
 	};
 
+	const register = (email, password, name) => {
+		// Створюємо об'єкт нового користувача
+		// (пароль в localStorage зазвичай не зберігають заради безпеки, тому збережемо лише email та ім'я)
+		const newUser = { email, name };
+
+		// Оновлюємо стани (робимо користувача авторизованим)
+		setIsAuthenticated(true);
+		setUser(newUser);
+
+		// Зберігаємо в localStorage
+		localStorage.setItem(
+			"taxUser",
+			JSON.stringify({ isAuthenticated: true, user: newUser }),
+		);
+	};
+
 	const logout = () => {
 		setIsAuthenticated(false);
 		setUser(null);
@@ -38,7 +54,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<AuthContext.Provider
-			value={{ isAuthenticated, user, login, logout, loading }}
+			value={{ isAuthenticated, user, login, logout, loading, register }}
 		>
 			{children}
 		</AuthContext.Provider>

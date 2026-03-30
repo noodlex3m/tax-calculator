@@ -1,0 +1,96 @@
+/* src/components/Auth.css */
+.auth-container {
+	padding: 2.5rem;
+	max-width: 450px;
+	margin: 3rem auto;
+	background-color: var(--bg-card);
+	border-radius: 12px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+	border: 1px solid var(--border-color);
+	text-align: center;
+}
+
+[data-theme="dark"] .auth-container {
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.auth-container h2 {
+	margin-top: 0;
+	margin-bottom: 1.5rem;
+	font-size: 1.8rem;
+	color: var(--text-main);
+}
+
+.auth-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.2rem;
+}
+
+.auth-input {
+	width: 100%;
+	padding: 0.9rem 1rem;
+	border-radius: 6px;
+	border: 1px solid var(--border-color);
+	background-color: var(--bg-input);
+	color: var(--text-main);
+	font-size: 1rem;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.auth-input:focus {
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(83, 91, 242, 0.2);
+}
+
+/* Прибираємо стандартний жовтий/синій фон автозаповнення у браузерах для темної теми */
+[data-theme="dark"] .auth-input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0 30px var(--bg-input) inset !important;
+	-webkit-text-fill-color: var(--text-main) !important;
+}
+
+.auth-submit-btn {
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	padding: 0.9rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 1rem;
+	transition: background-color 0.2s, opacity 0.2s;
+	margin-top: 0.5rem;
+}
+
+.auth-submit-btn:hover {
+	background-color: var(--primary-hover);
+}
+
+.auth-links {
+	margin-top: 1.5rem;
+	font-size: 0.95rem;
+	color: var(--text-muted);
+}
+
+.auth-links a {
+	color: var(--primary-color);
+	font-weight: 500;
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+.auth-links a:hover {
+	color: var(--primary-hover);
+	text-decoration: underline;
+}
+
+.auth-error {
+	background-color: var(--danger-hover-bg);
+	color: var(--danger-color);
+	padding: 0.8rem;
+	border-radius: 6px;
+	margin-bottom: 1rem;
+	font-size: 0.9rem;
+	border: 1px solid var(--danger-color);
+}
