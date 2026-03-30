@@ -107,6 +107,74 @@
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
+/* СТИЛІ ПРОФІЛЮ */
+.profile-header-card {
+	display: flex;
+	align-items: center;
+	gap: 1.5rem;
+	margin-bottom: 2rem;
+	padding-bottom: 1.5rem;
+	border-bottom: 1px dashed var(--border-color);
+}
+
+.profile-avatar {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2.5rem;
+	font-weight: 700;
+	box-shadow: 0 4px 10px rgba(83, 91, 242, 0.3);
+}
+
+.profile-info-text h2 {
+	margin: 0 0 0.5rem 0;
+	font-size: 1.6rem;
+	color: var(--text-main);
+}
+
+.profile-info-text p {
+	margin: 0;
+	color: var(--text-muted);
+	font-size: 1rem;
+}
+
+.profile-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.2rem;
+	max-width: 500px;
+}
+
+.profile-form h3 {
+	margin: 0 0 1rem 0;
+	font-size: 1.3rem;
+	color: var(--text-main);
+}
+
+.form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	text-align: left;
+}
+
+.form-group label {
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: var(--text-main);
+}
+
+.hint-text {
+	color: var(--text-muted);
+	font-size: 0.85rem;
+	margin-top: 0.2rem;
+}
+
 .history-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));

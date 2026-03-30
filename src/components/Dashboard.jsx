@@ -3,9 +3,38 @@ import { useAuth } from "../context/AuthContext";
 import "./Dashboard.css";
 
 const Dashboard = () => {
-	const { user, logout } = useAuth();
+	const { user, logout, updateUser } = useAuth();
 	const [history, setHistory] = useState([]);
 	const [activeTab, setActiveTab] = useState("history");
+
+	const [editName, setEditName] = useState(user?.name || "");
+	const [editEmail, setEditEmail] = useState(user?.email || "");
+	const [editPassword, setEditPassword] = useState("");
+	const [profileMessage, setProfileMessage] = useState("");
+	const [profileError, setProfileError] = useState("");
+
+	useEffect(() => {
+		if (user) {
+			setEditName(user.name || "");
+			setEditEmail(user.email || "");
+		}
+	}, [user]);
+
+	const handleProfileUpdate = (e) => {
+		e.preventDefault();
+		setProfileMessage("");
+		setProfileError("");
+
+		try {
+			// Зберігаємо нове ім'я та email у локальний контекст
+			updateUser({ name: editName, email: editEmail });
+			setProfileMessage("✅ Профіль успішно оновлено!");
+			setEditPassword(""); // Очищуємо поле паролю
+		} catch (err) {
+			console.error("Profile update error:", err);
+			setProfileError("❌ Помилка при оновленні профілю.");
+		}
+	};
 
 	useEffect(() => {
 		// 1. Беремо дані з localStorage за ключем "taxHistory"
@@ -138,17 +167,58 @@ const Dashboard = () => {
 
 			{activeTab === "profile" && (
 				<div className="profile-section">
-					<h2>Налаштування профілю</h2>
-					<p style={{ color: "var(--text-muted)", marginBottom: "1.5rem" }}>
-						Тут скоро буде форма для зміни електронної адреси, паролю та управління даними акаунту...
-					</p>
-					<button
-						className="auth-submit-btn"
-						style={{ width: "auto" }}
-						onClick={() => setActiveTab("history")}
-					>
-						&larr; Назад до Історії розрахунків
-					</button>
+					<div className="profile-header-card">
+						<div className="profile-avatar">
+							{user?.name ? user.name.charAt(0).toUpperCase() : "👤"}
+						</div>
+						<div className="profile-info-text">
+							<h2>{user?.name || "Користувач"}</h2>
+							<p>{user?.email || "Email не вказано"}</p>
+						</div>
+					</div>
+
+					<form className="profile-form" onSubmit={handleProfileUpdate}>
+						<h3>Налаштування акаунту</h3>
+						
+						{profileMessage && <div className="auth-warning" style={{ color: "green", borderColor: "green", backgroundColor: "rgba(0,128,0,0.1)" }}>{profileMessage}</div>}
+						{profileError && <div className="auth-error">{profileError}</div>}
+
+						<div className="form-group">
+							<label>Ім'я</label>
+							<input
+								type="text"
+								value={editName}
+								onChange={(e) => setEditName(e.target.value)}
+								className="auth-input"
+								required
+							/>
+						</div>
+						<div className="form-group">
+							<label>Email адреса</label>
+							<input
+								type="email"
+								value={editEmail}
+								onChange={(e) => setEditEmail(e.target.value)}
+								className="auth-input"
+								required
+							/>
+						</div>
+						<div className="form-group">
+							<label>Новий пароль</label>
+							<input
+								type="password"
+								value={editPassword}
+								onChange={(e) => setEditPassword(e.target.value)}
+								className="auth-input"
+								placeholder="Залиште пустим, якщо не змінюєте..."
+							/>
+							<small className="hint-text">Ми поки що не зберігаємо паролі в базі даних (у розробці).</small>
+						</div>
+
+						<button type="submit" className="auth-submit-btn">
+							Зберегти зміни
+						</button>
+					</form>
 				</div>
 			)}
 		</div>
