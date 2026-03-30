@@ -14,7 +14,7 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	const handleLogin = (e) => {
-		e.preventDefault(); 
+		e.preventDefault();
 		// Передаємо ім'я у властивості "name", щоб воно співпадало з тим, що очікує Dashboard ({user?.name})
 		login({ name: userName });
 		navigate("/dashboard");
@@ -22,6 +22,10 @@ const Login = () => {
 
 	return (
 		<div className="auth-container">
+			<div className="auth-warning">
+				<strong>🚧 Кабінет у процесі розробки</strong>
+				<span>Функції авторизації та збереження даних наразі працюють у тестовому режимі. Готуємося до інтеграції справжньої Бази Даних.</span>
+			</div>
 			<h2>Вхід в Кабінет</h2>
 			<form className="auth-form" onSubmit={handleLogin}>
 				<input
@@ -37,7 +41,9 @@ const Login = () => {
 				</button>
 			</form>
 			<div className="auth-links">
-				<p>Немає акаунту? <Link to="/register">Зареєструватися</Link></p>
+				<p>
+					Немає акаунту? <Link to="/register">Зареєструватися</Link>
+				</p>
 			</div>
 		</div>
 	);

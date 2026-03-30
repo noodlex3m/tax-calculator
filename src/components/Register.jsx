@@ -25,6 +25,10 @@ const Register = () => {
 
 	return (
 		<div className="auth-container">
+			<div className="auth-warning">
+				<strong>🚧 Кабінет у процесі розробки</strong>
+				<span>Функції авторизації та збереження даних наразі працюють у тестовому режимі. Готуємося до інтеграції справжньої Бази Даних.</span>
+			</div>
 			<h2>Реєстрація</h2>
 			
 			{error && <div className="auth-error">{error}</div>}

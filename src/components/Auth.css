@@ -94,3 +94,23 @@
 	font-size: 0.9rem;
 	border: 1px solid var(--danger-color);
 }
+
+.auth-warning {
+	background-color: rgba(255, 193, 7, 0.1);
+	border: 1px solid var(--warning-color, #ffc107);
+	color: #b45309;
+	padding: 1rem;
+	border-radius: 8px;
+	margin-bottom: 1.5rem;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	text-align: left;
+	display: flex;
+	flex-direction: column;
+	gap: 0.4rem;
+}
+
+[data-theme="dark"] .auth-warning {
+	color: #fde68a;
+	background-color: rgba(255, 193, 7, 0.05);
+}
