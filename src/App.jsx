@@ -13,6 +13,7 @@ import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import Register from "./components/Register";
 
+const KvedSearch = lazy(() => import("./components/KvedSearch"));
 const TaxCalculator = lazy(() => import("./components/TaxCalculator"));
 const News = lazy(() => import("./components/News"));
 const Faq = lazy(() => import("./components/Faq"));
@@ -46,6 +47,7 @@ function App() {
 						<Route path="/news/:id" element={<ArticlePage />} />
 						<Route path="/news" element={<News />} />
 						<Route path="/feedback" element={<FeedbackForm />} />
+						<Route path="/kved" element={<KvedSearch />} />
 						<Route path="*" element={<NotFound />} />
 						<Route
 							path="/dashboard"

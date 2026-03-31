@@ -44,6 +44,9 @@ function Header() {
 					<NavLink to="/calculator" onClick={closeMenu}>
 						Калькулятор
 					</NavLink>
+					<NavLink to="/kved" onClick={closeMenu}>
+						КВЕД
+					</NavLink>
 					<NavLink to="/news" onClick={closeMenu}>
 						Новини
 					</NavLink>
