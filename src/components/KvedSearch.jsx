@@ -15,6 +15,9 @@ const KvedSearch = () => {
 
 	return (
 		<div className="kved-container">
+			<div className="auth-warning">
+				<strong>🚧 Довідник КВЕД у процесі розробки</strong>
+			</div>
 			<h2>📚 Довідник КВЕД</h2>
 			<p className="kved-subtitle">
 				Знайдіть потрібний вид діяльності за кодом або назвою. Дізнайтеся, чи
@@ -47,12 +50,13 @@ const KvedSearch = () => {
 											? "Група"
 											: "Клас"}
 							</span>
-							
-							{kved.allowedSimplifiedGroups && kved.allowedSimplifiedGroups.length > 0 && (
-								<span className="kved-groups-badge">
-									Групи ФОП: {kved.allowedSimplifiedGroups.join(", ")}
-								</span>
-							)}
+
+							{kved.allowedSimplifiedGroups &&
+								kved.allowedSimplifiedGroups.length > 0 && (
+									<span className="kved-groups-badge">
+										Групи ФОП: {kved.allowedSimplifiedGroups.join(", ")}
+									</span>
+								)}
 						</div>
 
 						{kved.restrictions && (
@@ -62,11 +66,9 @@ const KvedSearch = () => {
 						)}
 					</li>
 				))}
-				
+
 				{filteredKveds.length === 0 && (
-					<li className="kved-empty">
-						За вашим запитом нічого не знайдено 🕵️‍♂️
-					</li>
+					<li className="kved-empty">За вашим запитом нічого не знайдено 🕵️‍♂️</li>
 				)}
 			</ul>
 		</div>
