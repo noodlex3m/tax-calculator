@@ -15,8 +15,11 @@ const KvedSearch = () => {
 
 	return (
 		<div className="kved-container">
-			<div className="auth-warning">
-				<strong>🚧 Довідник КВЕД у процесі розробки</strong>
+			<div className="auth-warning" style={{ marginBottom: "2rem", textAlign: "center" }}>
+				<strong style={{ fontSize: "1.1rem" }}>🚧 Довідник КВЕД у процесі наповнення</strong>
+				<p style={{ marginTop: "0.5rem", marginBottom: 0, color: "var(--text-muted)" }}>
+					Станом на зараз довідник налічує щонайменше <strong>{kvedData.length}</strong> КВЕДів. Далі буде більше!
+				</p>
 			</div>
 			<h2>📚 Довідник КВЕД</h2>
 			<p className="kved-subtitle">

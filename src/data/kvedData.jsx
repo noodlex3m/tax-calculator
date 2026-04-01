@@ -1,7 +1,67 @@
-// Цей файл згенеровано автоматично за допомогою скрипта scripts/generateKved.js
-// Будь ласка, не редагуйте його вручну! Усі зміни робіть у скрипті-генераторі.
+// Цей файл згенеровано автоматично скриптом scripts/generateKved.js
+// Джерело даних: Локальний реєстр ДК 009:2010
 
 const kvedData = [
+    {
+        "code": "A",
+        "parent": null,
+        "type": "section",
+        "name": "Сільське господарство, лісове господарство та рибне господарство",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
+    {
+        "code": "01",
+        "parent": null,
+        "type": "division",
+        "name": "Сільське господарство, мисливство та надання пов'язаних із ними послуг",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
+    {
+        "code": "01.1",
+        "parent": "01",
+        "type": "group",
+        "name": "Вирощування однорічних і дворічних культур",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
+    {
+        "code": "01.11",
+        "parent": "01.1",
+        "type": "class",
+        "name": "Вирощування зернових культур (крім рису), бобових культур і насіння олійних культур",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
+    {
+        "code": "01.12",
+        "parent": "01.1",
+        "type": "class",
+        "name": "Вирощування рису",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
     {
         "code": "G",
         "parent": null,
@@ -15,8 +75,32 @@ const kvedData = [
         "restrictions": null
     },
     {
+        "code": "45",
+        "parent": null,
+        "type": "division",
+        "name": "Оптова та роздрібна торгівля автотранспортними засобами та мотоциклами, їх ремонт",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
+    {
+        "code": "45.20",
+        "parent": "45.2",
+        "type": "class",
+        "name": "Технічне обслуговування та ремонт автотранспортних засобів",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
+    {
         "code": "47",
-        "parent": "G",
+        "parent": null,
         "type": "division",
         "name": "Роздрібна торгівля, крім торгівлі автотранспортними засобами та мотоциклами",
         "isGeneralTaxSystem": true,
@@ -66,7 +150,7 @@ const kvedData = [
         "code": "47.91",
         "parent": "47.9",
         "type": "class",
-        "name": "Роздрібна торгівля, що здійснюється фірмами поштового замовлення або через Інтернет",
+        "name": "Роздрібна торгівля, що здійснюється фірмами поштового замовлення або через мережу Інтернет",
         "isGeneralTaxSystem": true,
         "allowedSimplifiedGroups": [
             2,
@@ -88,20 +172,8 @@ const kvedData = [
     },
     {
         "code": "62",
-        "parent": "J",
+        "parent": null,
         "type": "division",
-        "name": "Комп'ютерне програмування, консультування та пов'язана з ними діяльність",
-        "isGeneralTaxSystem": true,
-        "allowedSimplifiedGroups": [
-            2,
-            3
-        ],
-        "restrictions": null
-    },
-    {
-        "code": "62.0",
-        "parent": "62",
-        "type": "group",
         "name": "Комп'ютерне програмування, консультування та пов'язана з ними діяльність",
         "isGeneralTaxSystem": true,
         "allowedSimplifiedGroups": [
@@ -147,34 +219,10 @@ const kvedData = [
         "restrictions": null
     },
     {
-        "code": "62.09",
-        "parent": "62.0",
-        "type": "class",
-        "name": "Інша діяльність у сфері інформаційних технологій і комп'ютерних систем",
-        "isGeneralTaxSystem": true,
-        "allowedSimplifiedGroups": [
-            2,
-            3
-        ],
-        "restrictions": null
-    },
-    {
         "code": "63",
-        "parent": "J",
+        "parent": null,
         "type": "division",
         "name": "Надання інформаційних послуг",
-        "isGeneralTaxSystem": true,
-        "allowedSimplifiedGroups": [
-            2,
-            3
-        ],
-        "restrictions": null
-    },
-    {
-        "code": "63.1",
-        "parent": "63",
-        "type": "group",
-        "name": "Оброблення даних, розміщення інформації на веб-вузлах і пов'язана з ними діяльність",
         "isGeneralTaxSystem": true,
         "allowedSimplifiedGroups": [
             2,
@@ -208,7 +256,7 @@ const kvedData = [
     },
     {
         "code": "69",
-        "parent": "J",
+        "parent": null,
         "type": "division",
         "name": "Діяльність у сферах права та бухгалтерського обліку",
         "isGeneralTaxSystem": true,
@@ -243,10 +291,10 @@ const kvedData = [
         "restrictions": "⚠️ Для 2-ї групи дозволено лише надання послуг платникам ЄП або населенню."
     },
     {
-        "code": "73",
-        "parent": "M",
-        "type": "division",
-        "name": "Рекламна діяльність і дослідження кон'юнктури ринку",
+        "code": "70.22",
+        "parent": "70.2",
+        "type": "class",
+        "name": "Консультування з питань комерційної діяльності й керування",
         "isGeneralTaxSystem": true,
         "allowedSimplifiedGroups": [
             2,
@@ -280,7 +328,7 @@ const kvedData = [
     },
     {
         "code": "96",
-        "parent": "S",
+        "parent": null,
         "type": "division",
         "name": "Надання інших індивідуальних послуг",
         "isGeneralTaxSystem": true,
@@ -301,6 +349,66 @@ const kvedData = [
             3
         ],
         "restrictions": null
+    },
+    {
+        "code": "K",
+        "parent": null,
+        "type": "section",
+        "name": "Фінансова та страхова діяльність",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
+    {
+        "code": "64",
+        "parent": null,
+        "type": "division",
+        "name": "Надання фінансових послуг, крім страхування та пенсійного забезпечення",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [],
+        "restrictions": "⛔️ Фінансове посередництво та страхування заборонені на Єдиному податку."
+    },
+    {
+        "code": "64.19",
+        "parent": "64.1",
+        "type": "class",
+        "name": "Інші види грошового посередництва",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [],
+        "restrictions": "⛔️ Фінансове посередництво та страхування заборонені на Єдиному податку."
+    },
+    {
+        "code": "R",
+        "parent": null,
+        "type": "section",
+        "name": "Мистецтво, спорт, розваги та відпочинок",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [
+            2,
+            3
+        ],
+        "restrictions": null
+    },
+    {
+        "code": "92",
+        "parent": null,
+        "type": "division",
+        "name": "Діяльність із забезпечення азартними іграми",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [],
+        "restrictions": "⛔️ Організація азартних ігор та лотерей заборонена на Єдиному податку."
+    },
+    {
+        "code": "92.00",
+        "parent": "92.0",
+        "type": "class",
+        "name": "Діяльність із забезпечення азартними іграми",
+        "isGeneralTaxSystem": true,
+        "allowedSimplifiedGroups": [],
+        "restrictions": "⛔️ Організація азартних ігор та лотерей заборонена на Єдиному податку."
     }
 ];
 

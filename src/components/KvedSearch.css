@@ -32,6 +32,11 @@
 	padding: 1rem 1.2rem;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
+@media (max-width: 600px) {
+	.kved-search-input::placeholder {
+		font-size: 0.8rem;
+	}
+}
 
 .kved-list {
 	list-style: none;
@@ -47,7 +52,10 @@
 	background-color: var(--bg-block);
 	border: 1px solid var(--border-color);
 	border-radius: 8px;
-	transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
 }
 
 .kved-card:hover {
