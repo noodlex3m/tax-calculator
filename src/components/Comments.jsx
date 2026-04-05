@@ -16,6 +16,7 @@ import {
 	doc,
 	updateDoc,
 } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 // Валідатор (залишається без змін)
 const validateComment = (text) => {
@@ -97,8 +98,10 @@ const Comments = ({ articleId }) => {
 		if (window.confirm("Ви впевнені, що хочете видалити цей коментар?")) {
 			try {
 				await deleteDoc(doc(db, "comments", id));
+				toast.success("Коментар видалено!");
 			} catch (err) {
 				console.error("Помилка видалення:", err);
+				toast.error("Помилка доступу Firebase: " + err.message);
 			}
 		}
 	};
