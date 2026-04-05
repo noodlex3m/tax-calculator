@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }) => {
 					email: currentUser.email,
 					name: currentUser.displayName || "Користувач",
 					photoURL: currentUser.photoURL,
+					isAdmin: currentUser.email === "noodlex3m@gmail.com",
 				});
 			} else {
 				// Користувач вийшов

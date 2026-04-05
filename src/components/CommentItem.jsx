@@ -9,23 +9,26 @@ const CommentItem = ({
 	onDislike,
 	onDelete,
 	onEdit,
+	currentUser, // 👈 Отримуємо поточного юзера
 }) => {
 	const [isReplying, setIsReplying] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 
+	// 👇 ЛОГІКА ДОСТУПУ
+	const isAuthor = currentUser?.uid === comment.author.id;
+	const isAdmin = currentUser?.isAdmin;
+	const canEdit = isAuthor; // Тільки автор може редагувати свій текст
+	const canDelete = isAuthor || isAdmin; // Видалити може автор АБО адмін
+
 	const handleReplySubmit = (text) => {
 		const result = onAddComment(text, comment.id);
-		if (result && result.error) {
-			return result; // Повертаємо помилку назад у CommentForm
-		}
+		if (result && result.error) return result;
 		setIsReplying(false);
 	};
 
 	const handleEditSubmit = (text) => {
 		const result = onEdit(comment.id, text);
-		if (result && result.error) {
-			return result; // Повертаємо помилку назад у CommentForm
-		}
+		if (result && result.error) return result;
 		setIsEditing(false);
 	};
 
@@ -33,6 +36,22 @@ const CommentItem = ({
 		<li className="comment-card">
 			<div className="comment-author">
 				{comment.author.username}
+				{/* Якщо це адмін, додаємо бейдж */}
+				{comment.author.username.includes("Admin") ||
+				(comment.author.id === currentUser?.uid && isAdmin) ? (
+					<span
+						style={{
+							marginLeft: "8px",
+							background: "var(--primary-color)",
+							color: "white",
+							padding: "2px 6px",
+							borderRadius: "4px",
+							fontSize: "0.7rem",
+						}}
+					>
+						Admin
+					</span>
+				) : null}
 				<span className="comment-date">
 					{new Date(comment.createdAt).toLocaleString("uk-UA")}
 				</span>
@@ -47,7 +66,7 @@ const CommentItem = ({
 					autoFocus
 				/>
 			) : (
-				<p className="comment-text">{comment.content}</p>
+				<div className="comment-text">{comment.content}</div>
 			)}
 
 			<div className="comment-actions">
@@ -55,28 +74,25 @@ const CommentItem = ({
 					onClick={() => setIsReplying(!isReplying)}
 					className="comment-action-btn"
 				>
-					💬 Відповісти
+					↩️ Відповісти
 				</button>
 				<button
 					onClick={() => onLike(comment.id)}
-					className={`comment-action-btn ${
-						comment.userHasLiked ? "active" : ""
-					}`}
+					className="comment-action-btn"
 				>
-					👍 {comment.likesCount}
+					👍 {comment.likesCount || 0}
 				</button>
 				<button
 					onClick={() => onDislike(comment.id)}
-					className={`comment-action-btn ${
-						comment.userHasDisliked ? "active" : ""
-					}`}
+					className="comment-action-btn"
 				>
-					👎 {comment.dislikesCount}
+					👎 {comment.dislikesCount || 0}
 				</button>
 
-				{comment.author.id === "user_me" && (
+				{/* 👇 Розумні кнопки дій */}
+				{(canEdit || canDelete) && (
 					<div className="comment-author-actions">
-						{!isEditing && (
+						{canEdit && !isEditing && (
 							<button
 								onClick={() => setIsEditing(true)}
 								className="comment-edit-btn"
@@ -84,12 +100,14 @@ const CommentItem = ({
 								✏️ Редагувати
 							</button>
 						)}
-						<button
-							onClick={() => onDelete(comment.id)}
-							className="comment-delete-btn"
-						>
-							🗑️ Видалити
-						</button>
+						{canDelete && (
+							<button
+								onClick={() => onDelete(comment.id)}
+								className="comment-delete-btn"
+							>
+								🗑️ Видалити
+							</button>
+						)}
 					</div>
 				)}
 			</div>
@@ -111,12 +129,13 @@ const CommentItem = ({
 						<CommentItem
 							key={reply.id}
 							comment={reply}
-							replies={[]} // For depth 1 we don't pass deeply nested replies yet. We will compute this in Comments.js
+							replies={[]}
 							onAddComment={onAddComment}
 							onLike={onLike}
 							onDislike={onDislike}
 							onDelete={onDelete}
 							onEdit={onEdit}
+							currentUser={currentUser} // 👈 Передаємо юзера далі у відповіді
 						/>
 					))}
 				</ul>

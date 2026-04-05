@@ -192,6 +192,7 @@ const Comments = ({ articleId }) => {
 						onDislike={handleDislike}
 						onDelete={handleDelete}
 						onEdit={handleEdit}
+						currentUser={user}
 					/>
 				))}
 			</ul>
