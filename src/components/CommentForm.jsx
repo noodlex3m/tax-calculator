@@ -11,12 +11,12 @@ const CommentForm = ({
 	const [text, setText] = useState(initialValue);
 	const [error, setError] = useState(null); // Додаємо стан помилки
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!text.trim()) return;
 
-		// onSubmit тепер може повернути об'єкт { error: 'Помилка' }
-		const result = onSubmit(text);
+		const result = await onSubmit(text);
+
 		if (result && result.error) {
 			setError(result.error);
 		} else {
