@@ -1,71 +1,132 @@
+// src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
+import { auth } from "../firebase";
+import {
+	createUserWithEmailAndPassword,
+	signInWithEmailAndPassword,
+	signOut,
+	onAuthStateChanged,
+	updateProfile,
+	GoogleAuthProvider,
+	signInWithPopup,
+} from "firebase/auth";
 
-// Створюємо контекст
 const AuthContext = createContext();
 
-// Створюємо провайдер
 export const AuthProvider = ({ children }) => {
-	// зберігаємо наші локальні стани
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [user, setUser] = useState(null);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(true); // Важливо для Firebase
 
-	// Ініціалізація при завантаженні
+	// Відстеження стану авторизації (Firebase автоматично пам'ятає сесію)
 	useEffect(() => {
-		const storedAuth = localStorage.getItem("taxUser");
-		if (storedAuth) {
-			const { isAuthenticated, user } = JSON.parse(storedAuth);
-			setIsAuthenticated(isAuthenticated);
-			setUser(user);
-		}
-		setLoading(false);
+		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+			if (currentUser) {
+				// Користувач увійшов
+				setIsAuthenticated(true);
+				setUser({
+					uid: currentUser.uid,
+					email: currentUser.email,
+					name: currentUser.displayName || "Користувач",
+					photoURL: currentUser.photoURL,
+				});
+			} else {
+				// Користувач вийшов
+				setIsAuthenticated(false);
+				setUser(null);
+			}
+			setLoading(false); // Завершили перевірку сесії
+		});
+
+		// Відписуємось від прослуховування при демонтажі компонента
+		return () => unsubscribe();
 	}, []);
 
-	const login = (user) => {
-		setIsAuthenticated(true);
-		setUser(user);
-		localStorage.setItem(
-			"taxUser",
-			JSON.stringify({ isAuthenticated: true, user }),
-		);
+	// Реєстрація через Email та Пароль
+	const register = async (email, password, name) => {
+		try {
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				email,
+				password,
+			);
+			// Додаємо ім'я до профілю Firebase
+			await updateProfile(userCredential.user, {
+				displayName: name,
+			});
+			// onAuthStateChanged автоматично оновить стан user
+		} catch (error) {
+			console.error("Помилка реєстрації:", error.message);
+			throw new Error(
+				"Не вдалося зареєструватися. Можливо, такий email вже існує або пароль надто простий.",
+			);
+		}
 	};
 
-	const register = (email, password, name) => {
-		// Створюємо об'єкт нового користувача
-		// (пароль в localStorage зазвичай не зберігають заради безпеки, тому збережемо лише email та ім'я)
-		const newUser = { email, name };
-
-		// Оновлюємо стани (робимо користувача авторизованим)
-		setIsAuthenticated(true);
-		setUser(newUser);
-
-		// Зберігаємо в localStorage
-		localStorage.setItem(
-			"taxUser",
-			JSON.stringify({ isAuthenticated: true, user: newUser }),
-		);
+	// Вхід через Email та Пароль
+	const login = async (email, password) => {
+		try {
+			await signInWithEmailAndPassword(auth, email, password);
+			// onAuthStateChanged автоматично оновить стан user
+		} catch (error) {
+			console.error("Помилка входу:", error.message);
+			throw new Error("Невірний email або пароль.");
+		}
 	};
 
-	const updateUser = (updatedData) => {
-		const updatedUser = { ...user, ...updatedData };
-		setUser(updatedUser);
-		localStorage.setItem(
-			"taxUser",
-			JSON.stringify({ isAuthenticated: true, user: updatedUser })
-		);
+	// Вхід через Google
+	const loginWithGoogle = async () => {
+		const provider = new GoogleAuthProvider();
+		try {
+			await signInWithPopup(auth, provider);
+			// onAuthStateChanged автоматично оновить стан user
+		} catch (error) {
+			console.error("Помилка входу через Google:", error.message);
+			throw new Error("Не вдалося увійти через Google.");
+		}
 	};
 
-	const logout = () => {
-		setIsAuthenticated(false);
-		setUser(null);
-		localStorage.removeItem("taxUser");
+	// Вихід з акаунту
+	const logout = async () => {
+		try {
+			await signOut(auth);
+		} catch (error) {
+			console.error("Помилка при виході:", error.message);
+		}
+	};
+
+	// Оновлення профілю (для сторінки Налаштування)
+	const updateUser = async (updatedData) => {
+		if (!auth.currentUser) return;
+		try {
+			await updateProfile(auth.currentUser, {
+				displayName: updatedData.name,
+				// email оновлюється окремим методом у Firebase (потребує переавторизації),
+				// тому поки що оновлюємо лише ім'я
+			});
+			// Оновлюємо локальний стан, щоб UI миттєво відреагував
+			setUser((prev) => ({ ...prev, name: updatedData.name }));
+		} catch (error) {
+			console.error("Помилка оновлення профілю:", error.message);
+			throw new Error("Не вдалося оновити профіль.");
+		}
 	};
 
 	return (
 		<AuthContext.Provider
-			value={{ isAuthenticated, user, login, logout, loading, register, updateUser }}
+			value={{
+				isAuthenticated,
+				user,
+				loading,
+				register,
+				login,
+				loginWithGoogle,
+				logout,
+				updateUser,
+			}}
 		>
-			{children}
+			{/* Не рендеримо додаток, поки Firebase не перевірить сесію */}
+			{!loading && children}
 		</AuthContext.Provider>
 	);
 };

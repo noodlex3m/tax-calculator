@@ -114,3 +114,37 @@
 	color: #fde68a;
 	background-color: rgba(255, 193, 7, 0.05);
 }
+
+/* Google Button Styling */
+.auth-google-btn {
+	background-color: white;
+	color: #3c4043;
+	border: 1px solid #dadce0;
+	padding: 0.9rem;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 500;
+	font-size: 1rem;
+	transition: background-color 0.2s, box-shadow 0.2s;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.8rem;
+	width: 100%;
+	margin-top: 0.5rem;
+}
+
+.auth-google-btn:hover {
+	background-color: #f8f9fa;
+	box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
+}
+
+[data-theme="dark"] .auth-google-btn {
+	background-color: #303134;
+	color: #e8eaed;
+	border-color: #5f6368;
+}
+
+[data-theme="dark"] .auth-google-btn:hover {
+	background-color: #3c4043;
+}
