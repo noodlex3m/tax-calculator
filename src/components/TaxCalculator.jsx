@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
 	calculateTaxes,
 	calculateNetProfit,
@@ -11,7 +11,15 @@ import { Helmet } from "react-helmet-async";
 import TaxAdvice from "./TaxAdvice";
 import "./TaxCalculator.css";
 
+// НОВІ ІМПОРТИ ДЛЯ FIREBASE
+import { useAuth } from "../context/AuthContext";
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
+
 function TaxCalculator() {
+	// Отримуємо поточного користувача
+	const { user } = useAuth();
+
 	const [income, setIncome] = useState("");
 	const [taxSystem, setTaxSystem] = useState("");
 	const [taxGroup, setTaxGroup] = useState("");
@@ -19,14 +27,7 @@ function TaxCalculator() {
 	const [expenseAmount, setExpenseAmount] = useState("");
 	const [taxResult, setTaxResult] = useState(null);
 
-	const [history, setHistory] = useState(() => {
-		const saved = localStorage.getItem("taxHistory");
-		return saved ? JSON.parse(saved) : [];
-	});
 
-	useEffect(() => {
-		localStorage.setItem("taxHistory", JSON.stringify(history));
-	}, [history]);
 
 	const netProfit = calculateNetProfit(grossIncomeAmount, expenseAmount);
 
@@ -44,7 +45,7 @@ function TaxCalculator() {
 		}
 	};
 
-	function handleSubmit(e) {
+	async function handleSubmit(e) {
 		e.preventDefault();
 		const incomeToUse = taxSystem === "general" ? grossIncomeAmount : income;
 
@@ -68,7 +69,20 @@ function TaxCalculator() {
 			military: result.yearly.military || 0,
 			total: result.yearly.total,
 		};
-		setHistory((prev) => [newItem, ...prev].slice(0, 5));
+
+		// 🔥 МАГІЯ FIREBASE: Зберігаємо в базу даних, якщо користувач авторизований
+		if (user) {
+			try {
+				// addDoc автоматично створює колекцію "calculations" і новий документ
+				await addDoc(collection(db, "calculations"), {
+					...newItem,
+					userId: user.uid, // Прив'язуємо розрахунок до конкретної людини
+				});
+				console.log("Успішно збережено в Firestore!");
+			} catch (error) {
+				console.error("Помилка збереження в базу:", error);
+			}
+		}
 	}
 
 	const incomeForChart =
@@ -260,28 +274,6 @@ function TaxCalculator() {
 						income={grossIncomeAmount}
 						isExcess={taxResult.yearly.excess > 0}
 					/>
-
-					{history.length > 0 && (
-						<div className="history-block">
-							<h3>📜 Історія запитів</h3>
-							<button
-								onClick={() => setHistory([])}
-								className="clear-history-btn"
-							>
-								Очистити
-							</button>
-							<ul>
-								{history.map((item, index) => (
-									<li key={index}>
-										<span>
-											{item.date} | {item.system}
-										</span>
-										<strong> {formatMoney(item.total)} / рік</strong>
-									</li>
-								))}
-							</ul>
-						</div>
-					)}
 				</div>
 			)}
 		</div>

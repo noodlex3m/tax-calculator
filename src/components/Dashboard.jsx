@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./Dashboard.css";
 
+// НОВІ ІМПОРТИ ДЛЯ FIREBASE
+import { db } from "../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
+
 const Dashboard = () => {
 	const { user, logout, updateUser } = useAuth();
 	const [history, setHistory] = useState([]);
@@ -26,28 +30,49 @@ const Dashboard = () => {
 		setProfileError("");
 
 		try {
-			// Зберігаємо нове ім'я та email у локальний контекст
 			updateUser({ name: editName, email: editEmail });
 			setProfileMessage("✅ Профіль успішно оновлено!");
-			setEditPassword(""); // Очищуємо поле паролю
+			setEditPassword("");
 		} catch (err) {
 			console.error("Profile update error:", err);
 			setProfileError("❌ Помилка при оновленні профілю.");
 		}
 	};
 
+	// 🔥 МАГІЯ FIREBASE: Читання з бази даних
 	useEffect(() => {
-		// 1. Беремо дані з localStorage за ключем "taxHistory"
-		const savedHistory = localStorage.getItem("taxHistory");
+		const fetchHistoryFromFirebase = async () => {
+			if (!user) return; // Якщо немає користувача, не робимо запит
 
-		// 2. Перевіряємо, чи є дані
-		if (savedHistory) {
-			// 3. Перетворюємо текст savedHistory назад у JavaScript-масив
-			const parsedHistory = JSON.parse(savedHistory);
-			// 4. Записуємо отриманий масив у змінну history (перевертаємо, щоб нові були зверху)
-			setHistory([...parsedHistory].reverse());
+			try {
+				// Створюємо запит: шукаємо лише ті документи, де userId співпадає з нашим
+				const q = query(
+					collection(db, "calculations"),
+					where("userId", "==", user.uid),
+				);
+
+				// Виконуємо запит
+				const querySnapshot = await getDocs(q);
+				const fetchedHistory = [];
+
+				// Перебираємо отримані документи
+				querySnapshot.forEach((doc) => {
+					fetchedHistory.push(doc.data());
+				});
+
+				// Сортуємо від найновіших до найстаріших
+				fetchedHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+				setHistory(fetchedHistory);
+			} catch (error) {
+				console.error("Помилка завантаження історії:", error);
+			}
+		};
+
+		if (activeTab === "history") {
+			fetchHistoryFromFirebase();
 		}
-	}, []);
+	}, [user, activeTab]);
 
 	return (
 		<div className="dashboard-container">
@@ -179,8 +204,19 @@ const Dashboard = () => {
 
 					<form className="profile-form" onSubmit={handleProfileUpdate}>
 						<h3>Налаштування акаунту</h3>
-						
-						{profileMessage && <div className="auth-warning" style={{ color: "green", borderColor: "green", backgroundColor: "rgba(0,128,0,0.1)" }}>{profileMessage}</div>}
+
+						{profileMessage && (
+							<div
+								className="auth-warning"
+								style={{
+									color: "green",
+									borderColor: "green",
+									backgroundColor: "rgba(0,128,0,0.1)",
+								}}
+							>
+								{profileMessage}
+							</div>
+						)}
 						{profileError && <div className="auth-error">{profileError}</div>}
 
 						<div className="form-group">
@@ -212,7 +248,9 @@ const Dashboard = () => {
 								className="auth-input"
 								placeholder="Залиште пустим, якщо не змінюєте..."
 							/>
-							<small className="hint-text">Ми поки що не зберігаємо паролі в базі даних (у розробці).</small>
+							<small className="hint-text">
+								Ми поки що не зберігаємо паролі в базі даних (у розробці).
+							</small>
 						</div>
 
 						<button type="submit" className="auth-submit-btn">
