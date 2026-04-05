@@ -4,7 +4,6 @@ import Skeleton from "./Skeleton";
 import "./News.css";
 import { useSimulatedApi } from "../hooks/useSimulatedApi";
 import Comments from "./Comments";
-import commentsData from "../data/commentsData";
 
 function ArticlePage() {
 	const { id } = useParams();
@@ -124,8 +123,8 @@ function ArticlePage() {
 					🛠️ <strong>Увага!</strong> Розділ коментарів знаходиться в стадії
 					розробки.
 				</div>
+				<Comments articleId={article.id} />
 			</div>
-			<Comments comments={commentsData.filter((c) => c.postId === id)} />
 		</div>
 	);
 }

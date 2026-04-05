@@ -1,9 +1,23 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import "./Comments.css";
 import CommentForm from "./CommentForm";
 import CommentItem from "./CommentItem";
 
-// Функція повертає текст помилки, якщо є погані слова, або null, якщо все чисто
+// 🔥 МАГІЯ FIREBASE
+import { useAuth } from "../context/AuthContext";
+import { db } from "../firebase";
+import {
+	collection,
+	addDoc,
+	query,
+	where,
+	onSnapshot,
+	deleteDoc,
+	doc,
+	updateDoc,
+} from "firebase/firestore";
+
+// Валідатор (залишається без змін)
 const validateComment = (text) => {
 	const bannedWords = ["спам", "реклама", "лайка", "дурень", "ідіот"];
 	const hasBadWords = bannedWords.some((word) =>
@@ -14,164 +28,120 @@ const validateComment = (text) => {
 		: null;
 };
 
-const Comments = ({ comments = [] }) => {
-	const [commentList, setCommentList] = useState(() => {
-		try {
-			const saved = localStorage.getItem("comments");
-			return saved ? JSON.parse(saved) : comments;
-		} catch (_err) {
-			void _err;
-			return comments;
-		}
-	});
+// Компонент приймає articleId, щоб знати, до якої статті ці коментарі!
+const Comments = ({ articleId }) => {
+	// 1. Отримуємо поточного користувача
+	const { user } = useAuth();
 
+	const [commentList, setCommentList] = useState([]);
 	const [sortBy, setSortBy] = useState("newest");
 
+	// 2. ЧИТАННЯ З БАЗИ (В РЕАЛЬНОМУ ЧАСІ)
 	useEffect(() => {
-		localStorage.setItem("comments", JSON.stringify(commentList));
-	}, [commentList]);
+		if (!articleId) return;
 
-	const handleAddComment = (text, parentId = null) => {
-		// Якщо текст порожній (або лише пробіли) — нічого не робимо
+		// Шукаємо коментарі тільки для поточної статті
+		const q = query(
+			collection(db, "comments"),
+			where("articleId", "==", String(articleId)),
+		);
+
+		// onSnapshot - автоматично оновлює дані, коли хтось додає новий коментар
+		const unsubscribe = onSnapshot(q, (snapshot) => {
+			const commentsData = snapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
+			setCommentList(commentsData);
+		});
+
+		// Відключаємо слухача, коли користувач йде зі сторінки
+		return () => unsubscribe();
+	}, [articleId]);
+
+	// 3. ДОДАВАННЯ КОМЕНТАРЯ В БАЗУ
+	const handleAddComment = async (text, parentId = null) => {
+		// Якщо не авторизований - повертаємо помилку
+		if (!user) {
+			return {
+				error: "Будь ласка, увійдіть в кабінет, щоб залишити коментар.",
+			};
+		}
+
 		if (!text.trim()) return;
 
-		// 1. Перевіряємо текст коментаря функцією
-		const errorMessage = validateComment(text);
+		const validationError = validateComment(text);
+		if (validationError) return { error: validationError };
 
-		// 2. Якщо є помилка - повертаємо її
-		if (errorMessage) {
-			return { error: errorMessage };
+		try {
+			await addDoc(collection(db, "comments"), {
+				articleId: String(articleId),
+				content: text,
+				parentId: parentId,
+				author: {
+					id: user.uid,
+					username: user.name,
+				},
+				createdAt: new Date().toISOString(),
+				likesCount: 0,
+				dislikesCount: 0,
+			});
+		} catch (err) {
+			console.error("Помилка додавання коментаря:", err);
+			return { error: "Не вдалося зберегти коментар." };
 		}
-
-		// Якщо заборонених слів немає - продовжуємо створювати коментар
-		const newComment = {
-			id: `cmt_${Date.now()}`,
-			postId: "1",
-			content: text,
-			author: {
-				id: "user_me",
-				username: "Гість",
-				role: "user",
-			},
-			createdAt: new Date().toISOString(),
-			parentId,
-			likesCount: 0,
-			dislikesCount: 0,
-			userHasLiked: false,
-			userHasDisliked: false,
-		};
-
-		setCommentList((prevComments) => [...prevComments, newComment]);
 	};
 
-	const handleEdit = (id, newText) => {
-		const errorMessage = validateComment(newText);
-
-		if (errorMessage) {
-			return { error: errorMessage };
-		}
-
-		setCommentList((prevComments) =>
-			prevComments.map((comment) =>
-				comment.id === id ? { ...comment, content: newText } : comment,
-			),
-		);
-	};
-
-	const handleLike = (id) => {
-		setCommentList((prevComments) =>
-			prevComments.map((comment) => {
-				if (comment.id === id) {
-					const isLiked = comment.userHasLiked;
-					const isDisliked = comment.userHasDisliked;
-
-					return {
-						...comment,
-						likesCount: isLiked
-							? comment.likesCount - 1
-							: comment.likesCount + 1,
-						userHasLiked: !isLiked,
-						dislikesCount:
-							!isLiked && isDisliked
-								? comment.dislikesCount - 1
-								: comment.dislikesCount,
-						userHasDisliked: !isLiked && isDisliked ? false : isDisliked,
-					};
-				}
-				return comment;
-			}),
-		);
-	};
-
-	const handleDislike = (id) => {
-		setCommentList((prevComments) =>
-			prevComments.map((comment) => {
-				if (comment.id === id) {
-					const isLiked = comment.userHasLiked;
-					const isDisliked = comment.userHasDisliked;
-
-					return {
-						...comment,
-						dislikesCount: isDisliked
-							? comment.dislikesCount - 1
-							: comment.dislikesCount + 1,
-						userHasDisliked: !isDisliked,
-						likesCount:
-							!isDisliked && isLiked
-								? comment.likesCount - 1
-								: comment.likesCount,
-						userHasLiked: !isDisliked && isLiked ? false : isLiked,
-					};
-				}
-				return comment;
-			}),
-		);
-	};
-
-	const handleDeleteComment = (id) => {
-		// Обережно: видалення батьківського коментаря має видаляти і його відповіді
-		// Але поки напишемо просте видалення, згодом можна додати рекурсивне.
-		setCommentList((prevComments) =>
-			prevComments.filter((comment) => comment.id !== id),
-		);
-	};
-
-	// --- Логіка перетворення плоского списку в деревооб'єкт (Tree Structure) ---
-	const buildCommentTree = (commentsFlatList) => {
-		if (!Array.isArray(commentsFlatList) || commentsFlatList.length === 0)
-			return [];
-
-		const tree = [];
-		const lookup = {};
-
-		// Спочатку заносимо всі коментарі у словник для швидкого доступу
-		commentsFlatList.forEach((comment) => {
-			lookup[comment.id] = { ...comment, replies: [] };
-		});
-
-		// Потім проходимось і розподіляємо відповідей по їхнім "батькам"
-		commentsFlatList.forEach((comment) => {
-			if (comment.parentId) {
-				// Якщо є parentId, і такий parent існує - додаємо у його replies
-				if (lookup[comment.parentId]) {
-					lookup[comment.parentId].replies.push(lookup[comment.id]);
-				}
-			} else {
-				// Якщо parentId немає (або null) - це коментар верхнього рівня
-				tree.push(lookup[comment.id]);
+	// 4. ВИДАЛЕННЯ З БАЗИ
+	const handleDelete = async (id) => {
+		if (window.confirm("Ви впевнені, що хочете видалити цей коментар?")) {
+			try {
+				await deleteDoc(doc(db, "comments", id));
+			} catch (err) {
+				console.error("Помилка видалення:", err);
 			}
-		});
-
-		return tree;
+		}
 	};
 
-	const commentTree = useMemo(
-		() => buildCommentTree(commentList),
-		[commentList],
-	);
+	// 5. РЕДАГУВАННЯ В БАЗІ
+	const handleEdit = async (id, newText) => {
+		const validationError = validateComment(newText);
+		if (validationError) return { error: validationError };
 
-	// 👇 Магія сортування тут
-	const sortedComments = [...commentTree].sort((a, b) => {
+		try {
+			await updateDoc(doc(db, "comments", id), {
+				content: newText,
+			});
+		} catch (err) {
+			console.error("Помилка редагування:", err);
+			return { error: "Не вдалося оновити." };
+		}
+	};
+
+	// Прості лайки (поки без перевірки на унікальність, для прикладу)
+	const handleLike = async (id) => {
+		if (!user) return alert("Увійдіть, щоб оцінити!");
+		const comment = commentList.find((c) => c.id === id);
+		if (comment) {
+			await updateDoc(doc(db, "comments", id), {
+				likesCount: (comment.likesCount || 0) + 1,
+			});
+		}
+	};
+
+	const handleDislike = async (id) => {
+		if (!user) return alert("Увійдіть, щоб оцінити!");
+		const comment = commentList.find((c) => c.id === id);
+		if (comment) {
+			await updateDoc(doc(db, "comments", id), {
+				dislikesCount: (comment.dislikesCount || 0) + 1,
+			});
+		}
+	};
+
+	const mainComments = commentList.filter((c) => c.parentId === null);
+
+	const sortedComments = [...mainComments].sort((a, b) => {
 		if (sortBy === "newest") {
 			return new Date(b.createdAt) - new Date(a.createdAt);
 		}
@@ -179,7 +149,7 @@ const Comments = ({ comments = [] }) => {
 			return new Date(a.createdAt) - new Date(b.createdAt);
 		}
 		if (sortBy === "popular") {
-			return b.likesCount - a.likesCount;
+			return (b.likesCount || 0) - (a.likesCount || 0);
 		}
 		return 0;
 	});
@@ -192,7 +162,6 @@ const Comments = ({ comments = [] }) => {
 					<div className="comments-meta">{commentList.length} Коментарів</div>
 				</div>
 
-				{/* 👇 Випадаючий список для сортування */}
 				<div className="sort-controls">
 					<label htmlFor="sort-select">Сортувати:</label>
 					<select
@@ -208,7 +177,6 @@ const Comments = ({ comments = [] }) => {
 				</div>
 			</header>
 
-			{/* Форма головного рівня (без parentId) */}
 			<div className="main-composer-wrapper" style={{ marginBottom: "2rem" }}>
 				<CommentForm onSubmit={(text) => handleAddComment(text, null)} />
 			</div>
@@ -218,11 +186,11 @@ const Comments = ({ comments = [] }) => {
 					<CommentItem
 						key={comment.id}
 						comment={comment}
-						replies={comment.replies}
+						replies={commentList.filter((c) => c.parentId === comment.id)}
 						onAddComment={handleAddComment}
 						onLike={handleLike}
 						onDislike={handleDislike}
-						onDelete={handleDeleteComment}
+						onDelete={handleDelete}
 						onEdit={handleEdit}
 					/>
 				))}

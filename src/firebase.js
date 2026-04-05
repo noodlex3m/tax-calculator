@@ -3,12 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-	apiKey: "AIzaSyCETpVDvF3zvEIThsVkAkYWKHJ2SmndMZU",
-	authDomain: "tax-calculator-dbead.firebaseapp.com",
-	projectId: "tax-calculator-dbead",
-	storageBucket: "tax-calculator-dbead.firebasestorage.app",
-	messagingSenderId: "980826599598",
-	appId: "1:980826599598:web:c4e4f3393b6b755497fd3f",
+	apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+	authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+	projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+	storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+	messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+	appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Ініціалізація Firebase
