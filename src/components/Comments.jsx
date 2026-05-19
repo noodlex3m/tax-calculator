@@ -15,6 +15,8 @@ import {
 	deleteDoc,
 	doc,
 	updateDoc,
+	arrayUnion,
+	arrayRemove,
 } from "firebase/firestore";
 import toast from "react-hot-toast";
 
@@ -86,6 +88,8 @@ const Comments = ({ articleId }) => {
 				createdAt: new Date().toISOString(),
 				likesCount: 0,
 				dislikesCount: 0,
+				likedBy: [],
+				dislikedBy: [],
 			});
 		} catch (err) {
 			console.error("Помилка додавання коментаря:", err);
@@ -121,24 +125,84 @@ const Comments = ({ articleId }) => {
 		}
 	};
 
-	// Прості лайки (поки без перевірки на унікальність, для прикладу)
+	// Розумні лайки з перевіркою на унікальність
 	const handleLike = async (id) => {
-		if (!user) return alert("Увійдіть, щоб оцінити!");
+		if (!user) {
+			toast.error("Увійдіть у систему, щоб оцінити коментар!");
+			return;
+		}
+		
 		const comment = commentList.find((c) => c.id === id);
-		if (comment) {
-			await updateDoc(doc(db, "comments", id), {
-				likesCount: (comment.likesCount || 0) + 1,
-			});
+		if (!comment) return;
+
+		const likedBy = comment.likedBy || [];
+		const dislikedBy = comment.dislikedBy || [];
+		const uid = user.uid;
+		const docRef = doc(db, "comments", id);
+
+		try {
+			if (likedBy.includes(uid)) {
+				// Якщо вже лайкнув - знімаємо лайк
+				await updateDoc(docRef, {
+					likedBy: arrayRemove(uid),
+					likesCount: Math.max(0, (comment.likesCount || 1) - 1),
+				});
+			} else {
+				// Додаємо лайк
+				const updates = {
+					likedBy: arrayUnion(uid),
+					likesCount: (comment.likesCount || 0) + 1,
+				};
+				// Якщо був дизлайк, знімаємо його
+				if (dislikedBy.includes(uid)) {
+					updates.dislikedBy = arrayRemove(uid);
+					updates.dislikesCount = Math.max(0, (comment.dislikesCount || 1) - 1);
+				}
+				await updateDoc(docRef, updates);
+			}
+		} catch (err) {
+			console.error("Помилка оцінювання:", err);
+			toast.error("Не вдалося оцінити коментар");
 		}
 	};
 
 	const handleDislike = async (id) => {
-		if (!user) return alert("Увійдіть, щоб оцінити!");
+		if (!user) {
+			toast.error("Увійдіть у систему, щоб оцінити коментар!");
+			return;
+		}
+		
 		const comment = commentList.find((c) => c.id === id);
-		if (comment) {
-			await updateDoc(doc(db, "comments", id), {
-				dislikesCount: (comment.dislikesCount || 0) + 1,
-			});
+		if (!comment) return;
+
+		const likedBy = comment.likedBy || [];
+		const dislikedBy = comment.dislikedBy || [];
+		const uid = user.uid;
+		const docRef = doc(db, "comments", id);
+
+		try {
+			if (dislikedBy.includes(uid)) {
+				// Знімаємо дизлайк
+				await updateDoc(docRef, {
+					dislikedBy: arrayRemove(uid),
+					dislikesCount: Math.max(0, (comment.dislikesCount || 1) - 1),
+				});
+			} else {
+				// Додаємо дизлайк
+				const updates = {
+					dislikedBy: arrayUnion(uid),
+					dislikesCount: (comment.dislikesCount || 0) + 1,
+				};
+				// Якщо був лайк, знімаємо його
+				if (likedBy.includes(uid)) {
+					updates.likedBy = arrayRemove(uid);
+					updates.likesCount = Math.max(0, (comment.likesCount || 1) - 1);
+				}
+				await updateDoc(docRef, updates);
+			}
+		} catch (err) {
+			console.error("Помилка оцінювання:", err);
+			toast.error("Не вдалося оцінити коментар");
 		}
 	};
 

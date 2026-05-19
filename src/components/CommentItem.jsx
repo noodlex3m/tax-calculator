@@ -19,6 +19,8 @@ const CommentItem = ({
 	const isAdmin = currentUser?.isAdmin;
 	const canEdit = isAuthor; // Тільки автор може редагувати свій текст
 	const canDelete = isAuthor || isAdmin; // Видалити може автор АБО адмін
+	const userHasLiked = comment.likedBy?.includes(currentUser?.uid);
+	const userHasDisliked = comment.dislikedBy?.includes(currentUser?.uid);
 
 	const handleReplySubmit = (text) => {
 		const result = onAddComment(text, comment.id);
@@ -78,13 +80,13 @@ const CommentItem = ({
 				</button>
 				<button
 					onClick={() => onLike(comment.id)}
-					className="comment-action-btn"
+					className={`comment-action-btn ${userHasLiked ? "active" : ""}`}
 				>
 					👍 {comment.likesCount || 0}
 				</button>
 				<button
 					onClick={() => onDislike(comment.id)}
-					className="comment-action-btn"
+					className={`comment-action-btn ${userHasDisliked ? "active" : ""}`}
 				>
 					👎 {comment.dislikesCount || 0}
 				</button>
