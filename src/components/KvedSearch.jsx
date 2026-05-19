@@ -16,9 +16,14 @@ const KvedSearch = () => {
 	return (
 		<div className="kved-container">
 			<div className="auth-warning" style={{ marginBottom: "2rem", textAlign: "center" }}>
-				<strong style={{ fontSize: "1.1rem" }}>🚧 Довідник КВЕД у процесі наповнення</strong>
+				<strong style={{ fontSize: "1.1rem" }}>🚧 Довідник КВЕД у процесі наповнення та перевірки</strong>
 				<p style={{ marginTop: "0.5rem", marginBottom: 0, color: "var(--text-muted)" }}>
-					Станом на зараз довідник налічує щонайменше <strong>{kvedData.length}</strong> КВЕДів. Далі буде більше!
+					Станом на зараз довідник налічує <strong>{kvedData.length}</strong> КВЕДів. 
+				</p>
+				<p style={{ marginTop: "0.5rem", marginBottom: 0, fontSize: "0.85rem", color: "var(--text-color)" }}>
+					<em>Увага: інформація щодо дозволених груп Єдиного податку наразі верифікується згідно з ПКУ. 
+					Наприклад, здійснення діяльності з продажу підакцизних товарів (таких як легкові автомобілі за КВЕД 45.11) 
+					забороняє перебування на 1-3 групах ЄП відповідно до п.п. 3 п.п. 291.5.1 ст. 291 ПКУ.</em>
 				</p>
 			</div>
 			<h2>📚 Довідник КВЕД</h2>
