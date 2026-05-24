@@ -4,9 +4,9 @@ import { Helmet } from "react-helmet-async";
 import FaqItem from "./FaqItem";
 import faqData from "../data/faqData";
 
-// 🔥 МІГРАЦІЯ НА FIREBASE
+// 🔥 МІГРАЦІЯ НА FIREBASE (ОПТИМІЗОВАНО)
 import { db } from "../firebase";
-import { collection, onSnapshot, query } from "firebase/firestore";
+import { collection, getDocs, query } from "firebase/firestore";
 
 function Faq() {
 	const [faqList, setFaqList] = useState([]);
@@ -15,16 +15,19 @@ function Faq() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("Всі");
 
-	// 1. ЗАВАНТАЖЕННЯ ДАНИХ З FIREBASE ЗІ СТАТИЧНИМ FALLBACK
+	// 1. ЗАВАНТАЖЕННЯ ДАНИХ З FIREBASE (ОПТИМІЗОВАНО ПО ЛІМІТАХ)
 	useEffect(() => {
-		const q = query(collection(db, "faqs"));
-		const unsubscribe = onSnapshot(
-			q,
-			(snapshot) => {
-				const items = snapshot.docs.map((doc) => ({
+		const fetchFaqs = async () => {
+			try {
+				setLoading(true);
+				const q = query(collection(db, "faqs"));
+				const querySnapshot = await getDocs(q);
+				
+				const items = querySnapshot.docs.map((doc) => ({
 					id: doc.id,
 					...doc.data(),
 				}));
+
 				// Якщо в Firestore ще немає даних, використовуємо локальний fallback
 				if (items.length === 0) {
 					setFaqList(faqData);
@@ -38,16 +41,15 @@ function Faq() {
 					});
 					setFaqList(sortedItems);
 				}
-				setLoading(false);
-			},
-			(error) => {
+			} catch (error) {
 				console.error("Помилка завантаження FAQ з Firestore, використовуємо fallback:", error);
 				setFaqList(faqData);
+			} finally {
 				setLoading(false);
 			}
-		);
+		};
 
-		return () => unsubscribe();
+		fetchFaqs();
 	}, []);
 
 	const filteredFaq = faqList
