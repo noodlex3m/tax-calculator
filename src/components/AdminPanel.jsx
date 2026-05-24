@@ -11,6 +11,8 @@ import { collection, addDoc } from "firebase/firestore";
 const AdminPanel = () => {
 	const { user, loading } = useAuth(); // Отримуємо поточного юзера та статус завантаження
 	const [activeTab, setActiveTab] = useState("news");
+	const [newsMode, setNewsMode] = useState("visual");
+	const [faqMode, setFaqMode] = useState("visual");
 
 	// Стани для форми новин
 	const [newsTitle, setNewsTitle] = useState("");
@@ -186,15 +188,43 @@ const AdminPanel = () => {
 					</div>
 
 					<div className="admin-form-group">
-						<label>Повний текст новини</label>
+						<div className="editor-header">
+							<label>Повний текст новини</label>
+							<div className="editor-mode-toggle">
+								<button
+									type="button"
+									className={`editor-mode-btn ${newsMode === "visual" ? "active" : ""}`}
+									onClick={() => setNewsMode("visual")}
+								>
+									✍️ Редактор
+								</button>
+								<button
+									type="button"
+									className={`editor-mode-btn ${newsMode === "code" ? "active" : ""}`}
+									onClick={() => setNewsMode("code")}
+								>
+									💻 HTML Код
+								</button>
+							</div>
+						</div>
 						<div className="quill-editor-wrapper">
-							<ReactQuill
-								theme="snow"
-								value={newsContent}
-								onChange={setNewsContent}
-								modules={modules}
-								placeholder="Напишіть текст новини тут, виділяйте слова для форматування..."
-							/>
+							{newsMode === "visual" ? (
+								<ReactQuill
+									theme="snow"
+									value={newsContent}
+									onChange={setNewsContent}
+									modules={modules}
+									placeholder="Напишіть текст новини тут, виділяйте слова для форматування..."
+								/>
+							) : (
+								<textarea
+									className="admin-code-editor"
+									value={newsContent}
+									onChange={(e) => setNewsContent(e.target.value)}
+									placeholder="<p>Введіть ваш HTML-код тут...</p>"
+									rows="12"
+								/>
+							)}
 						</div>
 					</div>
 
@@ -246,15 +276,43 @@ const AdminPanel = () => {
 					</div>
 
 					<div className="admin-form-group">
-						<label>Повна розгорнута відповідь</label>
+						<div className="editor-header">
+							<label>Повна розгорнута відповідь</label>
+							<div className="editor-mode-toggle">
+								<button
+									type="button"
+									className={`editor-mode-btn ${faqMode === "visual" ? "active" : ""}`}
+									onClick={() => setFaqMode("visual")}
+								>
+									✍️ Редактор
+								</button>
+								<button
+									type="button"
+									className={`editor-mode-btn ${faqMode === "code" ? "active" : ""}`}
+									onClick={() => setFaqMode("code")}
+								>
+									💻 HTML Код
+								</button>
+							</div>
+						</div>
 						<div className="quill-editor-wrapper">
-							<ReactQuill
-								theme="snow"
-								value={faqFullAnswer}
-								onChange={setFaqFullAnswer}
-								modules={modules}
-								placeholder="Напишіть детальну відповідь з посиланням на статті ПКУ..."
-							/>
+							{faqMode === "visual" ? (
+								<ReactQuill
+									theme="snow"
+									value={faqFullAnswer}
+									onChange={setFaqFullAnswer}
+									modules={modules}
+									placeholder="Напишіть детальну відповідь з посиланням на статті ПКУ..."
+								/>
+							) : (
+								<textarea
+									className="admin-code-editor"
+									value={faqFullAnswer}
+									onChange={(e) => setFaqFullAnswer(e.target.value)}
+									placeholder="<p>Введіть ваш HTML-код тут...</p>"
+									rows="12"
+								/>
+							)}
 						</div>
 					</div>
 

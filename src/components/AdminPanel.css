@@ -188,6 +188,74 @@ select.admin-input-field {
 	box-shadow: 0 4px 12px rgba(83, 91, 242, 0.2);
 }
 
+/* Editor Header and Mode Toggle */
+.editor-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.25rem;
+}
+
+.editor-mode-toggle {
+	display: flex;
+	background: var(--bg-input);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	padding: 0.2rem;
+	gap: 0.15rem;
+}
+
+.editor-mode-btn {
+	background: transparent;
+	border: none;
+	color: var(--text-secondary);
+	padding: 0.35rem 0.75rem;
+	border-radius: 6px;
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.editor-mode-btn:hover:not(.active) {
+	color: var(--text-main);
+	background: rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .editor-mode-btn:hover:not(.active) {
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.editor-mode-btn.active {
+	background: var(--bg-card);
+	color: var(--primary-color);
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+	border: 1px solid var(--border-color);
+}
+
+/* Monospace HTML Code Editor */
+.admin-code-editor {
+	width: 100%;
+	background: #1e1e1e; /* Справжня темна тема розробника для коду */
+	color: #d4d4d4;
+	font-family: 'Fira Code', 'Courier New', Courier, monospace;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	padding: 1rem;
+	border: none;
+	outline: none;
+	resize: vertical;
+	display: block;
+	min-height: 200px;
+	tab-size: 4;
+}
+
+/* Custom placeholder for Code Editor */
+.admin-code-editor::placeholder {
+	color: #6a9955;
+	font-style: italic;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
 	.admin-panel-container {
