@@ -15,15 +15,13 @@ const KvedSearch = () => {
 
 	return (
 		<div className="kved-container">
-			<div className="auth-warning" style={{ marginBottom: "2rem", textAlign: "center" }}>
-				<strong style={{ fontSize: "1.1rem" }}>🚧 Довідник КВЕД у процесі наповнення та перевірки</strong>
-				<p style={{ marginTop: "0.5rem", marginBottom: 0, color: "var(--text-muted)" }}>
-					Станом на зараз довідник налічує <strong>{kvedData.length}</strong> КВЕДів. 
+			<div className="auth-warning" style={{ marginBottom: "2rem", textAlign: "center", borderColor: "#059669", backgroundColor: "rgba(5, 150, 105, 0.05)", color: "#059669" }}>
+				<strong style={{ fontSize: "1.1rem", color: "#059669" }}>✅ Довідник КВЕД повністю верифіковано з ПКУ 2026</strong>
+				<p style={{ marginTop: "0.5rem", marginBottom: 0, color: "var(--text-color)" }}>
+					Базу даних КВЕД-2010 повністю звірено з <strong>п. 291.4, п. 291.5 та п. 291.7 ст. 291 Податкового кодексу України (ПКУ)</strong>.
 				</p>
 				<p style={{ marginTop: "0.5rem", marginBottom: 0, fontSize: "0.85rem", color: "var(--text-color)" }}>
-					<em>Увага: інформація щодо дозволених груп Єдиного податку наразі верифікується згідно з ПКУ. 
-					Наприклад, здійснення діяльності з продажу підакцизних товарів (таких як легкові автомобілі за КВЕД 45.11) 
-					забороняє перебування на 1-3 групах ЄП відповідно до п.п. 3 п.п. 291.5.1 ст. 291 ПКУ.</em>
+					<em>Довідник містить усі <strong>{kvedData.length}</strong> КВЕДів з автоматичним розрахунком дозволених груп спрощеної системи (1, 2, 3 групи ФОП) та детальним описом встановлених законодавством обмежень (у тому числі для підакцизних товарів, фінансового посередництва, ювелірних виробів та оренди нерухомості).</em>
 				</p>
 			</div>
 			<h2>📚 Довідник КВЕД</h2>
