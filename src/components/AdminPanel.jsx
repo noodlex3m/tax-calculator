@@ -17,12 +17,16 @@ const AdminPanel = () => {
 	// Стани для форми новин
 	const [newsTitle, setNewsTitle] = useState("");
 	const [newsCategory, setNewsCategory] = useState("Податки");
+	const [customNewsCategory, setCustomNewsCategory] = useState("");
+	const [showCustomNewsInput, setShowCustomNewsInput] = useState(false);
 	const [newsSummary, setNewsSummary] = useState("");
 	const [newsContent, setNewsContent] = useState("");
 
 	// Стани для форми FAQ
 	const [faqQuestion, setFaqQuestion] = useState("");
 	const [faqCategory, setFaqCategory] = useState("Загальні");
+	const [customFaqCategory, setCustomFaqCategory] = useState("");
+	const [showCustomFaqInput, setShowCustomFaqInput] = useState(false);
 	const [faqShortAnswer, setFaqShortAnswer] = useState("");
 	const [faqFullAnswer, setFaqFullAnswer] = useState("");
 
@@ -71,11 +75,15 @@ const AdminPanel = () => {
 		if (!newsContent.trim())
 			return alert("Текст новини не може бути порожнім!");
 
+		const finalCategory = newsCategory === "NEW_CATEGORY" ? customNewsCategory.trim() : newsCategory;
+		if (!finalCategory)
+			return alert("Категорія не може бути порожньою!");
+
 		try {
 			// Додаємо документ у колекцію "news"
 			await addDoc(collection(db, "news"), {
 				title: newsTitle,
-				category: newsCategory,
+				category: finalCategory,
 				summary: newsSummary,
 				content: newsContent, // Зберігаємо як готовий HTML-рядок із тегами
 				date: new Date().toLocaleDateString("uk-UA"),
@@ -88,6 +96,9 @@ const AdminPanel = () => {
 			setNewsTitle("");
 			setNewsSummary("");
 			setNewsContent("");
+			setCustomNewsCategory("");
+			setShowCustomNewsInput(false);
+			setNewsCategory("Податки");
 		} catch (err) {
 			console.error("Помилка публікації новини:", err);
 			alert("Помилка сервера. Не вдалося зберегти новину.");
@@ -100,11 +111,15 @@ const AdminPanel = () => {
 		if (!faqFullAnswer.trim())
 			return alert("Повна відповідь не може бути порожньою!");
 
+		const finalCategory = faqCategory === "NEW_CATEGORY" ? customFaqCategory.trim() : faqCategory;
+		if (!finalCategory)
+			return alert("Категорія не може бути порожньою!");
+
 		try {
 			// Додаємо документ у колекцію "faqs"
 			await addDoc(collection(db, "faqs"), {
 				question: faqQuestion,
-				category: faqCategory,
+				category: finalCategory,
 				shortAnswer: faqShortAnswer,
 				fullAnswer: faqFullAnswer, // HTML-рядок
 				createdAt: new Date().toISOString(),
@@ -116,6 +131,9 @@ const AdminPanel = () => {
 			setFaqQuestion("");
 			setFaqShortAnswer("");
 			setFaqFullAnswer("");
+			setCustomFaqCategory("");
+			setShowCustomFaqInput(false);
+			setFaqCategory("Загальні");
 		} catch (err) {
 			console.error("Помилка додавання FAQ:", err);
 			alert("Помилка сервера. Не вдалося зберегти запитання.");
@@ -167,12 +185,33 @@ const AdminPanel = () => {
 						<select
 							className="admin-input-field"
 							value={newsCategory}
-							onChange={(e) => setNewsCategory(e.target.value)}
+							onChange={(e) => {
+								const val = e.target.value;
+								setNewsCategory(val);
+								if (val === "NEW_CATEGORY") {
+									setShowCustomNewsInput(true);
+								} else {
+									setShowCustomNewsInput(false);
+								}
+							}}
 						>
 							<option value="Податки">Податки</option>
 							<option value="Законодавство">Законодавство</option>
 							<option value="Звітність">Звітність</option>
+							<option value="NEW_CATEGORY">➕ Створити нову категорію...</option>
 						</select>
+
+						{showCustomNewsInput && (
+							<input
+								type="text"
+								className="admin-input-field"
+								value={customNewsCategory}
+								onChange={(e) => setCustomNewsCategory(e.target.value)}
+								placeholder="Введіть назву нової категорії..."
+								required
+								style={{ marginTop: "0.5rem" }}
+							/>
+						)}
 					</div>
 
 					<div className="admin-form-group">
@@ -254,13 +293,34 @@ const AdminPanel = () => {
 						<select
 							className="admin-input-field"
 							value={faqCategory}
-							onChange={(e) => setFaqCategory(e.target.value)}
+							onChange={(e) => {
+								const val = e.target.value;
+								setFaqCategory(val);
+								if (val === "NEW_CATEGORY") {
+									setShowCustomFaqInput(true);
+								} else {
+									setShowCustomFaqInput(false);
+								}
+							}}
 						>
 							<option value="Загальні">Загальні</option>
 							<option value="ЄСВ">ЄСВ</option>
 							<option value="ЄП">ЄП</option>
 							<option value="Декларації">Декларації</option>
+							<option value="NEW_CATEGORY">➕ Створити нову категорію...</option>
 						</select>
+
+						{showCustomFaqInput && (
+							<input
+								type="text"
+								className="admin-input-field"
+								value={customFaqCategory}
+								onChange={(e) => setCustomFaqCategory(e.target.value)}
+								placeholder="Введіть назву нової категорії..."
+								required
+								style={{ marginTop: "0.5rem" }}
+							/>
+						)}
 					</div>
 
 					<div className="admin-form-group">

@@ -60,6 +60,9 @@ function News() {
 		return matchesCategory && matchesSearch;
 	});
 
+	const allCategories = articles.map((item) => item.category).filter(Boolean);
+	const uniqueCategories = ["Всі", ...new Set(allCategories)];
+
 	return (
 		<div className="news-container">
 			<Helmet>
@@ -86,7 +89,7 @@ function News() {
 			</div>
 
 			<div className="category-tabs">
-				{["Всі", "Податки", "Законодавство", "Звітність"].map((category) => (
+				{uniqueCategories.map((category) => (
 					<button
 						key={category}
 						className={`category-tab-btn ${
