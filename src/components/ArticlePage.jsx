@@ -1,13 +1,46 @@
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Skeleton from "./Skeleton";
 import "./News.css";
-import { useSimulatedApi } from "../hooks/useSimulatedApi";
 import Comments from "./Comments";
+
+// 🔥 FIREBASE ІМПОРТИ
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 function ArticlePage() {
 	const { id } = useParams();
-	const { data: article, isLoading, error } = useSimulatedApi(id);
+	const [article, setArticle] = useState(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState(null);
+
+	useEffect(() => {
+		const fetchArticle = async () => {
+			try {
+				setIsLoading(true);
+				setError(null);
+				const docRef = doc(db, "news", id);
+				const docSnap = await getDoc(docRef);
+
+				if (docSnap.exists()) {
+					setArticle({
+						id: docSnap.id,
+						...docSnap.data()
+					});
+				} else {
+					setArticle(null);
+				}
+			} catch (err) {
+				console.error("Помилка завантаження статті з Firestore:", err);
+				setError("Вибачте, сталася помилка завантаження статті!");
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchArticle();
+	}, [id]);
 
 	// 👇 БЛОК ЗАВАНТАЖЕННЯ (SKELETON)
 	if (isLoading) {
@@ -100,14 +133,18 @@ function ArticlePage() {
 				&larr; Назад до новин
 			</Link>
 
-			<span className="news-category">{article.category}</span>
-			<h1>{article.title}</h1>
-			<span className="news-date">{article.date}</span>
-
-			<div className="article-fulltext" style={{ whiteSpace: "pre-wrap" }}>
-				{article.fullText}
+			<div className="article-meta">
+				<span className="news-category-badge">{article.category}</span>
+				<span className="news-date">📅 {article.date}</span>
 			</div>
-			<br></br>
+
+			<h1>{article.title}</h1>
+
+			<div 
+				className="article-fulltext ql-editor" 
+				dangerouslySetInnerHTML={{ __html: article.content || article.fullText }}
+			/>
+			<br />
 			<div className="comments-form">
 				<div
 					style={{
