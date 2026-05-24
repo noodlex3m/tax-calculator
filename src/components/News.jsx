@@ -1,60 +1,95 @@
-import { useState } from "react";
-import newsData from "../data/newsData";
+import { useState, useEffect } from "react";
 import "./News.css";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Skeleton from "./Skeleton";
-import { useSimulatedApi } from "../hooks/useSimulatedApi";
+
+// 🔥 МАГІЯ FIREBASE
+import { db } from "../firebase";
+import { collection, getDocs, query } from "firebase/firestore";
 
 function News() {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [selectedCategory, setSelectedCategory] = useState("Всі");
-	const { data: articles, isLoading } = useSimulatedApi(newsData);
 
-	const filteredNews = (articles || []).filter((article) => {
-		// 1. Перевірка категорії
+	// Нові стани для реальних хмарних даних
+	const [articles, setArticles] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	// 📥 ЗАВАНТАЖЕННЯ НОВИН З ХМАРИ (БЕЗПЕЧНИЙ ВАРІАНТ)
+	useEffect(() => {
+		const fetchNews = async () => {
+			try {
+				setIsLoading(true);
+
+				// Запитуємо ВСІ новини без примусового серверного сортування
+				const q = query(collection(db, "news"));
+				const querySnapshot = await getDocs(q);
+
+				const newsData = querySnapshot.docs.map((doc) => ({
+					id: doc.id,
+					...doc.data(),
+				}));
+
+				// 🔥 Сортуємо локально в клієнті. Навіть якщо createdAt десь немає, додаток не впаде!
+				newsData.sort(
+					(a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+				);
+
+				setArticles(newsData);
+			} catch (err) {
+				console.error("Помилка завантаження новин з Firebase:", err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchNews();
+	}, []);
+
+	// ФІЛЬТРАЦІЯ
+	const filteredNews = articles.filter((article) => {
 		const matchesCategory =
 			selectedCategory === "Всі" || article.category === selectedCategory;
-		// 2. Перевірка пошуку
+
 		const matchesSearch =
-			article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			article.summary.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			article.fullText.toLowerCase().includes(searchTerm.toLowerCase());
-		// 3. Повертаємо true, тільки якщо ОБІДВІ умови виконуються
+			article.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			article.summary?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			article.content?.toLowerCase().includes(searchTerm.toLowerCase());
+
 		return matchesCategory && matchesSearch;
 	});
-	const sortedNews = [...filteredNews].sort((a, b) => {
-		const dateA = a.date.split(".").reverse().join("-");
-		const dateB = b.date.split(".").reverse().join("-");
-		return new Date(dateB) - new Date(dateA);
-	});
-
-	const allCategories = newsData.map((item) => item.category);
-	const uniqueCategories = ["Всі", ...new Set(allCategories)];
 
 	return (
 		<div className="news-container">
 			<Helmet>
-				<title>Новини податкового законодавства ФОП 2026 — Tax.Serh.One</title>
+				<title>Податкові новини для ФОП 2026 | Tax.Serh.One</title>
 				<meta
 					name="description"
-					content="Актуальні новини для ФОП: зміни в податках, нові рахунки ЄСВ, ліміти доходів та роз'яснення законодавства. Будьте в курсі змін!"
+					content="Актуальні новини законодавства, зміни ставок єдиного податку, ЄСВ та військового збору в Україні."
 				/>
-				<link rel="canonical" href="https://tax.serh.one/news" />
 			</Helmet>
-			<h1>Останні Новини</h1>
-			<input
-				type="text"
-				placeholder="Пошук"
-				className="search-bar"
-				value={searchTerm}
-				onChange={(e) => setSearchTerm(e.target.value)}
-			/>
-			<div className="category-filters">
-				{uniqueCategories.map((category) => (
+
+			<div className="news-header-section">
+				<h1>Податковий вісник</h1>
+				<p>Оперативні зміни в законодавстві, аналітика та роз'яснення ПКУ</p>
+			</div>
+
+			<div className="search-filter-wrapper">
+				<input
+					type="text"
+					placeholder="Пошук новин за ключовими словами..."
+					value={searchTerm}
+					onChange={(e) => setSearchTerm(e.target.value)}
+					className="auth-input news-search"
+				/>
+			</div>
+
+			<div className="category-tabs">
+				{["Всі", "Податки", "Законодавство", "Звітність"].map((category) => (
 					<button
 						key={category}
-						className={`filter-btn ${
+						className={`category-tab-btn ${
 							selectedCategory === category ? "active" : ""
 						}`}
 						onClick={() => setSelectedCategory(category)}
@@ -63,45 +98,49 @@ function News() {
 					</button>
 				))}
 			</div>
+
 			<div className="news-list">
 				{isLoading
 					? [...Array(6)].map((_, index) => (
 							<div key={index} className="news-card">
-								{/* 1. Категорія (маленька кнопка) */}
 								<Skeleton width="80px" height="25px" />
-
-								{/* 2. Заголовок (великий рядок) */}
 								<h3 style={{ marginTop: "10px", marginBottom: "10px" }}>
 									<Skeleton width="100%" height="28px" />
 								</h3>
-
-								{/* 3. Опис (кілька рядків тексту) */}
 								<div style={{ marginBottom: "15px" }}>
 									<Skeleton width="100%" height="16px" />
 									<Skeleton width="90%" height="16px" />
 									<Skeleton width="40%" height="16px" />
 								</div>
-
-								{/* 4. Дата (маленький текст внизу) */}
 								<Skeleton width="100px" height="16px" />
 							</div>
 						))
-					: // 📦 А тут повертаємо СПРАВЖНІ дані (як було раніше)
-						sortedNews.map((article) => (
+					: filteredNews.map((article) => (
 							<Link
 								key={article.id}
 								to={`/news/${article.id}`}
 								className="news-card-link"
 							>
-								<div className="news-card">
-									<span className="news-category">{article.category}</span>
+								<article className="news-card">
+									<span className="news-category-badge">
+										{article.category}
+									</span>
 									<h3>{article.title}</h3>
 									<p>{article.summary}</p>
-									<span className="news-date">{article.date}</span>
-								</div>
+									<div className="news-card-footer">
+										<span className="news-date">📅 {article.date}</span>
+										<span className="read-more">Читати далі →</span>
+									</div>
+								</article>
 							</Link>
 						))}
 			</div>
+
+			{!isLoading && filteredNews.length === 0 && (
+				<div className="no-results">
+					🔍 За вашим запитом новин не знайдено. Спробуйте змінити фільтр.
+				</div>
+			)}
 		</div>
 	);
 }

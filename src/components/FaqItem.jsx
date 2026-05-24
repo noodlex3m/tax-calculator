@@ -6,16 +6,17 @@ function FaqItem({ item, isActive, onToggle }) {
 			<div className="item-header" onClick={onToggle}>
 				<span className="item-category">{item.category}</span>
 				<h3>{item.question}</h3>
-				<span className="item-icon">{isActive ? "-" : "+"}</span>
+				<span className="item-icon">{isActive ? "−" : "+"}</span>
 			</div>
 			{isActive && (
 				<div className="item-content">
 					<p>
 						<strong>Коротка відповідь:</strong> {item.shortAnswer}
 					</p>
-					<p>
-						<strong>Повна відповідь:</strong> {item.fullAnswer}
-					</p>
+					<div className="item-full-answer">
+						<strong>Повна відповідь:</strong>{" "}
+						<span dangerouslySetInnerHTML={{ __html: item.fullAnswer }} />
+					</div>
 				</div>
 			)}
 		</div>

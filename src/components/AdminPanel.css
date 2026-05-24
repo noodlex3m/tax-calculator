@@ -1,0 +1,202 @@
+/* src/components/AdminPanel.css */
+
+.admin-panel-container {
+	width: 100%;
+	max-width: 850px;
+	margin: 3rem auto;
+	padding: 2.5rem;
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
+	border-radius: 16px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+	transition: all 0.3s ease;
+}
+
+/* Header with Badge */
+.admin-header-section {
+	text-align: center;
+	margin-bottom: 2.5rem;
+}
+
+.admin-header-section h1 {
+	font-size: 2.2rem;
+	font-weight: 800;
+	color: var(--text-main);
+	letter-spacing: -0.025em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.admin-subtitle {
+	color: var(--text-secondary);
+	font-size: 0.95rem;
+}
+
+/* Rounded Admin Tabs */
+.admin-tabs {
+	display: flex;
+	background: var(--bg-input);
+	padding: 0.35rem;
+	border-radius: 12px;
+	gap: 0.25rem;
+	max-width: 450px;
+	margin: 0 auto 2.5rem auto;
+	border: 1px solid var(--border-color);
+}
+
+.admin-tab-btn {
+	flex: 1;
+	border: none;
+	background: transparent;
+	color: var(--text-secondary);
+	padding: 0.65rem 1.2rem;
+	border-radius: 8px;
+	font-size: 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+}
+
+.admin-tab-btn:hover:not(.active) {
+	color: var(--text-main);
+	background: rgba(0, 0, 0, 0.03);
+}
+
+/* Dark mode fallback hover */
+[data-theme="dark"] .admin-tab-btn:hover:not(.active) {
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-tab-btn.active {
+	background: var(--bg-card);
+	color: var(--primary-color);
+	box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+	border: 1px solid var(--border-color);
+}
+
+/* Form Styles */
+.admin-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.admin-form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.admin-form-group label {
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: var(--text-main);
+}
+
+/* Admin Input Fields */
+.admin-input-field {
+	width: 100%;
+	padding: 0.75rem 1rem;
+	border-radius: 10px;
+	background: var(--bg-input);
+	border: 1px solid var(--border-color);
+	color: var(--text-main);
+	font-size: 0.95rem;
+	font-family: inherit;
+	transition: all 0.2s ease;
+}
+
+.admin-input-field:focus {
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(83, 91, 242, 0.08);
+	background: var(--bg-card);
+}
+
+/* Select custom dropdown */
+select.admin-input-field {
+	appearance: none;
+	-webkit-appearance: none;
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' width='12' height='12'><path fill='%23888' d='M5 7l5 5 5-5z'/></svg>");
+	background-repeat: no-repeat;
+	background-position: right 1rem center;
+	padding-right: 2.5rem;
+	cursor: pointer;
+}
+
+/* Quill rich text container style overrides */
+.quill-editor-wrapper {
+	border-radius: 10px;
+	border: 1px solid var(--border-color);
+	overflow: hidden;
+	background: white; /* Для редактора залишаємо чистий білий фон */
+	color: #1f2937;
+	transition: border-color 0.2s ease;
+}
+
+.quill-editor-wrapper:focus-within {
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(83, 91, 242, 0.08);
+}
+
+.ql-toolbar.ql-snow {
+	border: none !important;
+	border-bottom: 1px solid #e5e7eb !important;
+	background: #f9fafb;
+}
+
+.ql-container.ql-snow {
+	border: none !important;
+	min-height: 200px;
+	font-size: 0.95rem;
+	font-family: inherit;
+}
+
+/* Primary Action Button */
+.admin-action-btn {
+	background-color: var(--primary-color);
+	color: white;
+	border: none;
+	padding: 0.85rem 1.8rem;
+	border-radius: 10px;
+	font-size: 0.95rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	box-shadow: 0 4px 12px rgba(83, 91, 242, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+}
+
+.admin-action-btn:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(83, 91, 242, 0.3);
+	filter: brightness(1.05);
+}
+
+.admin-action-btn:active {
+	transform: translateY(0);
+	box-shadow: 0 4px 12px rgba(83, 91, 242, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+	.admin-panel-container {
+		padding: 1.5rem;
+		margin: 1.5rem auto;
+	}
+	
+	.admin-tabs {
+		flex-direction: column;
+		max-width: 100%;
+	}
+}

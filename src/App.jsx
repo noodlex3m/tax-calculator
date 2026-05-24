@@ -19,6 +19,8 @@ const News = lazy(() => import("./components/News"));
 const Faq = lazy(() => import("./components/Faq"));
 const ArticlePage = lazy(() => import("./components/ArticlePage"));
 const NotFound = lazy(() => import("./components/NotFound"));
+// 🔥 НОВИЙ КОМПОНЕНТ АДМІН-ПАНЕЛІ
+const AdminPanel = lazy(() => import("./components/AdminPanel"));
 
 function App() {
 	return (
@@ -48,7 +50,19 @@ function App() {
 						<Route path="/news" element={<News />} />
 						<Route path="/feedback" element={<FeedbackForm />} />
 						<Route path="/kved" element={<KvedSearch />} />
-						<Route path="*" element={<NotFound />} />
+						<Route path="/login" element={<Login />} />
+						<Route path="/register" element={<Register />} />
+
+						{/* 🔥 НАШ НОВИЙ РОУТ ДЛЯ АДМІНКИ */}
+						<Route
+							path="/admin"
+							element={
+								<ProtectedRoute>
+									<AdminPanel />
+								</ProtectedRoute>
+							}
+						/>
+
 						<Route
 							path="/dashboard"
 							element={
@@ -57,8 +71,7 @@ function App() {
 								</ProtectedRoute>
 							}
 						/>
-						<Route path="/login" element={<Login />} />
-						<Route path="/register" element={<Register />} />
+						<Route path="*" element={<NotFound />} />
 					</Routes>
 				</Suspense>
 			</main>

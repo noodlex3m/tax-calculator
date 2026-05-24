@@ -1,55 +1,187 @@
 .faq-container {
 	width: 100%;
-	max-width: 800px;
-	margin: 2rem auto;
+	max-width: 850px;
+	margin: 3rem auto;
 	text-align: left;
+	padding: 0 1.5rem;
 }
+
+.faq-container h2 {
+	font-size: 2.2rem;
+	font-weight: 800;
+	color: var(--text-main);
+	margin-bottom: 1.5rem;
+	letter-spacing: -0.025em;
+}
+
+/* Premium Search Bar with Glassmorphism */
+.faq-container .search-bar {
+	width: 100%;
+	padding: 0.9rem 1.2rem;
+	border-radius: 12px;
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
+	color: var(--text-main);
+	font-size: 1rem;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+	margin-bottom: 1.5rem;
+}
+
+.faq-container .search-bar:focus {
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 4px rgba(83, 91, 242, 0.12), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+	transform: translateY(-1px);
+}
+
+/* Category Filter Chips */
+.category-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+	margin-bottom: 2.5rem;
+}
+
+.filter-btn {
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
+	color: var(--text-secondary);
+	padding: 0.4rem 1rem;
+	border-radius: 20px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+	border-color: var(--primary-color);
+	color: var(--primary-color);
+	background-color: var(--btn-hover-bg);
+}
+
+.filter-btn.active {
+	background: var(--primary-color);
+	border-color: var(--primary-color);
+	color: white;
+	box-shadow: 0 4px 12px rgba(83, 91, 242, 0.25);
+}
+
+/* Accordion Card Layout */
 .faq-item {
-	border-bottom: 1px solid var(--border-color);
-	padding: 1rem 0.5rem;
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	margin-bottom: 1rem;
+	padding: 1.2rem;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
+
+.faq-item:hover {
+	border-color: var(--primary-color);
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+}
+
+.faq-item.active {
+	border-color: var(--primary-color);
+	box-shadow: 0 10px 20px -5px rgba(83, 91, 242, 0.08), 0 4px 6px -2px rgba(83, 91, 242, 0.04);
+}
+
 .item-header {
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	gap: 1.2rem;
 	cursor: pointer;
-	transition: background-color 0.4s ease-out;
+	user-select: none;
 }
-.item-header:hover {
-	background-color: var(--bg-input);
-}
+
 .item-category {
-	background-color: var(--accent-color);
-	color: var(--bg-body);
-	padding: 0.2rem 0.5rem;
-	border-radius: 4px;
+	background-color: rgba(83, 91, 242, 0.1);
+	color: var(--primary-color);
+	padding: 0.25rem 0.65rem;
+	border-radius: 6px;
 	font-size: 0.75rem;
-	font-weight: bold;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
 	flex-shrink: 0;
 }
+
 .item-header h3 {
 	margin: 0;
-	font-size: 1.1rem;
+	font-size: 1.15rem;
+	font-weight: 700;
+	line-height: 1.4;
 	flex-grow: 1;
 	color: var(--text-main);
+	transition: color 0.2s ease;
 }
-.item-icon {
-	font-size: 1.5rem;
-	font-weight: bold;
-	color: var(--text-muted);
-}
-.item-content {
-	padding: 1rem 0 0 1rem;
-	color: var(--text-secondary);
-	border-left: 3px solid var(--primary-color);
-	margin-top: 1rem;
-}
-.item-content p {
-	margin: 0.5rem 0;
-}
+
 .faq-item.active .item-header h3 {
 	color: var(--primary-color);
 }
-.faq-item.active .item-icon {
-	color: var(--text-main);
+
+.item-icon {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--bg-input);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+	font-weight: 600;
+	color: var(--text-muted);
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	flex-shrink: 0;
 }
+
+.faq-item.active .item-icon {
+	background: var(--primary-color);
+	color: white;
+	transform: rotate(180deg);
+}
+
+/* Accordion Content Styling */
+.item-content {
+	margin-top: 1.2rem;
+	padding-top: 1.2rem;
+	border-top: 1px solid var(--border-color);
+	color: var(--text-secondary);
+	line-height: 1.6;
+	animation: slideDown 0.3s ease-out;
+}
+
+.item-content p {
+	margin: 0.8rem 0;
+}
+
+.item-content strong {
+	color: var(--text-main);
+	font-weight: 600;
+}
+
+.item-content p:first-child {
+	background-color: rgba(83, 91, 242, 0.03);
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	border-left: 3px solid var(--primary-color);
+}
+
+.item-full-answer {
+	margin-top: 0.8rem;
+}
+
+@keyframes slideDown {
+	from {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
