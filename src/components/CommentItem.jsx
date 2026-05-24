@@ -2,14 +2,17 @@ import React, { useState } from "react";
 import CommentForm from "./CommentForm";
 
 const CommentItem = ({
-	comment,
-	replies,
-	onAddComment,
-	onLike,
-	onDislike,
-	onDelete,
-	onEdit,
+	comment, // 👈 Сам коментар
+	replies, // 👈 Відповіді на коментар
+	onAddComment, // 👈 Додавання коментаря
+	onLike, // 👈 Лайк коментаря
+	onDislike, // 👈 Дизлайк коментаря
+	onDelete, // 👈 Видалення коментаря
+	onEdit, // 👈 Редагування коментаря
 	currentUser, // 👈 Отримуємо поточного юзера
+	onBlock, // 👈 Функція блокування користувача
+	bannedUsersList = [], // 🔥 Список усіх забанених
+	onUnblock, // 🔥 Функція розблокування користувача
 }) => {
 	const [isReplying, setIsReplying] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
@@ -21,6 +24,8 @@ const CommentItem = ({
 	const canDelete = isAuthor || isAdmin; // Видалити може автор АБО адмін
 	const userHasLiked = comment.likedBy?.includes(currentUser?.uid);
 	const userHasDisliked = comment.dislikedBy?.includes(currentUser?.uid);
+	const canBlock = isAdmin && !isAuthor;
+	const isBannedUser = bannedUsersList.some((b) => b.userId === comment.author.id); // 🔥 Перевірка на бан
 
 	const handleReplySubmit = (text) => {
 		const result = onAddComment(text, comment.id);
@@ -35,7 +40,7 @@ const CommentItem = ({
 	};
 
 	return (
-		<li className="comment-card">
+		<li className={`comment-card ${isBannedUser ? "banned" : ""}`}>
 			<div className="comment-author">
 				{comment.author.username}
 				{/* Якщо це адмін, додаємо бейдж */}
@@ -54,6 +59,12 @@ const CommentItem = ({
 						Admin
 					</span>
 				) : null}
+				{/* Бейдж заблокованого користувача */}
+				{isBannedUser && (
+					<span className="banned-badge">
+						🚫 Заблокований
+					</span>
+				)}
 				<span className="comment-date">
 					{new Date(comment.createdAt).toLocaleString("uk-UA")}
 				</span>
@@ -92,7 +103,7 @@ const CommentItem = ({
 				</button>
 
 				{/* 👇 Розумні кнопки дій */}
-				{(canEdit || canDelete) && (
+				{(canEdit || canDelete || canBlock) && (
 					<div className="comment-author-actions">
 						{canEdit && !isEditing && (
 							<button
@@ -109,6 +120,23 @@ const CommentItem = ({
 							>
 								🗑️ Видалити
 							</button>
+						)}
+						{canBlock && (
+							isBannedUser ? (
+								<button
+									onClick={() => onUnblock(comment.author.id)}
+									className="comment-unblock-btn"
+								>
+									🔓 Розблокувати
+								</button>
+							) : (
+								<button
+									onClick={() => onBlock(comment.id)}
+									className="comment-block-btn"
+								>
+									🚫 Заблокувати
+								</button>
+							)
 						)}
 					</div>
 				)}
@@ -137,7 +165,10 @@ const CommentItem = ({
 							onDislike={onDislike}
 							onDelete={onDelete}
 							onEdit={onEdit}
-							currentUser={currentUser} // 👈 Передаємо юзера далі у відповіді
+							currentUser={currentUser}
+							onBlock={onBlock}
+							bannedUsersList={bannedUsersList}
+							onUnblock={onUnblock}
 						/>
 					))}
 				</ul>

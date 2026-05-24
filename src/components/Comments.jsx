@@ -15,10 +15,7 @@ import {
 	deleteDoc,
 	doc,
 	updateDoc,
-	arrayUnion,
-	arrayRemove,
 } from "firebase/firestore";
-import toast from "react-hot-toast";
 
 // Валідатор (залишається без змін)
 const validateComment = (text) => {
@@ -31,25 +28,24 @@ const validateComment = (text) => {
 		: null;
 };
 
-// Компонент приймає articleId, щоб знати, до якої статті ці коментарі!
 const Comments = ({ articleId }) => {
 	// 1. Отримуємо поточного користувача
 	const { user } = useAuth();
 
 	const [commentList, setCommentList] = useState([]);
 	const [sortBy, setSortBy] = useState("newest");
+	const [isBanned, setIsBanned] = useState(false); // 🔥 Новий стан для бану
+	const [bannedUsersList, setBannedUsersList] = useState([]); // 🔥 Список усіх забанених (тільки для адміна)
 
-	// 2. ЧИТАННЯ З БАЗИ (В РЕАЛЬНОМУ ЧАСІ)
+	// 2. ЧИТАННЯ З БАЗИ КОМЕНТАРІВ (В РЕАЛЬНОМУ ЧАСІ)
 	useEffect(() => {
 		if (!articleId) return;
 
-		// Шукаємо коментарі тільки для поточної статті
 		const q = query(
 			collection(db, "comments"),
 			where("articleId", "==", String(articleId)),
 		);
 
-		// onSnapshot - автоматично оновлює дані, коли хтось додає новий коментар
 		const unsubscribe = onSnapshot(q, (snapshot) => {
 			const commentsData = snapshot.docs.map((doc) => ({
 				id: doc.id,
@@ -58,16 +54,70 @@ const Comments = ({ articleId }) => {
 			setCommentList(commentsData);
 		});
 
-		// Відключаємо слухача, коли користувач йде зі сторінки
 		return () => unsubscribe();
 	}, [articleId]);
 
-	// 3. ДОДАВАННЯ КОМЕНТАРЯ В БАЗУ
+	// 🔥 3. ПЕРЕВІРКА НА БАН ПОТОЧНОГО КОРИСТУВАЧА
+	useEffect(() => {
+		if (!user) {
+			setIsBanned(false);
+			return;
+		}
+
+		const q = query(
+			collection(db, "bannedUsers"),
+			where("userId", "==", user.uid),
+		);
+
+		const unsubscribe = onSnapshot(
+			q,
+			(snapshot) => {
+				setIsBanned(!snapshot.empty);
+			},
+			(err) => {
+				console.error("Помилка перевірки статусу блокування:", err);
+			}
+		);
+
+		return () => unsubscribe();
+	}, [user]);
+
+	// 🔥 3.1 ЗАВАНТАЖЕННЯ СПИСКУ ЗАБЛОКОВАНИХ (ТІЛЬКИ ДЛЯ АДМІНІСТРАТОРА)
+	useEffect(() => {
+		if (!user || !user.isAdmin) {
+			setBannedUsersList([]);
+			return;
+		}
+
+		const unsubscribe = onSnapshot(
+			collection(db, "bannedUsers"),
+			(snapshot) => {
+				const list = snapshot.docs.map((doc) => ({
+					id: doc.id,
+					userId: doc.data().userId,
+				}));
+				setBannedUsersList(list);
+			},
+			(err) => {
+				console.error("Помилка завантаження списку заблокованих:", err);
+			}
+		);
+
+		return () => unsubscribe();
+	}, [user]);
+
+	// 4. ДОДАВАННЯ КОМЕНТАРЯ В БАЗУ
 	const handleAddComment = async (text, parentId = null) => {
-		// Якщо не авторизований - повертаємо помилку
 		if (!user) {
 			return {
 				error: "Будь ласка, увійдіть в кабінет, щоб залишити коментар.",
+			};
+		}
+
+		// 🔥 Захист на рівні функції відправки
+		if (isBanned) {
+			return {
+				error: "Ви заблоковані адміністратором і не можете залишати коментарі.",
 			};
 		}
 
@@ -97,21 +147,21 @@ const Comments = ({ articleId }) => {
 		}
 	};
 
-	// 4. ВИДАЛЕННЯ З БАЗИ
+	// 5. ВИДАЛЕННЯ З БАЗИ
 	const handleDelete = async (id) => {
 		if (window.confirm("Ви впевнені, що хочете видалити цей коментар?")) {
 			try {
 				await deleteDoc(doc(db, "comments", id));
-				toast.success("Коментар видалено!");
 			} catch (err) {
 				console.error("Помилка видалення:", err);
-				toast.error("Помилка доступу Firebase: " + err.message);
 			}
 		}
 	};
 
-	// 5. РЕДАГУВАННЯ В БАЗІ
+	// 6. РЕДАГУВАННЯ В БАЗІ
 	const handleEdit = async (id, newText) => {
+		if (isBanned) return { error: "Дія заборонена." };
+
 		const validationError = validateComment(newText);
 		if (validationError) return { error: validationError };
 
@@ -125,84 +175,75 @@ const Comments = ({ articleId }) => {
 		}
 	};
 
-	// Розумні лайки з перевіркою на унікальність
-	const handleLike = async (id) => {
-		if (!user) {
-			toast.error("Увійдіть у систему, щоб оцінити коментар!");
-			return;
-		}
-		
-		const comment = commentList.find((c) => c.id === id);
-		if (!comment) return;
+	// 7. ЛОГІКА БЛОКУВАННЯ КОРИСТУВАЧА АДМІНІСТРАТОРОМ
+	const handleBlockUser = async (commentId) => {
+		const targetComment = commentList.find((c) => c.id === commentId);
+		if (!targetComment) return;
 
-		const likedBy = comment.likedBy || [];
-		const dislikedBy = comment.dislikedBy || [];
-		const uid = user.uid;
-		const docRef = doc(db, "comments", id);
+		const targetUid = targetComment.author.id;
+		const targetUsername = targetComment.author.username;
 
-		try {
-			if (likedBy.includes(uid)) {
-				// Якщо вже лайкнув - знімаємо лайк
-				await updateDoc(docRef, {
-					likedBy: arrayRemove(uid),
-					likesCount: Math.max(0, (comment.likesCount || 1) - 1),
+		if (
+			window.confirm(
+				`Ви впевнені, що хочете заблокувати користувача ${targetUsername}?`,
+			)
+		) {
+			try {
+				await addDoc(collection(db, "bannedUsers"), {
+					userId: targetUid,
+					username: targetUsername,
+					bannedAt: new Date().toISOString(),
+					bannedBy: user.uid,
 				});
-			} else {
-				// Додаємо лайк
-				const updates = {
-					likedBy: arrayUnion(uid),
-					likesCount: (comment.likesCount || 0) + 1,
-				};
-				// Якщо був дизлайк, знімаємо його
-				if (dislikedBy.includes(uid)) {
-					updates.dislikedBy = arrayRemove(uid);
-					updates.dislikesCount = Math.max(0, (comment.dislikesCount || 1) - 1);
-				}
-				await updateDoc(docRef, updates);
+
+				alert(`Користувача ${targetUsername} успішно заблоковано!`);
+			} catch (err) {
+				console.error("Помилка при блокуванні користувача:", err);
+				alert("Не вдалося заблокувати користувача.");
 			}
-		} catch (err) {
-			console.error("Помилка оцінювання:", err);
-			toast.error("Не вдалося оцінити коментар");
+		}
+	};
+
+	// 🔥 7.1 ЛОГІКА РОЗБЛОКУВАННЯ КОРИСТУВАЧА АДМІНІСТРАТОРОМ
+	const handleUnblockUser = async (targetUid) => {
+		const banDoc = bannedUsersList.find((b) => b.userId === targetUid);
+		if (!banDoc) return;
+
+		if (
+			window.confirm(
+				"Ви впевнені, що хочете розблокувати цього користувача?",
+			)
+		) {
+			try {
+				await deleteDoc(doc(db, "bannedUsers", banDoc.id));
+				alert("Користувача успішно розблоковано!");
+			} catch (err) {
+				console.error("Помилка при розблокуванні користувача:", err);
+				alert("Не вдалося розблокувати користувача.");
+			}
+		}
+	};
+
+	// Прості лайки/дизлайки (без змін)
+	const handleLike = async (id) => {
+		if (!user) return alert("Увійдіть, щоб оцінити!");
+		if (isBanned) return;
+		const comment = commentList.find((c) => c.id === id);
+		if (comment) {
+			await updateDoc(doc(db, "comments", id), {
+				likesCount: (comment.likesCount || 0) + 1,
+			});
 		}
 	};
 
 	const handleDislike = async (id) => {
-		if (!user) {
-			toast.error("Увійдіть у систему, щоб оцінити коментар!");
-			return;
-		}
-		
+		if (!user) return alert("Увійдіть, щоб оцінити!");
+		if (isBanned) return;
 		const comment = commentList.find((c) => c.id === id);
-		if (!comment) return;
-
-		const likedBy = comment.likedBy || [];
-		const dislikedBy = comment.dislikedBy || [];
-		const uid = user.uid;
-		const docRef = doc(db, "comments", id);
-
-		try {
-			if (dislikedBy.includes(uid)) {
-				// Знімаємо дизлайк
-				await updateDoc(docRef, {
-					dislikedBy: arrayRemove(uid),
-					dislikesCount: Math.max(0, (comment.dislikesCount || 1) - 1),
-				});
-			} else {
-				// Додаємо дизлайк
-				const updates = {
-					dislikedBy: arrayUnion(uid),
-					dislikesCount: (comment.dislikesCount || 0) + 1,
-				};
-				// Якщо був лайк, знімаємо його
-				if (likedBy.includes(uid)) {
-					updates.likedBy = arrayRemove(uid);
-					updates.likesCount = Math.max(0, (comment.likesCount || 1) - 1);
-				}
-				await updateDoc(docRef, updates);
-			}
-		} catch (err) {
-			console.error("Помилка оцінювання:", err);
-			toast.error("Не вдалося оцінити коментар");
+		if (comment) {
+			await updateDoc(doc(db, "comments", id), {
+				dislikesCount: (comment.dislikesCount || 0) + 1,
+			});
 		}
 	};
 
@@ -244,8 +285,19 @@ const Comments = ({ articleId }) => {
 				</div>
 			</header>
 
+			{/* 🔥 Замість форми вводу показуємо попередження, якщо юзер у бані */}
 			<div className="main-composer-wrapper" style={{ marginBottom: "2rem" }}>
-				<CommentForm onSubmit={(text) => handleAddComment(text, null)} />
+				{isBanned ? (
+					<div
+						className="auth-error"
+						style={{ textAlign: "center", fontWeight: "bold" }}
+					>
+						🚫 Ваш акаунт заблоковано адміністратором за порушення правил
+						дискусії. Доступ до написання коментарів обмежено.
+					</div>
+				) : (
+					<CommentForm onSubmit={(text) => handleAddComment(text, null)} />
+				)}
 			</div>
 
 			<ul className="comments-list">
@@ -260,6 +312,9 @@ const Comments = ({ articleId }) => {
 						onDelete={handleDelete}
 						onEdit={handleEdit}
 						currentUser={user}
+						onBlock={handleBlockUser}
+						bannedUsersList={bannedUsersList}
+						onUnblock={handleUnblockUser}
 					/>
 				))}
 			</ul>

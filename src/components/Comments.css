@@ -292,3 +292,67 @@
 	padding-left: 1rem;
 	border-left: 2px solid var(--primary-color);
 }
+
+/* Кнопка блокування з ефектами наведення */
+.comment-block-btn {
+	background: transparent;
+	border: 1px solid transparent;
+	cursor: pointer;
+	padding: 0.2rem 0.6rem;
+	border-radius: 8px;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	font-size: 0.85rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	color: #d97706; /* Теплий помаранчевий попереджувальний колір */
+}
+
+.comment-block-btn:hover {
+	border-color: #d97706;
+	background-color: rgba(217, 119, 6, 0.08); /* Легка помаранчева підсвітка */
+}
+
+/* Стиль для кнопки "Розблокувати" */
+.comment-unblock-btn {
+	background: transparent;
+	border: 1px solid transparent;
+	cursor: pointer;
+	padding: 0.2rem 0.6rem;
+	border-radius: 8px;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	font-size: 0.85rem;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	color: #059669; /* Свіжий зелений колір */
+}
+
+.comment-unblock-btn:hover {
+	border-color: #059669;
+	background-color: rgba(5, 150, 105, 0.08); /* Легка зелена підсвітка */
+}
+
+/* Бейдж "Заблокований" біля імені автора */
+.banned-badge {
+	margin-left: 8px;
+	background-color: #ef4444; /* Насичений червоний */
+	color: white;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-size: 0.7rem;
+	font-weight: 600;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.2rem;
+}
+
+/* Напівпрозорий вигляд коментарів заблокованих користувачів для адміна */
+.comment-card.banned {
+	opacity: 0.65;
+	border-color: #fca5a5;
+	background-color: rgba(254, 226, 226, 0.15); /* Дуже легкий червонуватий відтінок */
+}
+
