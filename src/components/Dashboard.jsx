@@ -4,7 +4,16 @@ import "./Dashboard.css";
 
 // НОВІ ІМПОРТИ ДЛЯ FIREBASE (ОПТИМІЗОВАНО)
 import { db } from "../firebase";
-import { collection, query, where, getDocs, doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import {
+	collection,
+	query,
+	where,
+	getDocs,
+	doc,
+	getDoc,
+	setDoc,
+	deleteDoc,
+} from "firebase/firestore";
 import PersonalDataConsent from "./PersonalDataConsent";
 import { toast } from "react-hot-toast";
 
@@ -38,7 +47,7 @@ const Dashboard = () => {
 		ibanAccounts: "",
 		notes: "",
 		consentGiven: false,
-		consentTimestamp: ""
+		consentTimestamp: "",
 	});
 	const [isProfileDataLoading, setIsProfileDataLoading] = useState(true);
 	const [isSavingProfileData, setIsSavingProfileData] = useState(false);
@@ -124,7 +133,7 @@ const Dashboard = () => {
 						ibanAccounts: "",
 						notes: "",
 						consentGiven: false,
-						consentTimestamp: ""
+						consentTimestamp: "",
 					});
 				}
 			} catch (error) {
@@ -149,7 +158,7 @@ const Dashboard = () => {
 				...profileData,
 				consentGiven: true,
 				consentTimestamp: new Date().toISOString(),
-				updatedAt: new Date().toISOString()
+				updatedAt: new Date().toISOString(),
 			};
 			const docRef = doc(db, "userProfiles", user.uid);
 			await setDoc(docRef, updated);
@@ -171,7 +180,7 @@ const Dashboard = () => {
 		try {
 			const updated = {
 				...profileData,
-				updatedAt: new Date().toISOString()
+				updatedAt: new Date().toISOString(),
 			};
 			const docRef = doc(db, "userProfiles", user.uid);
 			await setDoc(docRef, updated);
@@ -188,18 +197,18 @@ const Dashboard = () => {
 	// Видалення всіх облікових даних (Право на забуття)
 	const handleDeleteProfileData = async () => {
 		if (!user) return;
-		
+
 		const confirmDelete = window.confirm(
-			"⚠️ УВАГА! Ви дійсно бажаєте видалити всі облікові дані та відкликати згоду на обробку ПД з хмари Firestore?"
+			"⚠️ УВАГА! Ви дійсно бажаєте видалити всі облікові дані та відкликати згоду на обробку ПД з хмари Firestore?",
 		);
-		
+
 		if (!confirmDelete) return;
 
 		setIsSavingProfileData(true);
 		try {
 			const docRef = doc(db, "userProfiles", user.uid);
 			await deleteDoc(docRef);
-			
+
 			setProfileData({
 				fopName: "",
 				rnokpp: "",
@@ -218,9 +227,9 @@ const Dashboard = () => {
 				ibanAccounts: "",
 				notes: "",
 				consentGiven: false,
-				consentTimestamp: ""
+				consentTimestamp: "",
 			});
-			
+
 			toast.success("Всі персональні дані видалено з хмари! 🚫");
 		} catch (error) {
 			console.error("Помилка видалення облікових даних:", error);
@@ -434,10 +443,16 @@ const Dashboard = () => {
 							isAccepting={isSavingProfileData}
 						/>
 					) : (
-						<form className="account-form animate-fadeIn" onSubmit={handleSaveProfileData}>
+						<form
+							className="account-form animate-fadeIn"
+							onSubmit={handleSaveProfileData}
+						>
 							<div className="account-form-header">
 								<h2>📇 Облікова картка ФОП</h2>
-								<p>Ці дані використовуються для спрощення розрахунків та кращої взаємодії з адміном.</p>
+								<p>
+									Ці дані використовуються для спрощення розрахунків та кращої
+									взаємодії з адміном.
+								</p>
 							</div>
 
 							{/* ГРУПА 1: РЕЄСТРАЦІЙНІ ДАНІ */}
@@ -450,8 +465,13 @@ const Dashboard = () => {
 											type="text"
 											className="auth-input"
 											value={profileData.fopName}
-											onChange={(e) => setProfileData({ ...profileData, fopName: e.target.value })}
-											placeholder="Наприклад: ТРІЩУК ЛУЧІЯ ЄВГЕНІВНА"
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													fopName: e.target.value,
+												})
+											}
+											placeholder="Наприклад: Шевченко Тарас Григорович"
 										/>
 									</div>
 									<div className="form-group">
@@ -461,7 +481,12 @@ const Dashboard = () => {
 											className="auth-input"
 											maxLength={10}
 											value={profileData.rnokpp}
-											onChange={(e) => setProfileData({ ...profileData, rnokpp: e.target.value.replace(/\D/g, "") })}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													rnokpp: e.target.value.replace(/\D/g, ""),
+												})
+											}
 											placeholder="10 цифр податкового номера"
 										/>
 									</div>
@@ -473,7 +498,12 @@ const Dashboard = () => {
 											type="text"
 											className="auth-input"
 											value={profileData.citizenship}
-											onChange={(e) => setProfileData({ ...profileData, citizenship: e.target.value })}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													citizenship: e.target.value,
+												})
+											}
 											placeholder="Наприклад: Україна"
 										/>
 									</div>
@@ -483,18 +513,30 @@ const Dashboard = () => {
 											type="text"
 											className="auth-input"
 											value={profileData.phone}
-											onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-											placeholder="Наприклад: +38(096)-594-00-13"
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													phone: e.target.value,
+												})
+											}
+											placeholder="Наприклад: +38(050)-123-45-67"
 										/>
 									</div>
 								</div>
 								<div className="form-group full-width">
-									<label>Адреса реєстрації (місцезнаходження за паспортом)</label>
+									<label>
+										Адреса реєстрації (місцезнаходження за паспортом)
+									</label>
 									<textarea
 										className="auth-input text-area-input"
 										rows={2}
 										value={profileData.address}
-										onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
+										onChange={(e) =>
+											setProfileData({
+												...profileData,
+												address: e.target.value,
+											})
+										}
 										placeholder="Повна адреса з поштовим індексом..."
 									/>
 								</div>
@@ -509,7 +551,12 @@ const Dashboard = () => {
 										<select
 											className="auth-input"
 											value={profileData.taxSystem}
-											onChange={(e) => setProfileData({ ...profileData, taxSystem: e.target.value })}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													taxSystem: e.target.value,
+												})
+											}
 										>
 											<option value="Спрощена система">Спрощена система</option>
 											<option value="Загальна система">Загальна система</option>
@@ -520,12 +567,19 @@ const Dashboard = () => {
 										<select
 											className="auth-input"
 											value={profileData.taxGroup}
-											onChange={(e) => setProfileData({ ...profileData, taxGroup: e.target.value })}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													taxGroup: e.target.value,
+												})
+											}
 										>
 											<option value="1 група">1 група</option>
 											<option value="2 група">2 група</option>
 											<option value="3 група">3 група</option>
-											<option value="Загальна система / Не застосовується">Загальна система / Не застосовується</option>
+											<option value="Загальна система / Не застосовується">
+												Загальна система / Не застосовується
+											</option>
 										</select>
 									</div>
 								</div>
@@ -535,14 +589,21 @@ const Dashboard = () => {
 										<select
 											className="auth-input"
 											value={profileData.taxRate}
-											onChange={(e) => setProfileData({ ...profileData, taxRate: e.target.value })}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													taxRate: e.target.value,
+												})
+											}
 										>
 											<option value="1%">1%</option>
 											<option value="2%">2%</option>
 											<option value="3%">3% (з ПДВ)</option>
 											<option value="5%">5% (без ПДВ)</option>
 											<option value="15%">15% (для перевищення ліміту)</option>
-											<option value="Не застосовується">Не застосовується</option>
+											<option value="Не застосовується">
+												Не застосовується
+											</option>
 										</select>
 									</div>
 									<div className="form-group">
@@ -551,7 +612,12 @@ const Dashboard = () => {
 											type="text"
 											className="auth-input"
 											value={profileData.esvNumber}
-											onChange={(e) => setProfileData({ ...profileData, esvNumber: e.target.value })}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													esvNumber: e.target.value,
+												})
+											}
 											placeholder="Номер платника єдиного внеску"
 										/>
 									</div>
@@ -568,7 +634,12 @@ const Dashboard = () => {
 											type="text"
 											className="auth-input"
 											value={profileData.mainKved}
-											onChange={(e) => setProfileData({ ...profileData, mainKved: e.target.value })}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													mainKved: e.target.value,
+												})
+											}
 											placeholder="Код основного КВЕД (наприклад: 47.91)"
 										/>
 									</div>
@@ -577,11 +648,22 @@ const Dashboard = () => {
 										<select
 											className="auth-input"
 											value={profileData.usesRro}
-											onChange={(e) => setProfileData({ ...profileData, usesRro: e.target.value })}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													usesRro: e.target.value,
+												})
+											}
 										>
-											<option value="Не використовується">Не використовується</option>
-											<option value="РРО (класичний касовий апарат)">РРО (класичний)</option>
-											<option value="ПРРО (програмний касовий апарат)">ПРРО (програмний)</option>
+											<option value="Не використовується">
+												Не використовується
+											</option>
+											<option value="РРО (класичний касовий апарат)">
+												РРО (класичний)
+											</option>
+											<option value="ПРРО (програмний касовий апарат)">
+												ПРРО (програмний)
+											</option>
 										</select>
 									</div>
 								</div>
@@ -591,7 +673,12 @@ const Dashboard = () => {
 										className="auth-input text-area-input"
 										rows={2}
 										value={profileData.otherKveds}
-										onChange={(e) => setProfileData({ ...profileData, otherKveds: e.target.value })}
+										onChange={(e) =>
+											setProfileData({
+												...profileData,
+												otherKveds: e.target.value,
+											})
+										}
 										placeholder="Наприклад: 62.01, 63.12, 70.22..."
 									/>
 								</div>
@@ -601,17 +688,29 @@ const Dashboard = () => {
 										className="auth-input text-area-input"
 										rows={2}
 										value={profileData.activityAddresses}
-										onChange={(e) => setProfileData({ ...profileData, activityAddresses: e.target.value })}
+										onChange={(e) =>
+											setProfileData({
+												...profileData,
+												activityAddresses: e.target.value,
+											})
+										}
 										placeholder="Фактичні адреси здійснення бізнесу..."
 									/>
 								</div>
 								<div className="form-group full-width">
-									<label>Господарські об'єкти оподаткування (форма 20-ОПП)</label>
+									<label>
+										Господарські об'єкти оподаткування (форма 20-ОПП)
+									</label>
 									<input
 										type="text"
 										className="auth-input"
 										value={profileData.taxObjects}
-										onChange={(e) => setProfileData({ ...profileData, taxObjects: e.target.value })}
+										onChange={(e) =>
+											setProfileData({
+												...profileData,
+												taxObjects: e.target.value,
+											})
+										}
 										placeholder="Наприклад: Офіс 24, Інтернет-магазин, Склад"
 									/>
 								</div>
@@ -626,17 +725,26 @@ const Dashboard = () => {
 										className="auth-input text-area-input"
 										rows={3}
 										value={profileData.ibanAccounts}
-										onChange={(e) => setProfileData({ ...profileData, ibanAccounts: e.target.value })}
+										onChange={(e) =>
+											setProfileData({
+												...profileData,
+												ibanAccounts: e.target.value,
+											})
+										}
 										placeholder="АТ 'УНІВЕРСАЛ БАНК', IBAN: UA193220010000026002313331034..."
 									/>
 								</div>
 								<div className="form-group full-width">
-									<label>Додаткові примітки / Особливий режим оподаткування</label>
+									<label>
+										Додаткові примітки / Особливий режим оподаткування
+									</label>
 									<textarea
 										className="auth-input text-area-input"
 										rows={2}
 										value={profileData.notes}
-										onChange={(e) => setProfileData({ ...profileData, notes: e.target.value })}
+										onChange={(e) =>
+											setProfileData({ ...profileData, notes: e.target.value })
+										}
 										placeholder="Особливості обліку, пільги тощо..."
 									/>
 								</div>
@@ -649,7 +757,9 @@ const Dashboard = () => {
 									disabled={isSavingProfileData}
 									className="auth-submit-btn account-save-btn"
 								>
-									{isSavingProfileData ? "Збереження..." : "💾 Зберегти картку ФОП"}
+									{isSavingProfileData
+										? "Збереження..."
+										: "💾 Зберегти картку ФОП"}
 								</button>
 								<button
 									type="button"
