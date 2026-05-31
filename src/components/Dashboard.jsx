@@ -42,6 +42,7 @@ const Dashboard = () => {
 		taxRate: "5%",
 		isVatPayer: "Ні",
 		esvBenefit: "Немає пільги",
+		employeesCount: 0,
 		esvNumber: "",
 		mainKved: "",
 		otherKveds: "",
@@ -199,6 +200,11 @@ const Dashboard = () => {
 					if (data.esvBenefit === undefined) {
 						data.esvBenefit = "Немає пільги";
 					}
+
+					// Завантаження кількості працівників
+					if (data.employeesCount === undefined) {
+						data.employeesCount = 0;
+					}
 					
 					setProfileData(data);
 				} else {
@@ -213,6 +219,7 @@ const Dashboard = () => {
 						taxRate: "5%",
 						isVatPayer: "Ні",
 						esvBenefit: "Немає пільги",
+						employeesCount: 0,
 						esvNumber: "",
 						mainKved: "",
 						otherKveds: "",
@@ -289,11 +296,25 @@ const Dashboard = () => {
 			}
 		}
 
+		// Валідація кількості найманих працівників відповідно до групи ФОП
+		if (updated.taxGroup === "1 група") {
+			if (profileData.employeesCount !== 0) {
+				updated.employeesCount = 0;
+				changed = true;
+			}
+		} else if (updated.taxGroup === "2 група") {
+			if (profileData.employeesCount > 10) {
+				updated.employeesCount = 10;
+				changed = true;
+				toast.error("На 2-й групі дозволено не більше 10 найманих працівників!");
+			}
+		}
+
 		if (changed) {
 			setProfileData(updated);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [profileData.taxSystem, profileData.taxGroup, profileData.taxRate]);
+	}, [profileData.taxSystem, profileData.taxGroup, profileData.taxRate, profileData.employeesCount]);
 
 	// Стан для інтерактивного вибору КВЕД та Об'єктів
 	const [kvedSearchQuery, setKvedSearchQuery] = useState("");
@@ -521,6 +542,7 @@ const Dashboard = () => {
 				taxRate: "5%",
 				isVatPayer: "Ні",
 				esvBenefit: "Немає пільги",
+				employeesCount: 0,
 				esvNumber: "",
 				mainKved: "",
 				otherKveds: "",
@@ -946,7 +968,7 @@ const Dashboard = () => {
 									</div>
 								</div>
 								<div className="form-row">
-									<div className="form-group full-width">
+									<div className="form-group">
 										<label>Пільга зі сплати ЄСВ (звільнення за себе)</label>
 										<select
 											className="auth-input"
@@ -977,6 +999,30 @@ const Dashboard = () => {
 												стану
 											</option>
 										</select>
+									</div>
+									<div className="form-group">
+										<label>Наймані працівники (кількість)</label>
+										<input
+											type="number"
+											className="auth-input"
+											min={0}
+											max={profileData.taxGroup === "2 група" ? 10 : undefined}
+											disabled={profileData.taxGroup === "1 група"}
+											value={profileData.employeesCount}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													employeesCount: Math.max(0, parseInt(e.target.value) || 0),
+												})
+											}
+											placeholder={
+												profileData.taxGroup === "1 група"
+													? "Заборонено наймати"
+													: profileData.taxGroup === "2 група"
+														? "Не більше 10 осіб"
+														: "Кількість працівників"
+											}
+										/>
 									</div>
 								</div>
 							</div>
