@@ -22,7 +22,7 @@
 }
 
 .calendar-header-section p {
-	color: var(--text-muted, #64748b);
+	color: var(--text-secondary);
 	font-size: 1.1rem;
 	max-width: 800px;
 	margin: 0 auto;
@@ -30,12 +30,16 @@
 
 /* Config Bar */
 .calendar-config-bar {
-	background: var(--bg-card, #1e293b);
-	border: 1px solid var(--border-color, #334155);
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
 	border-radius: 1rem;
 	padding: 1.5rem;
 	margin-bottom: 2rem;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .calendar-config-bar {
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .config-grid {
@@ -64,7 +68,7 @@
 	margin-bottom: 0.5rem;
 	font-size: 0.9rem;
 	font-weight: 500;
-	color: var(--text-muted, #64748b);
+	color: var(--text-secondary);
 }
 
 .checkbox-toggles {
@@ -88,7 +92,7 @@
 	align-items: center;
 	gap: 0.5rem;
 	font-size: 0.95rem;
-	color: var(--text-primary, #f8fafc);
+	color: var(--text-main);
 	cursor: pointer;
 	user-select: none;
 }
@@ -107,7 +111,7 @@
 	padding-bottom: 0.75rem;
 	margin-bottom: 2rem;
 	scrollbar-width: thin;
-	scrollbar-color: var(--border-color, #334155) transparent;
+	scrollbar-color: var(--border-color) transparent;
 }
 
 .month-filters-container::-webkit-scrollbar {
@@ -115,14 +119,14 @@
 }
 
 .month-filters-container::-webkit-scrollbar-thumb {
-	background: var(--border-color, #334155);
+	background: var(--border-color);
 	border-radius: 4px;
 }
 
 .month-filter-btn {
-	background: var(--bg-card, #1e293b);
-	border: 1px solid var(--border-color, #334155);
-	color: var(--text-muted, #64748b);
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
+	color: var(--text-secondary);
 	border-radius: 20px;
 	padding: 0.5rem 1.2rem;
 	font-size: 0.85rem;
@@ -132,15 +136,15 @@
 }
 
 .month-filter-btn:hover {
-	border-color: var(--primary-color, #3b82f6);
-	color: var(--text-primary, #f8fafc);
+	border-color: var(--primary-color);
+	color: var(--text-main);
 }
 
 .month-filter-btn.active {
-	background: var(--primary-color, #3b82f6);
-	border-color: var(--primary-color, #3b82f6);
+	background: var(--primary-color);
+	border-color: var(--primary-color);
 	color: #ffffff;
-	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+	box-shadow: 0 4px 12px rgba(83, 91, 242, 0.3);
 }
 
 /* Timeline Cards styling */
@@ -156,7 +160,7 @@
 	top: 0;
 	bottom: 0;
 	width: 2px;
-	background: var(--border-color, #334155);
+	background: var(--border-color);
 }
 
 .timeline-list {
@@ -167,18 +171,22 @@
 
 .timeline-card {
 	display: flex;
-	background: var(--bg-card, #1e293b);
-	border: 1px solid var(--border-color, #334155);
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
 	border-radius: 1rem;
 	overflow: hidden;
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 	position: relative;
 	transition: transform 0.2s ease, opacity 0.3s ease, border-color 0.2s ease;
 }
 
+[data-theme="dark"] .timeline-card {
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
 .timeline-card:hover {
 	transform: translateX(4px);
-	border-color: rgba(255, 255, 255, 0.15);
+	border-color: var(--primary-color);
 }
 
 .timeline-card::after {
@@ -200,11 +208,11 @@
 
 .timeline-card.completed {
 	opacity: 0.6;
-	border-color: var(--border-color, #334155) !important;
+	border-color: var(--border-color) !important;
 }
 
 .timeline-card.completed::after {
-	background: #64748b !important;
+	background: var(--text-muted) !important;
 }
 
 /* Card columns */
@@ -214,8 +222,8 @@
 	align-items: center;
 	justify-content: center;
 	padding: 1.5rem;
-	background: rgba(255, 255, 255, 0.02);
-	border-right: 1px solid var(--border-color, #334155);
+	background: rgba(0, 0, 0, 0.02);
+	border-right: 1px solid var(--border-color);
 	min-width: 110px;
 	text-align: center;
 }
@@ -240,19 +248,19 @@
 
 .timeline-card.completed .type-badge {
 	background: rgba(100, 116, 139, 0.15) !important;
-	color: #64748b !important;
+	color: var(--text-muted) !important;
 }
 
 .deadline-date-number {
 	font-size: 2.2rem;
 	font-weight: 700;
-	color: var(--text-primary, #f8fafc);
+	color: var(--text-main);
 	line-height: 1;
 }
 
 .deadline-month-text {
 	font-size: 0.85rem;
-	color: var(--text-muted, #64748b);
+	color: var(--text-muted);
 	text-transform: uppercase;
 	font-weight: 600;
 	margin-top: 0.25rem;
@@ -287,7 +295,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		border-right: none;
-		border-bottom: 1px solid var(--border-color, #334155);
+		border-bottom: 1px solid var(--border-color);
 		padding: 1rem 1.5rem;
 	}
 	.deadline-date-number {
@@ -304,7 +312,7 @@
 
 .timeline-content-header h4 {
 	font-size: 1.15rem;
-	color: var(--text-primary, #f8fafc);
+	color: var(--text-main);
 	margin: 0;
 	font-weight: 600;
 	line-height: 1.4;
@@ -312,13 +320,13 @@
 
 .timeline-card.completed h4 {
 	text-decoration: line-through;
-	color: var(--text-muted, #64748b);
+	color: var(--text-muted);
 }
 
 .date-badge {
-	background: var(--bg-body, #0f172a);
-	border: 1px solid var(--border-color, #334155);
-	color: var(--text-muted, #64748b);
+	background: var(--bg-body);
+	border: 1px solid var(--border-color);
+	color: var(--text-secondary);
 	font-size: 0.8rem;
 	padding: 0.25rem 0.6rem;
 	border-radius: 6px;
@@ -328,7 +336,7 @@
 
 .timeline-content-column p {
 	font-size: 0.95rem;
-	color: var(--text-muted, #64748b);
+	color: var(--text-secondary);
 	line-height: 1.5;
 	margin: 0;
 }
@@ -340,9 +348,9 @@
 }
 
 .complete-toggle-btn {
-	background: transparent;
-	border: 1px solid var(--border-color, #334155);
-	color: var(--text-primary, #f8fafc);
+	background: var(--bg-body);
+	border: 1px solid var(--border-color);
+	color: var(--text-main);
 	font-size: 0.85rem;
 	font-weight: 500;
 	border-radius: 6px;
@@ -355,14 +363,15 @@
 }
 
 .complete-toggle-btn:hover {
-	border-color: var(--primary-color, #3b82f6);
-	background: rgba(59, 130, 246, 0.05);
+	border-color: var(--primary-color);
+	color: var(--primary-color);
+	background: var(--btn-hover-bg);
 }
 
 .complete-toggle-btn.completed {
-	background: rgba(100, 116, 139, 0.1);
-	border-color: var(--border-color, #334155);
-	color: var(--text-muted, #64748b);
+	background: var(--muted-hover-bg);
+	border-color: var(--border-color);
+	color: var(--text-secondary);
 }
 
 .complete-toggle-btn.completed:hover {
