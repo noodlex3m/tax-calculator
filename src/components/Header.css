@@ -85,13 +85,13 @@
 		align-items: center;
 		padding: 0;
 		max-height: 0;
-		overflow: hidden;
+		overflow-y: auto;
 		transition: max-height 0.3s ease-in-out;
 	}
 	.main-nav.active {
-		max-height: 700px;
+		max-height: calc(100vh - 70px);
 		padding: 1rem 0;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
 	}
 	.main-nav a {
 		padding: 1rem;
