@@ -12,6 +12,8 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import SalaryCalculator from "./components/SalaryCalculator";
+import TaxCalendar from "./components/TaxCalendar";
 
 const KvedSearch = lazy(() => import("./components/KvedSearch"));
 const TaxCalculator = lazy(() => import("./components/TaxCalculator"));
@@ -52,6 +54,8 @@ function App() {
 						<Route path="/feedback" element={<FeedbackForm />} />
 						<Route path="/kved" element={<KvedSearch />} />
 						<Route path="/wizard" element={<GroupWizard />} />
+						<Route path="/salary" element={<SalaryCalculator />} />
+						<Route path="/calendar" element={<TaxCalendar />} />
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
 

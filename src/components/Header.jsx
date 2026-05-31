@@ -50,6 +50,12 @@ function Header() {
 					<NavLink to="/wizard" onClick={closeMenu}>
 						Гід ФОП
 					</NavLink>
+					<NavLink to="/calendar" onClick={closeMenu}>
+						Календар
+					</NavLink>
+					<NavLink to="/salary" onClick={closeMenu}>
+						Зарплата
+					</NavLink>
 					<NavLink to="/news" onClick={closeMenu}>
 						Новини
 					</NavLink>

@@ -9,6 +9,7 @@ export const TAX_CONSTANTS = {
 	MILITARY_TAX_RATE_FIXED: 0.1, // 10% від МЗП для 1-2 груп
 	MILITARY_TAX_RATE_GROUP_3: 0.01,
 	MILITARY_TAX_RATE_GENERAL: 0.05,
+	EMPLOYEE_MILITARY_TAX_RATE: 0.05, // 5% військовий збір із зарплат найманих працівників згідно з реформою
 	GENERAL_TAX_RATE: 0.18,
 	MIN_INCOME_FOR_VAT: 1000000,
 };

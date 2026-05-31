@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./Dashboard.css";
+import TaxCalendar from "./TaxCalendar";
+import SalaryCalculator from "./SalaryCalculator";
 
 // НОВІ ІМПОРТИ ДЛЯ FIREBASE (ОПТИМІЗОВАНО)
 import { db } from "../firebase";
@@ -600,6 +602,18 @@ const Dashboard = () => {
 					onClick={() => setActiveTab("account")}
 				>
 					Облікова картка ФОП
+				</button>
+				<button
+					className={activeTab === "calendar" ? "tab-btn active" : "tab-btn"}
+					onClick={() => setActiveTab("calendar")}
+				>
+					📅 Податковий календар
+				</button>
+				<button
+					className={activeTab === "salary" ? "tab-btn active" : "tab-btn"}
+					onClick={() => setActiveTab("salary")}
+				>
+					💼 Зарплата найманих
 				</button>
 			</div>
 
@@ -1310,6 +1324,26 @@ const Dashboard = () => {
 							</div>
 						</form>
 					)}
+				</div>
+			)}
+
+			{activeTab === "calendar" && (
+				<div className="calendar-tab-section animate-fadeIn">
+					<div className="account-form-header" style={{ marginBottom: "1.5rem" }}>
+						<h2>📅 Ваш персональний податковий календар</h2>
+						<p>Дедлайни автоматично розраховані під параметри вашої облікової картки ФОП.</p>
+					</div>
+					<TaxCalendar embedded={true} defaultProfile={profileData} />
+				</div>
+			)}
+
+			{activeTab === "salary" && (
+				<div className="salary-tab-section animate-fadeIn">
+					<div className="account-form-header" style={{ marginBottom: "1.5rem" }}>
+						<h2>💼 Розрахунок заробітної плати працівників</h2>
+						<p>Параметри автоматично синхронізовані з кількістю найманих осіб у вашому профілі.</p>
+					</div>
+					<SalaryCalculator embedded={true} defaultEmployees={profileData.employeesCount} />
 				</div>
 			)}
 		</div>

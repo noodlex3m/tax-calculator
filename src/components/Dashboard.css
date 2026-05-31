@@ -88,7 +88,9 @@
 }
 
 .history-section, 
-.profile-section {
+.profile-section,
+.calendar-tab-section,
+.salary-tab-section {
 	background-color: var(--bg-card);
 	border-radius: 12px;
 	padding: 2rem;
