@@ -38,10 +38,6 @@ const GroupWizard = () => {
 		if (currentStep === 1 && !answers.clients) return;
 		if (currentStep === 2 && !answers.activityType) return;
 		if (currentStep === 3 && !answers.employeeCount) return;
-		if (currentStep === 4 && answers.activityType === "rental_large" && !answers.rentalLimits) {
-			setCurrentStep(5);
-			return;
-		}
 		if (currentStep < totalSteps) {
 			setCurrentStep(currentStep + 1);
 		} else {
