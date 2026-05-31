@@ -1,0 +1,423 @@
+/* src/components/GroupWizard.css */
+
+.wizard-container {
+	max-width: 800px;
+	margin: 2rem auto;
+	padding: 0 1.5rem;
+}
+
+.wizard-card,
+.wizard-results-card {
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-color);
+	border-radius: 16px;
+	padding: 2.5rem;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+	position: relative;
+	overflow: hidden;
+}
+
+[data-theme="dark"] .wizard-card,
+[data-theme="dark"] .wizard-results-card {
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* 📊 Progress Bar */
+.wizard-progress-bar-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 6px;
+	background-color: var(--border-color);
+}
+
+.wizard-progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+	transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 🧭 Headers */
+.wizard-step-badge {
+	display: inline-block;
+	background-color: rgba(83, 91, 242, 0.1);
+	color: var(--primary-color);
+	padding: 0.35rem 0.8rem;
+	border-radius: 20px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-bottom: 1rem;
+}
+
+.wizard-step-header h2 {
+	font-size: 1.75rem;
+	margin: 0 0 0.5rem 0;
+	color: var(--text-main);
+}
+
+.wizard-step-header p {
+	margin: 0 0 2rem 0;
+	color: var(--text-muted);
+	font-size: 0.95rem;
+}
+
+.wizard-step-content h3 {
+	font-size: 1.25rem;
+	color: var(--text-main);
+	margin-bottom: 1.5rem;
+	text-align: left;
+	font-weight: 700;
+}
+
+/* 🎛️ Options Grid */
+.wizard-options-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1.25rem;
+	margin-bottom: 2rem;
+}
+
+@media (max-width: 650px) {
+	.wizard-options-grid {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+}
+
+.wizard-option-card {
+	background-color: var(--bg-block);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	padding: 1.25rem;
+	cursor: pointer;
+	text-align: left;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	font-family: inherit;
+}
+
+.wizard-option-card:hover {
+	transform: translateY(-2px);
+	border-color: var(--primary-color);
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="dark"] .wizard-option-card:hover {
+	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.wizard-option-card.selected {
+	border-color: var(--primary-color);
+	background-color: var(--muted-hover-bg, rgba(83, 91, 242, 0.05));
+	box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+.option-emoji {
+	font-size: 1.75rem;
+}
+
+.option-title {
+	font-weight: 700;
+	font-size: 1.05rem;
+	color: var(--text-main);
+}
+
+.option-desc {
+	font-size: 0.85rem;
+	color: var(--text-muted);
+	line-height: 1.4;
+}
+
+/* 🏁 Actions Footer */
+.wizard-footer-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-top: 1px solid var(--border-color);
+	padding-top: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+.wizard-back-btn {
+	background: transparent;
+	border: 1px solid var(--border-color);
+	color: var(--text-secondary);
+	padding: 0.75rem 1.5rem;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: all 0.2s ease;
+}
+
+.wizard-back-btn:hover:not(:disabled) {
+	background-color: var(--muted-hover-bg, rgba(100, 116, 139, 0.08));
+	color: var(--text-main);
+}
+
+.wizard-back-btn:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+.wizard-next-btn {
+	background-color: var(--primary-color);
+	border: none;
+	color: white;
+	padding: 0.75rem 1.8rem;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: all 0.2s ease;
+	box-shadow: 0 4px 12px rgba(83, 91, 242, 0.2);
+}
+
+.wizard-next-btn:hover:not(:disabled) {
+	background-color: var(--primary-hover);
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(83, 91, 242, 0.3);
+}
+
+.wizard-next-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	box-shadow: none;
+	transform: none;
+}
+
+/* ==========================================================================
+   RESULTS PAGE STYLING
+   ========================================================================== */
+
+.results-badge {
+	display: inline-block;
+	background-color: rgba(16, 185, 129, 0.1);
+	color: #10b981;
+	padding: 0.35rem 0.8rem;
+	border-radius: 20px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-bottom: 1rem;
+}
+
+.wizard-results-card h2 {
+	font-size: 1.25rem;
+	color: var(--text-muted);
+	margin: 0 0 0.5rem 0;
+	text-transform: uppercase;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+.recommended-group-box {
+	background-color: var(--bg-block);
+	border: 1px solid var(--border-color);
+	border-left: 6px solid #10b981;
+	border-radius: 12px;
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+	text-align: left;
+}
+
+.result-system-name {
+	font-size: 1.6rem;
+	font-weight: 800;
+	color: var(--text-main);
+	display: block;
+	margin-bottom: 0.5rem;
+}
+
+.result-main-desc {
+	font-size: 0.95rem;
+	color: var(--text-secondary);
+	line-height: 1.6;
+	margin: 0;
+}
+
+/* ⚖️ Legal reasons */
+.results-reasons-section {
+	text-align: left;
+	margin-bottom: 2rem;
+}
+
+.results-reasons-section h3 {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--text-main);
+	margin-bottom: 1rem;
+}
+
+.reasons-bullet-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.reason-bullet-item {
+	display: flex;
+	gap: 0.75rem;
+	align-items: flex-start;
+	font-size: 0.92rem;
+	color: var(--text-secondary);
+	line-height: 1.4;
+}
+
+.reason-icon {
+	color: var(--primary-color);
+	flex-shrink: 0;
+}
+
+/* 💰 Taxes estimation table */
+.results-taxes-box {
+	background-color: var(--bg-block);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+	text-align: left;
+}
+
+.results-taxes-box h3 {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--text-main);
+	margin: 0 0 1.25rem 0;
+}
+
+.taxes-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 0.85rem;
+	margin-bottom: 1.25rem;
+}
+
+.tax-grid-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px dashed var(--border-color);
+	padding-bottom: 0.6rem;
+	font-size: 0.95rem;
+}
+
+.tax-grid-row:last-child {
+	border-bottom: none;
+	padding-bottom: 0;
+}
+
+.tax-grid-row span {
+	color: var(--text-secondary);
+}
+
+.tax-grid-row strong {
+	color: var(--primary-color);
+	font-size: 1.05rem;
+	font-weight: 700;
+}
+
+.taxes-footnote {
+	font-size: 0.8rem;
+	color: var(--text-muted);
+	display: block;
+	line-height: 1.4;
+}
+
+/* Actions */
+.results-actions-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 1rem;
+	border-top: 1px solid var(--border-color);
+	padding-top: 1.5rem;
+}
+
+.wizard-restart-btn {
+	background: transparent;
+	border: 1px solid var(--border-color);
+	color: var(--text-secondary);
+	padding: 0.8rem 1.5rem;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: all 0.2s ease;
+}
+
+.wizard-restart-btn:hover {
+	background-color: var(--muted-hover-bg, rgba(100, 116, 139, 0.08));
+	color: var(--text-main);
+}
+
+.results-main-action-buttons {
+	display: flex;
+	gap: 0.8rem;
+}
+
+.wizard-calc-preset-btn {
+	background-color: var(--primary-color);
+	border: none;
+	color: white;
+	padding: 0.8rem 1.6rem;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: all 0.2s ease;
+	box-shadow: 0 4px 12px rgba(83, 91, 242, 0.25);
+}
+
+.wizard-calc-preset-btn:hover {
+	background-color: var(--primary-hover);
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(83, 91, 242, 0.35);
+}
+
+.wizard-save-profile-btn {
+	background-color: #10b981;
+	border: none;
+	color: white;
+	padding: 0.8rem 1.6rem;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: all 0.2s ease;
+	box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+
+.wizard-save-profile-btn:hover:not(:disabled) {
+	background-color: #059669;
+	transform: translateY(-1px);
+	box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+}
+
+.wizard-save-profile-btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+	.results-actions-container {
+		flex-direction: column;
+		width: 100%;
+		align-items: stretch;
+	}
+	
+	.results-main-action-buttons {
+		flex-direction: column;
+		width: 100%;
+	}
+	
+	.results-main-action-buttons button,
+	.wizard-restart-btn {
+		width: 100%;
+	}
+}

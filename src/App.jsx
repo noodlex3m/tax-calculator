@@ -21,6 +21,7 @@ const ArticlePage = lazy(() => import("./components/ArticlePage"));
 const NotFound = lazy(() => import("./components/NotFound"));
 // 🔥 НОВИЙ КОМПОНЕНТ АДМІН-ПАНЕЛІ
 const AdminPanel = lazy(() => import("./components/AdminPanel"));
+const GroupWizard = lazy(() => import("./components/GroupWizard"));
 
 function App() {
 	return (
@@ -50,6 +51,7 @@ function App() {
 						<Route path="/news" element={<News />} />
 						<Route path="/feedback" element={<FeedbackForm />} />
 						<Route path="/kved" element={<KvedSearch />} />
+						<Route path="/wizard" element={<GroupWizard />} />
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
 

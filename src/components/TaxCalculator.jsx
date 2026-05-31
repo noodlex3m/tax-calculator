@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
 	calculateTaxes,
 	calculateNetProfit,
@@ -26,6 +27,23 @@ function TaxCalculator() {
 	const [grossIncomeAmount, setGrossIncomeAmount] = useState("");
 	const [expenseAmount, setExpenseAmount] = useState("");
 	const [taxResult, setTaxResult] = useState(null);
+
+	const [searchParams] = useSearchParams();
+
+	// Пресет налаштувань групи ФОП з Гіда (URL Query Params)
+	useEffect(() => {
+		const group = searchParams.get("group");
+		if (group) {
+			if (group === "general") {
+				setTaxSystem("general");
+				setTaxResult(null);
+			} else if (["1", "2", "3"].includes(group)) {
+				setTaxSystem("simplified");
+				setTaxGroup(group);
+				setTaxResult(null);
+			}
+		}
+	}, [searchParams]);
 
 
 
