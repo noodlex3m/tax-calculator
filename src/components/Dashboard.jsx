@@ -731,7 +731,7 @@ const Dashboard = () => {
 												ibanAccounts: e.target.value,
 											})
 										}
-										placeholder="АТ 'УНІВЕРСАЛ БАНК', IBAN: UA193220010000026002313331034..."
+										placeholder="АТ 'ПРИВАТБАНК', IBAN: UA993052990000026001234567890..."
 									/>
 								</div>
 								<div className="form-group full-width">
