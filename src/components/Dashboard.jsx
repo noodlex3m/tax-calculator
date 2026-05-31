@@ -16,6 +16,8 @@ import {
 } from "firebase/firestore";
 import PersonalDataConsent from "./PersonalDataConsent";
 import { toast } from "react-hot-toast";
+import kvedData from "../data/kvedData";
+import { objectTypes } from "../data/objectTypesData";
 
 const Dashboard = () => {
 	const { user, logout, updateUser } = useAuth();
@@ -38,11 +40,15 @@ const Dashboard = () => {
 		taxSystem: "Спрощена система",
 		taxGroup: "3 група",
 		taxRate: "5%",
+		isVatPayer: "Ні",
+		esvBenefit: "Немає пільги",
 		esvNumber: "",
 		mainKved: "",
 		otherKveds: "",
-		taxObjects: "",
-		usesRro: "Не використовується",
+		kvedsList: [],
+		selectedObjects: [],
+		rroCount: 0,
+		prroCount: 0,
 		activityAddresses: "",
 		ibanAccounts: "",
 		notes: "",
@@ -113,7 +119,88 @@ const Dashboard = () => {
 				const docRef = doc(db, "userProfiles", user.uid);
 				const docSnap = await getDoc(docRef);
 				if (docSnap.exists()) {
-					setProfileData(docSnap.data());
+					const data = docSnap.data();
+					
+					// Міграція КВЕДів з рядків у структурований масив
+					if (!data.kvedsList || !Array.isArray(data.kvedsList)) {
+						const list = [];
+						if (data.mainKved) {
+							const matched = kvedData.find(k => k.code === data.mainKved);
+							list.push({
+								code: data.mainKved,
+								name: matched ? matched.name : "Основний вид діяльності",
+								isMain: true
+							});
+						}
+						if (data.otherKveds) {
+							const codes = data.otherKveds.split(",").map(c => c.trim()).filter(Boolean);
+							codes.forEach(c => {
+								if (c !== data.mainKved && !list.some(k => k.code === c)) {
+									const matched = kvedData.find(k => k.code === c);
+									list.push({
+										code: c,
+										name: matched ? matched.name : "Додатковий вид діяльності",
+										isMain: false
+									});
+								}
+							});
+						}
+						data.kvedsList = list;
+					}
+					
+					// Міграція об'єктів 20-ОПП з рядків у структурований масив
+					if (!data.selectedObjects || !Array.isArray(data.selectedObjects)) {
+						const list = [];
+						if (data.taxObjects) {
+							const names = data.taxObjects.split(",").map(n => n.trim()).filter(Boolean);
+							names.forEach((n, idx) => {
+								let code = "321"; // Дефолт: МАГАЗИН
+								let typeName = "МАГАЗИН";
+								const lowerN = n.toLowerCase();
+								if (lowerN.includes("офіс") || lowerN.includes("контор")) {
+									code = "283";
+									typeName = "КОНТОРА";
+								} else if (lowerN.includes("склад") || lowerN.includes("комор")) {
+									code = "267";
+									typeName = "КОМОРА";
+								} else if (lowerN.includes("кіоск")) {
+									code = "2";
+									typeName = "КІОСК";
+								} else if (lowerN.includes("аптек")) {
+									code = "47";
+									typeName = "АПТЕКА";
+								}
+								list.push({
+									id: `legacy-${idx}-${Date.now()}`,
+									code,
+									typeName,
+									customName: n,
+									address: ""
+								});
+							});
+						}
+						data.selectedObjects = list;
+					}
+					
+					// Міграція платника ПДВ
+					if (data.isVatPayer === undefined) {
+						data.isVatPayer = (data.taxRate && (data.taxRate.includes("3%") || data.taxRate.includes("з ПДВ"))) ? "Так" : "Ні";
+					}
+					
+					// Міграція кількості РРО/ПРРО
+					if (data.rroCount === undefined) {
+						data.rroCount = (data.usesRro && data.usesRro.includes("класичний")) ? 1 : 0;
+					}
+					if (data.prroCount === undefined) {
+						data.prroCount = (data.usesRro && data.usesRro.includes("програмний")) ? 1 : 0;
+					}
+					
+					// Міграція пільг ЄСВ
+					if (data.esvBenefit === undefined) {
+						data.esvBenefit = "Немає пільги";
+					}
+					
+					setProfileData(data);
 				} else {
 					setProfileData({
 						fopName: "",
@@ -124,11 +211,15 @@ const Dashboard = () => {
 						taxSystem: "Спрощена система",
 						taxGroup: "3 група",
 						taxRate: "5%",
+						isVatPayer: "Ні",
+						esvBenefit: "Немає пільги",
 						esvNumber: "",
 						mainKved: "",
 						otherKveds: "",
-						taxObjects: "",
-						usesRro: "Не використовується",
+						kvedsList: [],
+						selectedObjects: [],
+						rroCount: 0,
+						prroCount: 0,
 						activityAddresses: "",
 						ibanAccounts: "",
 						notes: "",
@@ -148,6 +239,190 @@ const Dashboard = () => {
 			fetchProfileData();
 		}
 	}, [user, activeTab]);
+
+	// Реактивна синхронізація параметрів оподаткування згідно з ПКУ
+	useEffect(() => {
+		let changed = false;
+		const updated = { ...profileData };
+
+		if (profileData.taxSystem === "Загальна система") {
+			if (profileData.taxGroup !== "Загальна система / Не застосовується") {
+				updated.taxGroup = "Загальна система / Не застосовується";
+				changed = true;
+			}
+			if (profileData.taxRate !== "Не застосовується") {
+				updated.taxRate = "Не застосовується";
+				changed = true;
+			}
+		} else if (profileData.taxSystem === "Спрощена система") {
+			if (profileData.taxGroup === "Загальна система / Не застосовується") {
+				updated.taxGroup = "3 група";
+				changed = true;
+			}
+
+			if (updated.taxGroup === "1 група" || updated.taxGroup === "2 група") {
+				if (profileData.taxRate !== "Фіксована ставка") {
+					updated.taxRate = "Фіксована ставка";
+					changed = true;
+				}
+				if (profileData.isVatPayer !== "Ні") {
+					updated.isVatPayer = "Ні";
+					changed = true;
+				}
+			} else if (updated.taxGroup === "3 група") {
+				if (profileData.taxRate === "Фіксована ставка" || profileData.taxRate === "Не застосовується") {
+					updated.taxRate = "5% (без ПДВ)";
+					changed = true;
+				}
+
+				if (updated.taxRate === "3% (з ПДВ)") {
+					if (profileData.isVatPayer !== "Так") {
+						updated.isVatPayer = "Так";
+						changed = true;
+					}
+				} else if (updated.taxRate === "5% (без ПДВ)") {
+					if (profileData.isVatPayer !== "Ні") {
+						updated.isVatPayer = "Ні";
+						changed = true;
+					}
+				}
+			}
+		}
+
+		if (changed) {
+			setProfileData(updated);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [profileData.taxSystem, profileData.taxGroup, profileData.taxRate]);
+
+	// Стан для інтерактивного вибору КВЕД та Об'єктів
+	const [kvedSearchQuery, setKvedSearchQuery] = useState("");
+	const [kvedSearchResults, setKvedSearchResults] = useState([]);
+	const [objectSearchQuery, setObjectSearchQuery] = useState("");
+	const [objectSearchResults, setObjectSearchResults] = useState([]);
+
+	const handleKvedSearchChange = (e) => {
+		const query = e.target.value;
+		setKvedSearchQuery(query);
+		if (!query.trim()) {
+			setKvedSearchResults([]);
+			return;
+		}
+
+		const filtered = kvedData.filter(
+			(k) =>
+				k.code.includes(query) ||
+				k.name.toLowerCase().includes(query.toLowerCase()),
+		);
+		setKvedSearchResults(filtered.slice(0, 10));
+	};
+
+	const addKved = (kved) => {
+		if (profileData.kvedsList.some((k) => k.code === kved.code)) {
+			toast.error("Цей КВЕД вже додано!");
+			return;
+		}
+
+		const newKved = {
+			code: kved.code,
+			name: kved.name,
+			isMain: profileData.kvedsList.length === 0,
+		};
+
+		setProfileData((prev) => ({
+			...prev,
+			kvedsList: [...prev.kvedsList, newKved],
+		}));
+		setKvedSearchQuery("");
+		setKvedSearchResults([]);
+		toast.success(`КВЕД ${kved.code} додано!`);
+	};
+
+	const removeKved = (code) => {
+		const updatedList = profileData.kvedsList.filter((k) => k.code !== code);
+		if (profileData.kvedsList.find((k) => k.code === code)?.isMain && updatedList.length > 0) {
+			// Find first non-main and set as main
+			const newMainIdx = updatedList.findIndex(k => !k.isMain);
+			if (newMainIdx !== -1) {
+				updatedList[newMainIdx].isMain = true;
+			}
+		}
+
+		setProfileData((prev) => ({
+			...prev,
+			kvedsList: updatedList,
+		}));
+		toast.success("КВЕД вилучено!");
+	};
+
+	const setMainKved = (code) => {
+		const updatedList = profileData.kvedsList.map((k) => ({
+			...k,
+			isMain: k.code === code,
+		}));
+		setProfileData((prev) => ({
+			...prev,
+			kvedsList: updatedList,
+		}));
+		toast.success(`КВЕД ${code} встановлено як основний!`);
+	};
+
+	const handleObjectSearchChange = (e) => {
+		const query = e.target.value;
+		setObjectSearchQuery(query);
+		if (!query.trim()) {
+			setObjectSearchResults([]);
+			return;
+		}
+
+		const filtered = objectTypes.filter(
+			(obj) =>
+				obj.code.includes(query) ||
+				obj.name.toLowerCase().includes(query.toLowerCase()),
+		);
+		setObjectSearchResults(filtered.slice(0, 10));
+	};
+
+	const addObject = (objType) => {
+		const newObj = {
+			id: `obj-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+			code: objType.code,
+			typeName: objType.name,
+			customName: objType.name,
+			address: "",
+		};
+
+		setProfileData((prev) => ({
+			...prev,
+			selectedObjects: [...prev.selectedObjects, newObj],
+		}));
+		setObjectSearchQuery("");
+		setObjectSearchResults([]);
+		toast.success(`Об'єкт "${objType.name}" додано!`);
+	};
+
+	const updateObjectField = (id, field, value) => {
+		const updatedList = profileData.selectedObjects.map((obj) => {
+			if (obj.id === id) {
+				return { ...obj, [field]: value };
+			}
+			return obj;
+		});
+
+		setProfileData((prev) => ({
+			...prev,
+			selectedObjects: updatedList,
+		}));
+	};
+
+	const removeObject = (id) => {
+		const updatedList = profileData.selectedObjects.filter((obj) => obj.id !== id);
+		setProfileData((prev) => ({
+			...prev,
+			selectedObjects: updatedList,
+		}));
+		toast.success("Об'єкт вилучено!");
+	};
 
 	// Запис згоди на обробку персональних даних
 	const handleAcceptConsent = async () => {
@@ -178,8 +453,34 @@ const Dashboard = () => {
 		if (!user) return;
 		setIsSavingProfileData(true);
 		try {
+			// Створення сумісних рядків для старих полів
+			const mainKvedObj = (profileData.kvedsList || []).find((k) => k.isMain);
+			const mainKved = mainKvedObj ? mainKvedObj.code : "";
+			const otherKveds = (profileData.kvedsList || [])
+				.filter((k) => !k.isMain)
+				.map((k) => k.code)
+				.join(", ");
+
+			const taxObjects = (profileData.selectedObjects || [])
+				.map((o) => o.customName || o.typeName)
+				.filter(Boolean)
+				.join(", ");
+
+			let legacyUsesRro = "Не використовується";
+			if (Number(profileData.rroCount) > 0 && Number(profileData.prroCount) > 0) {
+				legacyUsesRro = "РРО та ПРРО";
+			} else if (Number(profileData.rroCount) > 0) {
+				legacyUsesRro = "РРО (класичний касовий апарат)";
+			} else if (Number(profileData.prroCount) > 0) {
+				legacyUsesRro = "ПРРО (програмний касовий апарат)";
+			}
+
 			const updated = {
 				...profileData,
+				mainKved,
+				otherKveds,
+				taxObjects,
+				usesRro: legacyUsesRro,
 				updatedAt: new Date().toISOString(),
 			};
 			const docRef = doc(db, "userProfiles", user.uid);
@@ -218,11 +519,15 @@ const Dashboard = () => {
 				taxSystem: "Спрощена система",
 				taxGroup: "3 група",
 				taxRate: "5%",
+				isVatPayer: "Ні",
+				esvBenefit: "Немає пільги",
 				esvNumber: "",
 				mainKved: "",
 				otherKveds: "",
-				taxObjects: "",
-				usesRro: "Не використовується",
+				kvedsList: [],
+				selectedObjects: [],
+				rroCount: 0,
+				prroCount: 0,
 				activityAddresses: "",
 				ibanAccounts: "",
 				notes: "",
@@ -451,7 +756,7 @@ const Dashboard = () => {
 								<h2>📇 Облікова картка ФОП</h2>
 								<p>
 									Ці дані використовуються для спрощення розрахунків та кращої
-									взаємодії з адміном.
+									взаємодії з податковим калькулятором.
 								</p>
 							</div>
 
@@ -567,6 +872,7 @@ const Dashboard = () => {
 										<select
 											className="auth-input"
 											value={profileData.taxGroup}
+											disabled={profileData.taxSystem === "Загальна система"}
 											onChange={(e) =>
 												setProfileData({
 													...profileData,
@@ -574,12 +880,17 @@ const Dashboard = () => {
 												})
 											}
 										>
-											<option value="1 група">1 група</option>
-											<option value="2 група">2 група</option>
-											<option value="3 група">3 група</option>
-											<option value="Загальна система / Не застосовується">
-												Загальна система / Не застосовується
-											</option>
+											{profileData.taxSystem === "Загальна система" ? (
+												<option value="Загальна система / Не застосовується">
+													Загальна система / Не застосовується
+												</option>
+											) : (
+												<>
+													<option value="1 група">1 група</option>
+													<option value="2 група">2 група</option>
+													<option value="3 група">3 група</option>
+												</>
+											)}
 										</select>
 									</div>
 								</div>
@@ -589,6 +900,11 @@ const Dashboard = () => {
 										<select
 											className="auth-input"
 											value={profileData.taxRate}
+											disabled={
+												profileData.taxSystem === "Загальна система" ||
+												profileData.taxGroup === "1 група" ||
+												profileData.taxGroup === "2 група"
+											}
 											onChange={(e) =>
 												setProfileData({
 													...profileData,
@@ -596,92 +912,194 @@ const Dashboard = () => {
 												})
 											}
 										>
-											<option value="1%">1%</option>
-											<option value="2%">2%</option>
-											<option value="3%">3% (з ПДВ)</option>
-											<option value="5%">5% (без ПДВ)</option>
-											<option value="15%">15% (для перевищення ліміту)</option>
-											<option value="Не застосовується">
-												Не застосовується
-											</option>
+											{profileData.taxSystem === "Загальна система" ? (
+												<option value="Не застосовується">Не застосовується</option>
+											) : profileData.taxGroup === "1 група" ||
+											  profileData.taxGroup === "2 група" ? (
+												<option value="Фіксована ставка">
+													Фіксована ставка ст. 293 ПКУ
+												</option>
+											) : (
+												<>
+													<option value="5% (без ПДВ)">5% (без ПДВ)</option>
+													<option value="3% (з ПДВ)">3% (з ПДВ)</option>
+												</>
+											)}
 										</select>
 									</div>
 									<div className="form-group">
-										<label>Реєстраційний номер платника ЄСВ</label>
-										<input
-											type="text"
+										<label>Платник ПДВ</label>
+										<select
 											className="auth-input"
-											value={profileData.esvNumber}
+											value={profileData.isVatPayer}
+											disabled={profileData.taxSystem === "Спрощена система"}
 											onChange={(e) =>
 												setProfileData({
 													...profileData,
-													esvNumber: e.target.value,
+													isVatPayer: e.target.value,
 												})
 											}
-											placeholder="Номер платника єдиного внеску"
-										/>
+										>
+											<option value="Ні">Ні</option>
+											<option value="Так">Так</option>
+										</select>
+									</div>
+								</div>
+								<div className="form-row">
+									<div className="form-group full-width">
+										<label>Пільга зі сплати ЄСВ (звільнення за себе)</label>
+										<select
+											className="auth-input"
+											value={profileData.esvBenefit}
+											onChange={(e) =>
+												setProfileData({
+													...profileData,
+													esvBenefit: e.target.value,
+												})
+											}
+										>
+											<option value="Немає пільги">
+												Немає пільги (сплата на загальних підставах)
+											</option>
+											<option value="Пенсіонер за віком">
+												Пенсіонер за віком (звільнення відповідно до ч. 4 ст. 4
+												Закону про ЄСВ)
+											</option>
+											<option value="Особа з інвалідністю">
+												Особа з інвалідністю (звільнення від сплати)
+											</option>
+											<option value="Офіційно працевлаштований">
+												Офіційно працевлаштований (якщо роботодавець сплачує ЄСВ
+												не менше мінімуму)
+											</option>
+											<option value="Військовослужбовець / Мобілізований">
+												Військовослужбовець / Мобілізований на період воєнного
+												стану
+											</option>
+										</select>
 									</div>
 								</div>
 							</div>
 
 							{/* ГРУПА 3: КВЕДИ ТА ОБ'ЄКТИ */}
 							<div className="form-grid-section">
-								<h3>📊 3. Види діяльності (КВЕД) та Об'єкти оподаткування</h3>
-								<div className="form-row">
-									<div className="form-group">
-										<label>Основний КВЕД</label>
+								<h3>📊 3. Види діяльності (КВЕД) та Господарські об'єкти</h3>
+
+								{/* КВЕД Реєстр */}
+								<div className="form-group full-width kved-registry-group">
+									<label>
+										📋 Зареєстровані КВЕДи (оберіть один як основний)
+									</label>
+
+									{(profileData.kvedsList || []).length === 0 ? (
+										<div className="kveds-empty-notice">
+											КВЕДи ще не обрано. Знайдіть та додайте їх через пошук нижче.
+										</div>
+									) : (
+										<div className="kveds-selected-list">
+											{profileData.kvedsList.map((kved) => (
+												<div
+													key={kved.code}
+													className={`kved-selected-item ${
+														kved.isMain ? "main-active" : ""
+													}`}
+												>
+													<div className="kved-item-meta">
+														<input
+															type="radio"
+															name="mainKvedRadio"
+															checked={kved.isMain}
+															onChange={() => setMainKved(kved.code)}
+															id={`kved-radio-${kved.code}`}
+															className="kved-main-radio"
+														/>
+														<label
+															htmlFor={`kved-radio-${kved.code}`}
+															className="kved-item-label"
+														>
+															<span className="kved-code-badge">{kved.code}</span>
+															<span className="kved-name-text">{kved.name}</span>
+														</label>
+													</div>
+													<div className="kved-item-actions">
+														{kved.isMain && (
+															<span className="main-kved-label">Основний</span>
+														)}
+														<button
+															type="button"
+															onClick={() => removeKved(kved.code)}
+															className="kved-remove-btn"
+															title="Вилучити КВЕД"
+														>
+															❌
+														</button>
+													</div>
+												</div>
+											))}
+										</div>
+									)}
+
+									{/* Пошук КВЕДів */}
+									<div className="kved-search-wrapper" style={{ marginTop: "1rem" }}>
 										<input
 											type="text"
+											className="auth-input kved-registry-search"
+											placeholder="Пошук КВЕД за кодом або назвою для додавання..."
+											value={kvedSearchQuery}
+											onChange={handleKvedSearchChange}
+										/>
+										{kvedSearchResults.length > 0 && (
+											<ul className="kved-search-results-dropdown">
+												{kvedSearchResults.map((kved) => (
+													<li
+														key={kved.code}
+														onClick={() => addKved(kved)}
+														className="kved-result-dropdown-item"
+													>
+														<span className="result-code">{kved.code}</span>
+														<span className="result-name">{kved.name}</span>
+													</li>
+												))}
+											</ul>
+										)}
+									</div>
+								</div>
+
+								{/* РРО та ПРРО Кількісний облік */}
+								<div className="form-row">
+									<div className="form-group">
+										<label>Кількість класичних РРО</label>
+										<input
+											type="number"
 											className="auth-input"
-											value={profileData.mainKved}
+											min={0}
+											value={profileData.rroCount}
 											onChange={(e) =>
 												setProfileData({
 													...profileData,
-													mainKved: e.target.value,
+													rroCount: Math.max(0, parseInt(e.target.value) || 0),
 												})
 											}
-											placeholder="Код основного КВЕД (наприклад: 47.91)"
 										/>
 									</div>
 									<div className="form-group">
-										<label>Застосування РРО/ПРРО</label>
-										<select
+										<label>Кількість програмних ПРРО</label>
+										<input
+											type="number"
 											className="auth-input"
-											value={profileData.usesRro}
+											min={0}
+											value={profileData.prroCount}
 											onChange={(e) =>
 												setProfileData({
 													...profileData,
-													usesRro: e.target.value,
+													prroCount: Math.max(0, parseInt(e.target.value) || 0),
 												})
 											}
-										>
-											<option value="Не використовується">
-												Не використовується
-											</option>
-											<option value="РРО (класичний касовий апарат)">
-												РРО (класичний)
-											</option>
-											<option value="ПРРО (програмний касовий апарат)">
-												ПРРО (програмний)
-											</option>
-										</select>
+										/>
 									</div>
 								</div>
-								<div className="form-group full-width">
-									<label>Інші КВЕДи (через кому або списком)</label>
-									<textarea
-										className="auth-input text-area-input"
-										rows={2}
-										value={profileData.otherKveds}
-										onChange={(e) =>
-											setProfileData({
-												...profileData,
-												otherKveds: e.target.value,
-											})
-										}
-										placeholder="Наприклад: 62.01, 63.12, 70.22..."
-									/>
-								</div>
+
+								{/* Адреси провадження діяльності */}
 								<div className="form-group full-width">
 									<label>Адреси провадження господарської діяльності</label>
 									<textarea
@@ -694,25 +1112,99 @@ const Dashboard = () => {
 												activityAddresses: e.target.value,
 											})
 										}
-										placeholder="Фактичні адреси здійснення бізнесу..."
+										placeholder="Повна адреса (місто, вулиця) або 'Територія України' для інтернет-торгівлі..."
 									/>
 								</div>
-								<div className="form-group full-width">
+
+								{/* Господарські об'єкти (20-ОПП) */}
+								<div className="form-group full-width object-registry-group">
 									<label>
-										Господарські об'єкти оподаткування (форма 20-ОПП)
+										🏠 Господарські об'єкти оподаткування (форма 20-ОПП)
 									</label>
-									<input
-										type="text"
-										className="auth-input"
-										value={profileData.taxObjects}
-										onChange={(e) =>
-											setProfileData({
-												...profileData,
-												taxObjects: e.target.value,
-											})
-										}
-										placeholder="Наприклад: Офіс 24, Інтернет-магазин, Склад"
-									/>
+
+									{(profileData.selectedObjects || []).length === 0 ? (
+										<div className="objects-empty-notice">
+											Об'єкти оподаткування ще не додано. Скористайтеся пошуком нижче.
+										</div>
+									) : (
+										<div className="objects-selected-list">
+											{profileData.selectedObjects.map((obj) => (
+												<div key={obj.id} className="object-selected-card">
+													<div className="object-card-header">
+														<span className="object-type-badge">
+															{obj.code} - {obj.typeName}
+														</span>
+														<button
+															type="button"
+															onClick={() => removeObject(obj.id)}
+															className="object-remove-btn"
+														>
+															❌
+														</button>
+													</div>
+													<div className="object-card-inputs">
+														<div className="form-group">
+															<label>Власна назва об'єкта (для ідентифікації)</label>
+															<input
+																type="text"
+																className="auth-input object-card-input"
+																value={obj.customName}
+																placeholder="Наприклад: Магазин одягу 'Стиль'"
+																onChange={(e) =>
+																	updateObjectField(
+																		obj.id,
+																		"customName",
+																		e.target.value,
+																	)
+																}
+															/>
+														</div>
+														<div className="form-group">
+															<label>Фактична адреса розташування об'єкта</label>
+															<input
+																type="text"
+																className="auth-input object-card-input"
+																value={obj.address}
+																placeholder="Наприклад: м. Чернівці, вул. Головна, 15"
+																onChange={(e) =>
+																	updateObjectField(
+																		obj.id,
+																		"address",
+																		e.target.value,
+																	)
+																}
+															/>
+														</div>
+													</div>
+												</div>
+											))}
+										</div>
+									)}
+
+									{/* Пошук об'єктів */}
+									<div className="object-search-wrapper" style={{ marginTop: "1rem" }}>
+										<input
+											type="text"
+											className="auth-input object-registry-search"
+											placeholder="Пошук типу об'єкта за номером або назвою (наприклад: 321 або Магазин)..."
+											value={objectSearchQuery}
+											onChange={handleObjectSearchChange}
+										/>
+										{objectSearchResults.length > 0 && (
+											<ul className="object-search-results-dropdown">
+												{objectSearchResults.map((obj) => (
+													<li
+														key={obj.code}
+														onClick={() => addObject(obj)}
+														className="object-result-dropdown-item"
+													>
+														<span className="result-code">{obj.code}</span>
+														<span className="result-name">{obj.name}</span>
+													</li>
+												))}
+											</ul>
+										)}
+									</div>
 								</div>
 							</div>
 
@@ -731,7 +1223,7 @@ const Dashboard = () => {
 												ibanAccounts: e.target.value,
 											})
 										}
-										placeholder="АТ 'ПРИВАТБАНК', IBAN: UA993052990000026001234567890..."
+										placeholder="АТ 'УНІВЕРСАЛ БАНК', IBAN: UA193220010000026002313331034..."
 									/>
 								</div>
 								<div className="form-group full-width">
