@@ -388,6 +388,12 @@
 	border: 1px solid rgba(83, 91, 242, 0.3);
 }
 
+.alert-badge.warning {
+	background: rgba(245, 158, 11, 0.15);
+	color: #f59e0b;
+	border-color: rgba(245, 158, 11, 0.3);
+}
+
 .total-tax-burden {
 	background: var(--bg-body);
 	border: 1px solid var(--border-color);

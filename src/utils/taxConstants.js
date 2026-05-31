@@ -30,7 +30,8 @@ export const CALCULATED_CONSTANTS = {
 	GROUP_2_TAX: TAX_CONSTANTS.MIN_SALARY * TAX_CONSTANTS.GROUP_2_TAX_RATE,
 	MILITARY_TAX_FIXED:
 		TAX_CONSTANTS.MIN_SALARY * TAX_CONSTANTS.MILITARY_TAX_RATE_FIXED,
-	INCOME_LIMIT_GROUP_3: LIMITS[3], // Adding this back for backward compatibility if needed, though previously it was calculated
+	INCOME_LIMIT_GROUP_3: LIMITS[3],
+	MAX_ESV_BASE: TAX_CONSTANTS.MIN_SALARY * 20, // 20 МЗП максимальна база нарахування ЄСВ у 2026 році (172 940 грн)
 };
 
 export const VAT_REGISTRATION_LIMIT = 1000000;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TAX_CONSTANTS } from "../utils/taxConstants";
+import { TAX_CONSTANTS, CALCULATED_CONSTANTS } from "../utils/taxConstants";
 import { toast } from "react-hot-toast";
 import "./SalaryCalculator.css";
 
@@ -45,9 +45,13 @@ const SalaryCalculator = ({ embedded = false, defaultEmployees = 0 }) => {
 	const militaryAmount = grossSalary * MILITARY_RATE;
 	const netSalary = grossSalary - pitAmount - militaryAmount;
 
-	// ESV calculation (considering minimum contribution rule for main job)
+	// ESV calculation (considering minimum contribution rule for main job and maximum base cap)
 	const currentEsvRate = isHandicap ? HANDICAP_ESV_RATE : ESV_RATE;
-	let esvAmount = grossSalary * currentEsvRate;
+	const MAX_ESV_BASE = CALCULATED_CONSTANTS.MAX_ESV_BASE;
+	
+	const isMaxEsvApplied = grossSalary > MAX_ESV_BASE;
+	const esvBasis = isMaxEsvApplied ? MAX_ESV_BASE : grossSalary;
+	let esvAmount = esvBasis * currentEsvRate;
 
 	// Minimum insurance contribution rule (doesn't apply to disabled workers or non-main jobs)
 	const isMinEsvApplied = isMainJob && !isHandicap && grossSalary > 0 && grossSalary < MIN_SALARY;
@@ -273,6 +277,7 @@ const SalaryCalculator = ({ embedded = false, defaultEmployees = 0 }) => {
 								<span>
 									ЄСВ роботодавця ({currentEsvRate * 100}%):
 									{isMinEsvApplied && <small className="alert-badge">мін. внесок</small>}
+									{isMaxEsvApplied && <small className="alert-badge warning">макс. база</small>}
 								</span>
 								<strong>
 									+ {totalEsv.toLocaleString("uk-UA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ₴
