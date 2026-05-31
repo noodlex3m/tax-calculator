@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./Dashboard.css";
 
-// НОВІ ІМПОРТИ ДЛЯ FIREBASE
+// НОВІ ІМПОРТИ ДЛЯ FIREBASE (ОПТИМІЗОВАНО)
 import { db } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import PersonalDataConsent from "./PersonalDataConsent";
+import { toast } from "react-hot-toast";
 
 const Dashboard = () => {
 	const { user, logout, updateUser } = useAuth();
@@ -16,6 +18,30 @@ const Dashboard = () => {
 	const [editPassword, setEditPassword] = useState("");
 	const [profileMessage, setProfileMessage] = useState("");
 	const [profileError, setProfileError] = useState("");
+
+	// Стан для розширеної облікової картки ФОП (персональні дані)
+	const [profileData, setProfileData] = useState({
+		fopName: "",
+		rnokpp: "",
+		citizenship: "Україна",
+		address: "",
+		phone: "",
+		taxSystem: "Спрощена система",
+		taxGroup: "3 група",
+		taxRate: "5%",
+		esvNumber: "",
+		mainKved: "",
+		otherKveds: "",
+		taxObjects: "",
+		usesRro: "Не використовується",
+		activityAddresses: "",
+		ibanAccounts: "",
+		notes: "",
+		consentGiven: false,
+		consentTimestamp: ""
+	});
+	const [isProfileDataLoading, setIsProfileDataLoading] = useState(true);
+	const [isSavingProfileData, setIsSavingProfileData] = useState(false);
 
 	useEffect(() => {
 		if (user) {
@@ -39,30 +65,25 @@ const Dashboard = () => {
 		}
 	};
 
-	// 🔥 МАГІЯ FIREBASE: Читання з бази даних
+	// 🔥 МАГІЯ FIREBASE: Читання історії розрахунків з бази даних
 	useEffect(() => {
 		const fetchHistoryFromFirebase = async () => {
-			if (!user) return; // Якщо немає користувача, не робимо запит
+			if (!user) return;
 
 			try {
-				// Створюємо запит: шукаємо лише ті документи, де userId співпадає з нашим
 				const q = query(
 					collection(db, "calculations"),
 					where("userId", "==", user.uid),
 				);
 
-				// Виконуємо запит
 				const querySnapshot = await getDocs(q);
 				const fetchedHistory = [];
 
-				// Перебираємо отримані документи
 				querySnapshot.forEach((doc) => {
 					fetchedHistory.push(doc.data());
 				});
 
-				// Сортуємо від найновіших до найстаріших
 				fetchedHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-
 				setHistory(fetchedHistory);
 			} catch (error) {
 				console.error("Помилка завантаження історії:", error);
@@ -73,6 +94,141 @@ const Dashboard = () => {
 			fetchHistoryFromFirebase();
 		}
 	}, [user, activeTab]);
+
+	// 🔥 МАГІЯ FIREBASE: Читання розширеної облікової картки ФОП
+	useEffect(() => {
+		const fetchProfileData = async () => {
+			if (!user) return;
+			setIsProfileDataLoading(true);
+			try {
+				const docRef = doc(db, "userProfiles", user.uid);
+				const docSnap = await getDoc(docRef);
+				if (docSnap.exists()) {
+					setProfileData(docSnap.data());
+				} else {
+					setProfileData({
+						fopName: "",
+						rnokpp: "",
+						citizenship: "Україна",
+						address: "",
+						phone: "",
+						taxSystem: "Спрощена система",
+						taxGroup: "3 група",
+						taxRate: "5%",
+						esvNumber: "",
+						mainKved: "",
+						otherKveds: "",
+						taxObjects: "",
+						usesRro: "Не використовується",
+						activityAddresses: "",
+						ibanAccounts: "",
+						notes: "",
+						consentGiven: false,
+						consentTimestamp: ""
+					});
+				}
+			} catch (error) {
+				console.error("Помилка при завантаженні облікових даних:", error);
+				toast.error("Не вдалося завантажити облікові дані");
+			} finally {
+				setIsProfileDataLoading(false);
+			}
+		};
+
+		if (activeTab === "account") {
+			fetchProfileData();
+		}
+	}, [user, activeTab]);
+
+	// Запис згоди на обробку персональних даних
+	const handleAcceptConsent = async () => {
+		if (!user) return;
+		setIsSavingProfileData(true);
+		try {
+			const updated = {
+				...profileData,
+				consentGiven: true,
+				consentTimestamp: new Date().toISOString(),
+				updatedAt: new Date().toISOString()
+			};
+			const docRef = doc(db, "userProfiles", user.uid);
+			await setDoc(docRef, updated);
+			setProfileData(updated);
+			toast.success("Облікову картку ФОП активовано! 🚀");
+		} catch (error) {
+			console.error("Помилка збереження згоди:", error);
+			toast.error("Не вдалося зберегти згоду");
+		} finally {
+			setIsSavingProfileData(false);
+		}
+	};
+
+	// Збереження даних картки ФОП в БД
+	const handleSaveProfileData = async (e) => {
+		e.preventDefault();
+		if (!user) return;
+		setIsSavingProfileData(true);
+		try {
+			const updated = {
+				...profileData,
+				updatedAt: new Date().toISOString()
+			};
+			const docRef = doc(db, "userProfiles", user.uid);
+			await setDoc(docRef, updated);
+			setProfileData(updated);
+			toast.success("Облікові дані ФОП збережено в хмарі! 💾");
+		} catch (error) {
+			console.error("Помилка збереження картки ФОП:", error);
+			toast.error("Не вдалося зберегти дані");
+		} finally {
+			setIsSavingProfileData(false);
+		}
+	};
+
+	// Видалення всіх облікових даних (Право на забуття)
+	const handleDeleteProfileData = async () => {
+		if (!user) return;
+		
+		const confirmDelete = window.confirm(
+			"⚠️ УВАГА! Ви дійсно бажаєте видалити всі облікові дані та відкликати згоду на обробку ПД з хмари Firestore?"
+		);
+		
+		if (!confirmDelete) return;
+
+		setIsSavingProfileData(true);
+		try {
+			const docRef = doc(db, "userProfiles", user.uid);
+			await deleteDoc(docRef);
+			
+			setProfileData({
+				fopName: "",
+				rnokpp: "",
+				citizenship: "Україна",
+				address: "",
+				phone: "",
+				taxSystem: "Спрощена система",
+				taxGroup: "3 група",
+				taxRate: "5%",
+				esvNumber: "",
+				mainKved: "",
+				otherKveds: "",
+				taxObjects: "",
+				usesRro: "Не використовується",
+				activityAddresses: "",
+				ibanAccounts: "",
+				notes: "",
+				consentGiven: false,
+				consentTimestamp: ""
+			});
+			
+			toast.success("Всі персональні дані видалено з хмари! 🚫");
+		} catch (error) {
+			console.error("Помилка видалення облікових даних:", error);
+			toast.error("Не вдалося видалити дані");
+		} finally {
+			setIsSavingProfileData(false);
+		}
+	};
 
 	return (
 		<div className="dashboard-container">
@@ -102,6 +258,12 @@ const Dashboard = () => {
 					onClick={() => setActiveTab("profile")}
 				>
 					Мій профіль
+				</button>
+				<button
+					className={activeTab === "account" ? "tab-btn active" : "tab-btn"}
+					onClick={() => setActiveTab("account")}
+				>
+					Облікова картка ФОП
 				</button>
 			</div>
 
@@ -257,6 +419,249 @@ const Dashboard = () => {
 							Зберегти зміни
 						</button>
 					</form>
+				</div>
+			)}
+
+			{activeTab === "account" && (
+				<div className="account-data-section">
+					{isProfileDataLoading ? (
+						<div className="empty-state animate-fadeIn">
+							<p>Завантаження облікової картки з хмари... ⏳</p>
+						</div>
+					) : !profileData.consentGiven ? (
+						<PersonalDataConsent
+							onAccept={handleAcceptConsent}
+							isAccepting={isSavingProfileData}
+						/>
+					) : (
+						<form className="account-form animate-fadeIn" onSubmit={handleSaveProfileData}>
+							<div className="account-form-header">
+								<h2>📇 Облікова картка ФОП</h2>
+								<p>Ці дані використовуються для спрощення розрахунків та кращої взаємодії з адміном.</p>
+							</div>
+
+							{/* ГРУПА 1: РЕЄСТРАЦІЙНІ ДАНІ */}
+							<div className="form-grid-section">
+								<h3>📌 1. Ідентифікаційні та реєстраційні дані ФОП</h3>
+								<div className="form-row">
+									<div className="form-group">
+										<label>Прізвище, ім'я та по батькові (ФОП)</label>
+										<input
+											type="text"
+											className="auth-input"
+											value={profileData.fopName}
+											onChange={(e) => setProfileData({ ...profileData, fopName: e.target.value })}
+											placeholder="Наприклад: ТРІЩУК ЛУЧІЯ ЄВГЕНІВНА"
+										/>
+									</div>
+									<div className="form-group">
+										<label>Податковий номер (РНОКПП / ІПН)</label>
+										<input
+											type="text"
+											className="auth-input"
+											maxLength={10}
+											value={profileData.rnokpp}
+											onChange={(e) => setProfileData({ ...profileData, rnokpp: e.target.value.replace(/\D/g, "") })}
+											placeholder="10 цифр податкового номера"
+										/>
+									</div>
+								</div>
+								<div className="form-row">
+									<div className="form-group">
+										<label>Громадянство</label>
+										<input
+											type="text"
+											className="auth-input"
+											value={profileData.citizenship}
+											onChange={(e) => setProfileData({ ...profileData, citizenship: e.target.value })}
+											placeholder="Наприклад: Україна"
+										/>
+									</div>
+									<div className="form-group">
+										<label>Контактний телефон</label>
+										<input
+											type="text"
+											className="auth-input"
+											value={profileData.phone}
+											onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+											placeholder="Наприклад: +38(096)-594-00-13"
+										/>
+									</div>
+								</div>
+								<div className="form-group full-width">
+									<label>Адреса реєстрації (місцезнаходження за паспортом)</label>
+									<textarea
+										className="auth-input text-area-input"
+										rows={2}
+										value={profileData.address}
+										onChange={(e) => setProfileData({ ...profileData, address: e.target.value })}
+										placeholder="Повна адреса з поштовим індексом..."
+									/>
+								</div>
+							</div>
+
+							{/* ГРУПА 2: ПОДАТКОВІ РЕКВІЗИТИ */}
+							<div className="form-grid-section">
+								<h3>💼 2. Параметри оподаткування (Єдиний податок & ЄСВ)</h3>
+								<div className="form-row">
+									<div className="form-group">
+										<label>Система оподаткування</label>
+										<select
+											className="auth-input"
+											value={profileData.taxSystem}
+											onChange={(e) => setProfileData({ ...profileData, taxSystem: e.target.value })}
+										>
+											<option value="Спрощена система">Спрощена система</option>
+											<option value="Загальна система">Загальна система</option>
+										</select>
+									</div>
+									<div className="form-group">
+										<label>Група єдиного податку</label>
+										<select
+											className="auth-input"
+											value={profileData.taxGroup}
+											onChange={(e) => setProfileData({ ...profileData, taxGroup: e.target.value })}
+										>
+											<option value="1 група">1 група</option>
+											<option value="2 група">2 група</option>
+											<option value="3 група">3 група</option>
+											<option value="Загальна система / Не застосовується">Загальна система / Не застосовується</option>
+										</select>
+									</div>
+								</div>
+								<div className="form-row">
+									<div className="form-group">
+										<label>Ставка податку (%)</label>
+										<select
+											className="auth-input"
+											value={profileData.taxRate}
+											onChange={(e) => setProfileData({ ...profileData, taxRate: e.target.value })}
+										>
+											<option value="1%">1%</option>
+											<option value="2%">2%</option>
+											<option value="3%">3% (з ПДВ)</option>
+											<option value="5%">5% (без ПДВ)</option>
+											<option value="15%">15% (для перевищення ліміту)</option>
+											<option value="Не застосовується">Не застосовується</option>
+										</select>
+									</div>
+									<div className="form-group">
+										<label>Реєстраційний номер платника ЄСВ</label>
+										<input
+											type="text"
+											className="auth-input"
+											value={profileData.esvNumber}
+											onChange={(e) => setProfileData({ ...profileData, esvNumber: e.target.value })}
+											placeholder="Номер платника єдиного внеску"
+										/>
+									</div>
+								</div>
+							</div>
+
+							{/* ГРУПА 3: КВЕДИ ТА ОБ'ЄКТИ */}
+							<div className="form-grid-section">
+								<h3>📊 3. Види діяльності (КВЕД) та Об'єкти оподаткування</h3>
+								<div className="form-row">
+									<div className="form-group">
+										<label>Основний КВЕД</label>
+										<input
+											type="text"
+											className="auth-input"
+											value={profileData.mainKved}
+											onChange={(e) => setProfileData({ ...profileData, mainKved: e.target.value })}
+											placeholder="Код основного КВЕД (наприклад: 47.91)"
+										/>
+									</div>
+									<div className="form-group">
+										<label>Застосування РРО/ПРРО</label>
+										<select
+											className="auth-input"
+											value={profileData.usesRro}
+											onChange={(e) => setProfileData({ ...profileData, usesRro: e.target.value })}
+										>
+											<option value="Не використовується">Не використовується</option>
+											<option value="РРО (класичний касовий апарат)">РРО (класичний)</option>
+											<option value="ПРРО (програмний касовий апарат)">ПРРО (програмний)</option>
+										</select>
+									</div>
+								</div>
+								<div className="form-group full-width">
+									<label>Інші КВЕДи (через кому або списком)</label>
+									<textarea
+										className="auth-input text-area-input"
+										rows={2}
+										value={profileData.otherKveds}
+										onChange={(e) => setProfileData({ ...profileData, otherKveds: e.target.value })}
+										placeholder="Наприклад: 62.01, 63.12, 70.22..."
+									/>
+								</div>
+								<div className="form-group full-width">
+									<label>Адреси провадження господарської діяльності</label>
+									<textarea
+										className="auth-input text-area-input"
+										rows={2}
+										value={profileData.activityAddresses}
+										onChange={(e) => setProfileData({ ...profileData, activityAddresses: e.target.value })}
+										placeholder="Фактичні адреси здійснення бізнесу..."
+									/>
+								</div>
+								<div className="form-group full-width">
+									<label>Господарські об'єкти оподаткування (форма 20-ОПП)</label>
+									<input
+										type="text"
+										className="auth-input"
+										value={profileData.taxObjects}
+										onChange={(e) => setProfileData({ ...profileData, taxObjects: e.target.value })}
+										placeholder="Наприклад: Офіс 24, Інтернет-магазин, Склад"
+									/>
+								</div>
+							</div>
+
+							{/* ГРУПА 4: БАНКІВСЬКІ РЕКВІЗИТИ ТА ІНШЕ */}
+							<div className="form-grid-section">
+								<h3>💳 4. Банківські реквізити (IBAN) та Додатково</h3>
+								<div className="form-group full-width">
+									<label>Рахунки IBAN (Банк, номер рахунку, валюта)</label>
+									<textarea
+										className="auth-input text-area-input"
+										rows={3}
+										value={profileData.ibanAccounts}
+										onChange={(e) => setProfileData({ ...profileData, ibanAccounts: e.target.value })}
+										placeholder="АТ 'УНІВЕРСАЛ БАНК', IBAN: UA193220010000026002313331034..."
+									/>
+								</div>
+								<div className="form-group full-width">
+									<label>Додаткові примітки / Особливий режим оподаткування</label>
+									<textarea
+										className="auth-input text-area-input"
+										rows={2}
+										value={profileData.notes}
+										onChange={(e) => setProfileData({ ...profileData, notes: e.target.value })}
+										placeholder="Особливості обліку, пільги тощо..."
+									/>
+								</div>
+							</div>
+
+							{/* КНОПКИ ДІЙ */}
+							<div className="account-actions-footer">
+								<button
+									type="submit"
+									disabled={isSavingProfileData}
+									className="auth-submit-btn account-save-btn"
+								>
+									{isSavingProfileData ? "Збереження..." : "💾 Зберегти картку ФОП"}
+								</button>
+								<button
+									type="button"
+									disabled={isSavingProfileData}
+									onClick={handleDeleteProfileData}
+									className="account-delete-btn"
+								>
+									🚫 Видалити всі дані
+								</button>
+							</div>
+						</form>
+					)}
 				</div>
 			)}
 		</div>
