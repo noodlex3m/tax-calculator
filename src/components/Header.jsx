@@ -22,7 +22,6 @@ function Header() {
 					Tax.Serh.One
 				</Link>
 				<div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-					<nav className={`main-nav ${isMenuOpen ? "active" : ""}`}></nav>
 					<ThemeToggle />
 				</div>
 				<div

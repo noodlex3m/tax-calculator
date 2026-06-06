@@ -126,8 +126,7 @@ export const AuthProvider = ({ children }) => {
 				updateUser,
 			}}
 		>
-			{/* Не рендеримо додаток, поки Firebase не перевірить сесію */}
-			{!loading && children}
+			{children}
 		</AuthContext.Provider>
 	);
 };
