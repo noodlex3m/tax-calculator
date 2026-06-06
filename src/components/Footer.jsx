@@ -52,7 +52,17 @@ function Footer() {
 					</div>
 				</div>
 				<div className="footer-bottom">
-					<p>© {year} Tax.Serh.One. Всі права захищено. Створено Тріщуком Сергієм.</p>
+					<p>
+						© {year} Tax.Serh.One. Всі права захищено. Створено{" "}
+						<a
+							href="https://www.linkedin.com/in/%D1%81%D0%B5%D1%80%D0%B3%D1%96%D0%B9-%D1%82%D1%80%D1%96%D1%89%D1%83%D0%BA-765b36192/"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="author-link"
+						>
+							Тріщуком Сергієм
+						</a>.
+					</p>
 				</div>
 			</div>
 		</footer>

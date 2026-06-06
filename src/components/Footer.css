@@ -66,6 +66,36 @@
 	color: var(--text-muted);
 }
 
+.author-link {
+	color: var(--text-main);
+	text-decoration: none;
+	font-weight: 600;
+	position: relative;
+	transition: color 0.2s ease;
+}
+
+.author-link::after {
+	content: '';
+	position: absolute;
+	width: 100%;
+	transform: scaleX(0);
+	height: 1.5px;
+	bottom: -2px;
+	left: 0;
+	background-color: var(--primary-color);
+	transform-origin: bottom right;
+	transition: transform 0.25s ease-out;
+}
+
+.author-link:hover {
+	color: var(--primary-color);
+}
+
+.author-link:hover::after {
+	transform: scaleX(1);
+	transform-origin: bottom left;
+}
+
 @media (max-width: 968px) {
 	.footer-columns {
 		grid-template-columns: 1fr 1fr;
