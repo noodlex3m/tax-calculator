@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. ПРАВИЛА ДЛЯ КАЛЬКУЛЯТОРА (Доступно тільки власнику розрахунку)
+    match /calculations/{docId} {
+      allow read, update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+    }
+
+    // 2. ПРАВИЛА ДЛЯ КОМЕНТАРІВ (Читати всім, створювати авторизованим, змінювати тільки лайки або автору, видаляти автору або адміну)
+    match /comments/{docId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.resource.data.author.id == request.auth.uid;
+      
+      allow update: if request.auth != null && (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likesCount', 'dislikesCount', 'likedBy', 'dislikedBy']) ||
+        resource.data.author.id == request.auth.uid
+      );
+      
+      allow delete: if request.auth != null && (
+        request.auth.token.email == "noodlex3m@gmail.com" || 
+        resource.data.author.id == request.auth.uid
+      );
+    }
+
+    // 3. ПРАВИЛА ДЛЯ МОДЕРАЦІЇ (Список забанених - читає адмін або сам користувач, пише тільки адмін)
+    match /bannedUsers/{docId} {
+      allow read: if request.auth != null && (
+        request.auth.token.email == "noodlex3m@gmail.com" ||
+        (resource != null && resource.data.userId == request.auth.uid) ||
+        request.query.limit <= 1
+      );
+      allow write: if request.auth != null && request.auth.token.email == "noodlex3m@gmail.com";
+    }
+
+    // 📰 4. НОВИНИ (CMS) - Читати можуть усі, створювати/видаляти/редагувати тільки твій email (Адмін)
+    match /news/{docId} {
+      allow read: if true; 
+      allow write: if request.auth != null && request.auth.token.email == "noodlex3m@gmail.com"; 
+    }
+
+    // ❓ FAQ (База знань) - Читати можуть усі, створювати/видаляти/редагувати тільки твій email (Адмін)
+    match /faqs/{docId} {
+      allow read: if true; 
+      allow write: if request.auth != null && request.auth.token.email == "noodlex3m@gmail.com"; 
+    }
+
+    // 5. ПРАВИЛА ДЛЯ ОБЛІКОВИХ ДАНИХ (ПРОФІЛІВ КОРИСТУВАЧІВ)
+    match /userProfiles/{userId} {
+      // Читання: власник за UID, або користувач із відповідним email (для автоматичного лінкування)
+      allow read: if request.auth != null && (
+        request.auth.uid == userId || 
+        (resource != null && resource.data.email == request.auth.token.email)
+      );
+      // Запис: тільки власник за UID
+      allow write: if request.auth != null && request.auth.uid == userId;
+      
+      // Дозволити читати та писати адміністратору сайту для управління ФОП
+      allow read, write: if request.auth != null && request.auth.token.email == "noodlex3m@gmail.com";
+    }
+
+    // 6. ПРАВИЛА ДЛЯ ЗАРЕЄСТРОВАНИХ КОРИСТУВАЧІВ (МЕТАДАНІ ДЛЯ АДМІНІСТРАТОРА)
+    match /users/{userId} {
+      // Дозволити користувачу читати та оновлювати власні дані
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Дозволити читати та оновлювати адміністратору для списку користувачів
+      allow read, write: if request.auth != null && request.auth.token.email == "noodlex3m@gmail.com";
+    }
+  }
+}

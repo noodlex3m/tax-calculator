@@ -1,6 +1,6 @@
 // src/context/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
@@ -10,6 +10,7 @@ import {
 	GoogleAuthProvider,
 	signInWithPopup,
 } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 const AuthContext = createContext();
 
@@ -30,6 +31,23 @@ export const AuthProvider = ({ children }) => {
 					name: currentUser.displayName || "Користувач",
 					photoURL: currentUser.photoURL,
 					isAdmin: currentUser.email === "noodlex3m@gmail.com",
+				});
+
+				// Збереження користувача у Firestore для адміна
+				const userDocRef = doc(db, "users", currentUser.uid);
+				setDoc(
+					userDocRef,
+					{
+						uid: currentUser.uid,
+						email: currentUser.email,
+						name: currentUser.displayName || "Користувач",
+						photoURL: currentUser.photoURL || null,
+						lastActive: new Date().toISOString(),
+						updatedAt: new Date().toISOString(),
+					},
+					{ merge: true }
+				).catch((err) => {
+					console.error("Помилка синхронізації користувача у Firestore:", err);
 				});
 			} else {
 				// Користувач вийшов

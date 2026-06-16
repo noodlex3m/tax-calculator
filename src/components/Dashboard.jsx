@@ -120,10 +120,28 @@ const Dashboard = () => {
 			setIsProfileDataLoading(true);
 			try {
 				const docRef = doc(db, "userProfiles", user.uid);
-				const docSnap = await getDoc(docRef);
+				let docSnap = await getDoc(docRef);
+				let data = null;
+				let shouldMigrateFromDocId = null;
+
 				if (docSnap.exists()) {
-					const data = docSnap.data();
-					
+					data = docSnap.data();
+				} else if (user.email) {
+					// Якщо немає документу за UID, спробуємо знайти за email
+					const q = query(
+						collection(db, "userProfiles"),
+						where("email", "==", user.email)
+					);
+					const querySnapshot = await getDocs(q);
+					if (!querySnapshot.empty) {
+						// Знайшли створену адміном картку за поштою
+						const foundDoc = querySnapshot.docs[0];
+						data = foundDoc.data();
+						shouldMigrateFromDocId = foundDoc.id;
+					}
+				}
+
+				if (data) {
 					// Міграція КВЕДів з рядків у структурований масив
 					if (!data.kvedsList || !Array.isArray(data.kvedsList)) {
 						const list = [];
@@ -209,6 +227,17 @@ const Dashboard = () => {
 					}
 					
 					setProfileData(data);
+
+					// Якщо це знайдений за email документ, скопіюємо його в docRef (UID) та видалимо старий
+					if (shouldMigrateFromDocId && shouldMigrateFromDocId !== user.uid) {
+						try {
+							await setDoc(doc(db, "userProfiles", user.uid), data);
+							await deleteDoc(doc(db, "userProfiles", shouldMigrateFromDocId));
+							console.log("Автоматично прив'язано гостьову картку ФОП до облікового запису користувача!");
+						} catch (migrateErr) {
+							console.error("Помилка автоматичного лінкування картки ФОП:", migrateErr);
+						}
+					}
 				} else {
 					setProfileData({
 						fopName: "",

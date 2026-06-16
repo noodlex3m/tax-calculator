@@ -6,7 +6,7 @@ import { TAX_CONSTANTS } from "../utils/taxConstants";
 import { toast } from "react-hot-toast";
 import "./TaxCalendar.css";
 
-const TaxCalendar = ({ embedded = false, defaultProfile = null }) => {
+const TaxCalendar = ({ embedded = false, defaultProfile = null, fopDocId = null }) => {
 	const { user } = useAuth();
 	
 	// Tax configuration states
@@ -45,26 +45,29 @@ const TaxCalendar = ({ embedded = false, defaultProfile = null }) => {
 
 		if (defaultProfile) {
 			applyProfileData(defaultProfile);
-		} else if (user) {
-			// Fetch profile directly from database if logged in and not passed as prop
-			const fetchProfile = async () => {
-				try {
-					const docRef = doc(db, "userProfiles", user.uid);
-					const docSnap = await getDoc(docRef);
-					if (docSnap.exists()) {
-						applyProfileData(docSnap.data());
+		} else {
+			const targetId = fopDocId || (user ? user.uid : null);
+			if (targetId) {
+				// Fetch profile directly from database if targetId is available
+				const fetchProfile = async () => {
+					try {
+						const docRef = doc(db, "userProfiles", targetId);
+						const docSnap = await getDoc(docRef);
+						if (docSnap.exists()) {
+							applyProfileData(docSnap.data());
+						}
+					} catch (error) {
+						console.error("Помилка завантаження профілю для календаря:", error);
 					}
-				} catch (error) {
-					console.error("Помилка завантаження профілю для календаря:", error);
-				}
-			};
-			fetchProfile();
+				};
+				fetchProfile();
+			}
 		}
-	}, [user, defaultProfile]);
+	}, [user, defaultProfile, fopDocId]);
 
 	// Fetch completed deadlines from local storage for guests
 	useEffect(() => {
-		if (!user) {
+		if (!user && !fopDocId) {
 			const saved = localStorage.getItem("tax_completed_deadlines");
 			if (saved) {
 				try {
@@ -74,7 +77,7 @@ const TaxCalendar = ({ embedded = false, defaultProfile = null }) => {
 				}
 			}
 		}
-	}, [user]);
+	}, [user, fopDocId]);
 
 	// Reactive constraint check for simplified system dropdowns
 	useEffect(() => {
@@ -93,12 +96,13 @@ const TaxCalendar = ({ embedded = false, defaultProfile = null }) => {
 		
 		setCompletedDeadlines(updated);
 
-		if (user) {
+		const targetId = fopDocId || (user ? user.uid : null);
+		if (targetId) {
 			setIsSaving(true);
 			try {
-				const docRef = doc(db, "userProfiles", user.uid);
+				const docRef = doc(db, "userProfiles", targetId);
 				await setDoc(docRef, { completedDeadlines: updated }, { merge: true });
-				toast.success("Статус дедлайну синхронізовано у вашому кабінеті! 💾");
+				toast.success("Статус дедлайну синхронізовано! 💾");
 			} catch (error) {
 				console.error("Не вдалося зберегти позначку дедлайну:", error);
 				toast.error("Не вдалося зберегти статус дедлайну.");
