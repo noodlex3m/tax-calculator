@@ -69,7 +69,7 @@
 ### Frontend-ядро
 *   **Framework:** React 19 (Hooks, Context API, Code Splitting через `lazy` & `Suspense`)
 *   **Routing:** React Router DOM v7
-*   **SEO & Meta:** React Helmet Async (динамічне керування унікальними тегами `title` / `meta description` для кожної сторінки)
+*   **SEO & Meta:** Вбудований механізм React 19 Document Metadata (нативне динамічне керування унікальними тегами `title` / `meta description` для кожної сторінки без використання сторонніх бібліотек)
 *   **Visuals:** Chart.js + React-Chartjs-2
 *   **Rich Text Editor:** `react-quill-new` (професійна адаптація під React 19)
 *   **Styling:** Vanilla CSS з нативними CSS-змінними (сучасний неоморфний/скляний інтерфейс з повною підтримкою **Темної теми**)

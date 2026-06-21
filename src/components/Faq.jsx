@@ -1,6 +1,5 @@
 import "./Faq.css";
 import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
 import FaqItem from "./FaqItem";
 import faqData from "../data/faqData";
 
@@ -73,14 +72,12 @@ function Faq() {
 
 	return (
 		<div className="faq-container">
-			<Helmet>
-				<title>Поширені питання з оподаткування — Tax.Serh.One</title>
-				<meta
-					name="description"
-					content="Повний довідник поширених питань (FAQ) з оподаткування ФОП. Відповіді на запитання щодо лімітів, єдиного податку та ЄСВ."
-				/>
-				<link rel="canonical" href="https://tax.serh.one/faq" />
-			</Helmet>
+			<title>Поширені питання з оподаткування — Tax.Serh.One</title>
+			<meta
+				name="description"
+				content="Повний довідник поширених питань (FAQ) з оподаткування ФОП. Відповіді на запитання щодо лімітів, єдиного податку та ЄСВ."
+			/>
+			<link rel="canonical" href="https://tax.serh.one/faq" />
 			<h2>Поширені питання (FAQ)</h2>
 			<input
 				type="text"

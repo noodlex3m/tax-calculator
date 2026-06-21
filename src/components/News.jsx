@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "./News.css";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Skeleton from "./Skeleton";
 
 // 🔥 МАГІЯ FIREBASE
@@ -65,13 +64,11 @@ function News() {
 
 	return (
 		<div className="news-container">
-			<Helmet>
-				<title>Податкові новини для ФОП 2026 | Tax.Serh.One</title>
-				<meta
-					name="description"
-					content="Актуальні новини законодавства, зміни ставок єдиного податку, ЄСВ та військового збору в Україні."
-				/>
-			</Helmet>
+			<title>Податкові новини для ФОП 2026 | Tax.Serh.One</title>
+			<meta
+				name="description"
+				content="Актуальні новини законодавства, зміни ставок єдиного податку, ЄСВ та військового збору в Україні."
+			/>
 
 			<div className="news-header-section">
 				<h1>Податковий вісник</h1>

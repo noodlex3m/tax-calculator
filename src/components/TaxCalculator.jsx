@@ -8,7 +8,6 @@ import {
 import ResultsChart from "./ResultsChart";
 import LimitIndicator from "./LimitIndicator";
 import { LIMITS } from "../utils/taxConstants";
-import { Helmet } from "react-helmet-async";
 import TaxAdvice from "./TaxAdvice";
 import "./TaxCalculator.css";
 
@@ -110,14 +109,12 @@ function TaxCalculator() {
 
 	return (
 		<div className="calculator-container">
-			<Helmet>
-				<title>Калькулятор податків ФОП 2026 — Tax.Serh.One</title>
-				<meta
-					name="description"
-					content="Розрахуйте єдиний податок та ЄСВ для 1, 2 та 3 групи ФОП. Актуальні ставки 2026 року."
-				/>
-				<link rel="canonical" href="https://tax.serh.one/calculator" />
-			</Helmet>
+			<title>Калькулятор податків ФОП 2026 — Tax.Serh.One</title>
+			<meta
+				name="description"
+				content="Розрахуйте єдиний податок та ЄСВ для 1, 2 та 3 групи ФОП. Актуальні ставки 2026 року."
+			/>
+			<link rel="canonical" href="https://tax.serh.one/calculator" />
 			<form onSubmit={handleSubmit}>
 				<h1>Калькулятор податків ФОП на 2026 рік</h1>
 

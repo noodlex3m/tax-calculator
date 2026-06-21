@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Skeleton from "./Skeleton";
 import "./News.css";
 import Comments from "./Comments";
@@ -46,9 +45,7 @@ function ArticlePage() {
 	if (isLoading) {
 		return (
 			<div className="article-container">
-				<Helmet>
-					<title>Завантаження...</title>
-				</Helmet>
+				<title>Завантаження...</title>
 				{/* Імітуємо заголовок */}
 				<h1>
 					<Skeleton width="70%" height="40px" />
@@ -76,9 +73,7 @@ function ArticlePage() {
 				className="article-container"
 				style={{ textAlign: "center", color: "red" }}
 			>
-				<Helmet>
-					<title>Помилка — Tax.Serh.One</title>
-				</Helmet>
+				<title>Помилка — Tax.Serh.One</title>
 				<h2>Ой, халепа! 💥</h2>
 				<p>{error}</p>
 				<p style={{ color: "#666", fontSize: "0.9rem" }}>
@@ -95,10 +90,8 @@ function ArticlePage() {
 	if (!article) {
 		return (
 			<div className="article-container" style={{ textAlign: "center" }}>
-				<Helmet>
-					<title>Статтю не знайдено — Tax.Serh.One</title>
-					<meta name="robots" content="noindex" />
-				</Helmet>
+				<title>Статтю не знайдено — Tax.Serh.One</title>
+				<meta name="robots" content="noindex" />
 				<h2>Статтю не знайдено</h2>
 				<p>Вибачте, але запитувана стаття не існує.</p>
 				<Link to="/news" className="back-link">
@@ -111,23 +104,21 @@ function ArticlePage() {
 	// 👇 БЛОК НОРМАЛЬНОЇ СТАТТІ
 	return (
 		<div className="article-container">
-			<Helmet>
-				<title>{article.title} — Tax.Serh.One</title>
-				<meta name="description" content={article.summary} />
+			<title>{article.title} — Tax.Serh.One</title>
+			<meta name="description" content={article.summary} />
 
-				<link
-					rel="canonical"
-					href={`https://tax.serh.one/news/${article.id}`}
-				/>
+			<link
+				rel="canonical"
+				href={`https://tax.serh.one/news/${article.id}`}
+			/>
 
-				<meta property="og:title" content={article.title} />
-				<meta property="og:description" content={article.summary} />
-				<meta property="og:type" content="article" />
-				<meta
-					property="og:url"
-					content={`https://tax.serh.one/news/${article.id}`}
-				/>
-			</Helmet>
+			<meta property="og:title" content={article.title} />
+			<meta property="og:description" content={article.summary} />
+			<meta property="og:type" content="article" />
+			<meta
+				property="og:url"
+				content={`https://tax.serh.one/news/${article.id}`}
+			/>
 
 			<Link to="/news" className="back-link">
 				&larr; Назад до новин
