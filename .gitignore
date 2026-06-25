@@ -28,3 +28,6 @@ dev-dist
 .tmp.driveupload/
 .env
 .implementation_plan.md
+
+# Local files directory
+creat/

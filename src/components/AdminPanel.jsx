@@ -34,6 +34,7 @@ const AdminPanel = () => {
 	const [showCustomFaqInput, setShowCustomFaqInput] = useState(false);
 	const [faqShortAnswer, setFaqShortAnswer] = useState("");
 	const [faqFullAnswer, setFaqFullAnswer] = useState("");
+	const [publishFaqToTelegram, setPublishFaqToTelegram] = useState(true);
 
 	// 👤 СТАНИ ДЛЯ УПРАВЛІННЯ КОРИСТУВАЧАМИ ТА ФОП
 	const [fops, setFops] = useState([]);
@@ -508,6 +509,53 @@ const AdminPanel = () => {
 		}
 	};
 
+	// 📢 ВІДПРАВКА FAQ В TELEGRAM-КАНАЛ
+	const sendTelegramFaqMessage = async (question, shortAnswer) => {
+		const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+		const chatId = import.meta.env.VITE_TELEGRAM_CHANNEL_CHAT_ID;
+
+		if (!token || !chatId) {
+			console.warn("Telegram токен або Chat ID не налаштовані в .env!");
+			return;
+		}
+
+		// Для MarkdownV2 треба екранувати спеціальні символи
+		const escapeMarkdown = (text) => {
+			if (!text) return "";
+			return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
+		};
+
+		const escapedQuestion = escapeMarkdown(question);
+		const escapedShortAnswer = escapeMarkdown(shortAnswer);
+		const faqUrl = "https://tax.serh.one/faq";
+		const escapedUrl = escapeMarkdown(faqUrl);
+
+		const text = `❓ *Запитання:* ${escapedQuestion}\n\n` +
+					 `💡 *Коротка відповідь:* ${escapedShortAnswer}\n\n` +
+					 `🔗 [Читати всі відповіді на сайті](${escapedUrl})`;
+
+		try {
+			const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					chat_id: chatId,
+					text: text,
+					parse_mode: "MarkdownV2",
+				}),
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.description || `Помилка API: ${response.statusText}`);
+			}
+
+			console.log("FAQ пост успішно надіслано в Telegram-канал!");
+		} catch (err) {
+			console.error("Не вдалося надіслати FAQ пост у Telegram:", err);
+		}
+	};
+
 	// 📰 ПУБЛІКАЦІЯ НОВИНИ В FIRESTORE
 	const handleNewsSubmit = async (e) => {
 		e.preventDefault();
@@ -570,6 +618,11 @@ const AdminPanel = () => {
 			});
 
 			alert("🎉 Запитання FAQ успішно додано до бази знань!");
+
+			// Якщо чекбокс увімкнений, надсилаємо в Telegram
+			if (publishFaqToTelegram) {
+				await sendTelegramFaqMessage(faqQuestion, faqShortAnswer);
+			}
 
 			// Очищення форми
 			setFaqQuestion("");
@@ -837,6 +890,18 @@ const AdminPanel = () => {
 								/>
 							)}
 						</div>
+					</div>
+
+					<div className="admin-checkbox-group">
+						<input
+							type="checkbox"
+							id="publishFaqToTelegram"
+							checked={publishFaqToTelegram}
+							onChange={(e) => setPublishFaqToTelegram(e.target.checked)}
+						/>
+						<label htmlFor="publishFaqToTelegram">
+							📢 Автоматично опублікувати запитання та відповідь (FAQ) в Telegram-канал @taxuse
+						</label>
 					</div>
 
 					<button type="submit" className="admin-action-btn">
