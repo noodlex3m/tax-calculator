@@ -25,6 +25,7 @@ const AdminPanel = () => {
 	const [showCustomNewsInput, setShowCustomNewsInput] = useState(false);
 	const [newsSummary, setNewsSummary] = useState("");
 	const [newsContent, setNewsContent] = useState("");
+	const [publishToTelegram, setPublishToTelegram] = useState(true);
 
 	// Стани для форми FAQ
 	const [faqQuestion, setFaqQuestion] = useState("");
@@ -461,6 +462,52 @@ const AdminPanel = () => {
 		);
 	}
 
+	// 📢 ВІДПРАВКА ПРЕВ'Ю СТАТТІ В TELEGRAM-КАНАЛ
+	const sendTelegramMessage = async (articleId, title, summary) => {
+		const token = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
+		const chatId = import.meta.env.VITE_TELEGRAM_CHANNEL_CHAT_ID;
+
+		if (!token || !chatId) {
+			console.warn("Telegram токен або Chat ID не налаштовані в .env!");
+			return;
+		}
+
+		// Для MarkdownV2 треба екранувати спеціальні символи
+		// Символи, що підлягають екрануванню: _, *, [, ], ( , ), ~, `, >, #, +, -, =, |, {, }, ., !
+		const escapeMarkdown = (text) => {
+			if (!text) return "";
+			return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
+		};
+
+		const escapedTitle = escapeMarkdown(title);
+		const escapedSummary = escapeMarkdown(summary);
+		const articleUrl = `https://tax.serh.one/news/${articleId}`;
+		const escapedUrl = escapeMarkdown(articleUrl);
+
+		const text = `📰 *${escapedTitle}*\n\n${escapedSummary}\n\n🔗 [Читати на сайті](${escapedUrl})`;
+
+		try {
+			const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					chat_id: chatId,
+					text: text,
+					parse_mode: "MarkdownV2",
+				}),
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.description || `Помилка API: ${response.statusText}`);
+			}
+
+			console.log("Пост успішно надіслано в Telegram-канал!");
+		} catch (err) {
+			console.error("Не вдалося надіслати пост у Telegram:", err);
+		}
+	};
+
 	// 📰 ПУБЛІКАЦІЯ НОВИНИ В FIRESTORE
 	const handleNewsSubmit = async (e) => {
 		e.preventDefault();
@@ -473,7 +520,7 @@ const AdminPanel = () => {
 
 		try {
 			// Додаємо документ у колекцію "news"
-			await addDoc(collection(db, "news"), {
+			const docRef = await addDoc(collection(db, "news"), {
 				title: newsTitle,
 				category: finalCategory,
 				summary: newsSummary,
@@ -483,6 +530,11 @@ const AdminPanel = () => {
 			});
 
 			alert("🎉 Новину успішно опубліковано на сайті!");
+
+			// Якщо чекбокс увімкнений, надсилаємо в Telegram
+			if (publishToTelegram) {
+				await sendTelegramMessage(docRef.id, newsTitle, newsSummary);
+			}
 
 			// Очищення форми
 			setNewsTitle("");
@@ -664,6 +716,18 @@ const AdminPanel = () => {
 								/>
 							)}
 						</div>
+					</div>
+
+					<div className="admin-checkbox-group">
+						<input
+							type="checkbox"
+							id="publishToTelegram"
+							checked={publishToTelegram}
+							onChange={(e) => setPublishToTelegram(e.target.checked)}
+						/>
+						<label htmlFor="publishToTelegram">
+							📢 Автоматично опублікувати новину в Telegram-канал @taxuse
+						</label>
 					</div>
 
 					<button type="submit" className="admin-action-btn">
