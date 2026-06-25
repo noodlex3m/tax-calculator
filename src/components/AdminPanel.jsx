@@ -495,6 +495,20 @@ const AdminPanel = () => {
 					chat_id: chatId,
 					text: text,
 					parse_mode: "MarkdownV2",
+					reply_markup: {
+						inline_keyboard: [
+							[
+								{
+									text: "🔗 Читати статтю",
+									url: articleUrl,
+								},
+								{
+									text: "🧮 Запустити калькулятор",
+									url: "https://t.me/TaxSerhOneBot/calc",
+								},
+							],
+						],
+					},
 				}),
 			});
 
@@ -542,6 +556,20 @@ const AdminPanel = () => {
 					chat_id: chatId,
 					text: text,
 					parse_mode: "MarkdownV2",
+					reply_markup: {
+						inline_keyboard: [
+							[
+								{
+									text: "🔗 Всі FAQ на сайті",
+									url: faqUrl,
+								},
+								{
+									text: "🧮 Запустити калькулятор",
+									url: "https://t.me/TaxSerhOneBot/calc",
+								},
+							],
+						],
+					},
 				}),
 			});
 
