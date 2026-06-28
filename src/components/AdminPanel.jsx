@@ -478,7 +478,7 @@ const AdminPanel = () => {
 		const escapeMarkdown = (text) => {
 			if (!text) return "";
 			// eslint-disable-next-line no-useless-escape
-			return text.replace(/[_*\[\]()~`>#+\-=|{}.!]/g, "\\$&");
+			return text.replace(/[\\_*\[\]()~`>#+\-=|{}.!]/g, "\\$&");
 		};
 
 		const escapedTitle = escapeMarkdown(title);
@@ -538,7 +538,7 @@ const AdminPanel = () => {
 		const escapeMarkdown = (text) => {
 			if (!text) return "";
 			// eslint-disable-next-line no-useless-escape
-			return text.replace(/[_*\[\]()~`>#+\-=|{}.!]/g, "\\$&");
+			return text.replace(/[\\_*\[\]()~`>#+\-=|{}.!]/g, "\\$&");
 		};
 
 		const escapedQuestion = escapeMarkdown(question);
