@@ -1,167 +1,495 @@
-.calculator-container {
-	width: 100%;
-	max-width: 700px;
-	margin: 2rem auto;
-	padding: 2rem;
-	background-color: var(--bg-card);
-	border-radius: 8px;
-	text-align: left;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-	border: 1px solid var(--border-light);
+.calculator-container-modern {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 2rem 1.5rem;
 }
-.calculator-container h1 {
+
+/* Header Section */
+.salary-header-section {
+	margin-bottom: 2.5rem;
 	text-align: center;
+}
+
+.salary-header-section h2 {
+	font-size: 2.2rem;
+	background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	margin-bottom: 0.5rem;
+	font-weight: 800;
+}
+
+.salary-header-section p {
+	color: var(--text-secondary);
+	font-size: 1.1rem;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+/* Two Column Grid */
+.tax-calculator-grid {
+	display: grid;
+	grid-template-columns: 1.1fr 0.9fr;
+	gap: 2.5rem;
+	align-items: start;
+}
+
+@media (max-width: 968px) {
+	.tax-calculator-grid {
+		grid-template-columns: 1fr;
+		gap: 2rem;
+	}
+}
+
+/* Cards */
+.salary-inputs-card,
+.salary-results-card {
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
+	border-radius: 1.2rem;
+	padding: 2rem;
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+	position: relative;
+	overflow: hidden;
+}
+
+[data-theme="dark"] .salary-inputs-card,
+[data-theme="dark"] .salary-results-card {
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.salary-inputs-card h3,
+.salary-results-card h3 {
+	font-size: 1.4rem;
 	margin-top: 0;
-	color: var(--text-main);
-}
-fieldset {
-	border: 1px solid var(--border-color);
-	border-radius: 6px;
 	margin-bottom: 1.5rem;
-	padding: 1rem 1.5rem;
-}
-legend {
-	padding: 0 0.5rem;
-	font-weight: bold;
-	color: var(--accent-color);
-}
-input[type="radio"] {
-	margin-right: 0.5rem;
-}
-input[type="number"],
-select {
-	width: 100%;
-	padding: 0.75rem;
-	margin-top: 0.5rem;
-	background-color: var(--bg-input);
-	border: 1px solid var(--border-color);
-	border-radius: 4px;
 	color: var(--text-main);
-	font-size: 1rem;
+	border-bottom: 1px solid var(--border-color);
+	padding-bottom: 0.75rem;
+}
+
+.salary-form-group {
+	margin-bottom: 2rem;
+}
+
+.salary-form-group label {
+	display: block;
+	margin-bottom: 0.75rem;
+	font-weight: 600;
+	color: var(--text-main);
+}
+
+/* System selection Segmented Tabs */
+.system-selector-tabs {
+	display: flex;
+	gap: 1rem;
+	margin-top: 0.5rem;
+}
+
+@media (max-width: 480px) {
+	.system-selector-tabs {
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+}
+
+.system-tab-btn {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	background: var(--bg-body);
+	border: 1px solid var(--border-color);
+	border-radius: 0.75rem;
+	padding: 1rem;
+	cursor: pointer;
+	text-align: left;
+	transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
+}
+
+.system-tab-btn:hover {
+	border-color: var(--primary-color);
+	transform: translateY(-2px);
+}
+
+.system-tab-btn.active {
+	border-color: var(--primary-color);
+	background: rgba(83, 91, 242, 0.08);
+	box-shadow: 0 0 15px rgba(83, 91, 242, 0.1);
+}
+
+.system-tab-btn .tab-icon {
+	font-size: 1.6rem;
+}
+
+.system-tab-btn .tab-info {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+}
+
+.system-tab-btn .tab-info strong {
+	font-size: 0.95rem;
+	color: var(--text-main);
+}
+
+.system-tab-btn .tab-info small {
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+	line-height: 1.2;
+}
+
+/* FOP Group Cards Grid */
+.group-cards-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.75rem;
+	margin-top: 0.5rem;
+}
+
+@media (min-width: 480px) {
+	.group-cards-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.group-card-btn {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 1rem;
+	background: var(--bg-body);
+	border: 1px solid var(--border-color);
+	border-radius: 0.75rem;
+	padding: 1rem;
+	cursor: pointer;
+	text-align: left;
+	transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
+}
+
+.group-card-btn:hover {
+	border-color: var(--primary-color);
+	transform: translateY(-2px);
+}
+
+.group-card-btn.active {
+	border-color: var(--primary-color);
+	background: rgba(83, 91, 242, 0.08);
+	box-shadow: 0 0 15px rgba(83, 91, 242, 0.1);
+}
+
+.group-card-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+
+.group-badge {
+	font-size: 0.75rem;
+	font-weight: 700;
+	background: rgba(83, 91, 242, 0.15);
+	color: var(--primary-color);
+	padding: 0.2rem 0.5rem;
+	border-radius: 4px;
+}
+
+.group-rate {
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: var(--text-main);
+}
+
+.group-card-details {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.group-card-details span {
+	font-size: 0.9rem;
+	font-weight: 700;
+	color: var(--text-main);
+}
+
+.group-card-details small {
+	font-size: 0.75rem;
+	color: var(--text-secondary);
+	line-height: 1.35;
+}
+
+/* Numeric Input and Range Slider */
+.salary-num-input {
+	font-size: 1.4rem !important;
+	font-weight: 600 !important;
+	padding: 0.85rem 1rem !important;
+	text-align: right;
+	letter-spacing: 0.05em;
+	background-color: var(--bg-body) !important;
+	color: var(--text-main) !important;
+	border: 1px solid var(--border-color) !important;
+	border-radius: 0.5rem;
+	width: 100%;
 	box-sizing: border-box;
 }
-label {
-	display: block;
-	margin-top: 1rem;
-	margin-bottom: 0.25rem;
-	font-weight: 500;
+
+.salary-slider {
+	width: 100%;
+	height: 6px;
+	background: var(--border-color);
+	border-radius: 5px;
+	outline: none;
+	margin-top: 1.5rem;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.salary-slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--primary-color, #3b82f6);
+	cursor: pointer;
+	box-shadow: 0 0 10px rgba(83, 91, 242, 0.3);
+	transition: background 0.2s, transform 0.1s;
+}
+
+.salary-slider::-webkit-slider-thumb:hover {
+	background: var(--primary-hover);
+	transform: scale(1.1);
+}
+
+.slider-labels {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 0.5rem;
+	font-size: 0.85rem;
+	color: var(--text-muted);
+}
+
+/* General system net profit card */
+.general-net-profit-card {
+	background: var(--bg-body);
+	border: 1px dashed var(--border-color);
+	border-radius: 0.75rem;
+	padding: 1rem 1.25rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
+}
+
+.net-profit-label {
+	font-size: 0.95rem;
 	color: var(--text-secondary);
+	font-weight: 500;
 }
-fieldset > div {
-	display: inline-block;
-	margin-right: 1.5rem;
+
+.net-profit-value {
+	font-size: 1.2rem;
+	color: #10b981;
+	font-weight: 700;
 }
-fieldset > div label {
-	display: inline-block;
-	margin-top: 0;
-}
-#netProfit p {
-	font-size: 1.1rem;
-	font-weight: bold;
-	color: var(--text-main);
-	background-color: var(--bg-block);
-	padding: 0.5rem 1rem;
-	border-radius: 4px;
-}
+
+/* Calculate button */
 .calculate-btn {
 	width: 100%;
 	padding: 1rem;
 	font-size: 1.2rem;
 	font-weight: bold;
-	color: #fff; /* Кнопка завжди з білим текстом */
+	color: #fff;
 	background-color: var(--primary-color);
 	border: none;
-	border-radius: 6px;
+	border-radius: 0.75rem;
 	cursor: pointer;
-	transition: background-color 0.2s ease;
+	transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+	box-shadow: 0 4px 15px rgba(83, 91, 242, 0.2);
 }
+
 .calculate-btn:hover {
 	background-color: var(--primary-hover);
-}
-.results-block {
-	margin-top: 2rem;
-	padding: 1.5rem;
-	background-color: var(--bg-block);
-	border-radius: 8px;
-	border-left: 5px solid var(--primary-color);
-}
-.results-block h3 {
-	margin-top: 0;
-	color: var(--text-main);
-}
-.results-block p {
-	font-size: 1.1rem;
-	color: var(--text-main);
-	margin: 0.5rem 0;
-}
-.results-block p.excess-tax {
-	color: var(--danger-color);
-	font-weight: bold;
-}
-.results-block h4 {
-	font-size: 1.3rem;
-	color: var(--text-main);
-	margin-top: 1rem;
-}
-input.over-limit {
-	color: var(--danger-color);
-	border-color: var(--danger-color);
+	box-shadow: 0 6px 20px rgba(83, 91, 242, 0.3);
 }
 
-.warning-text {
-	color: var(--danger-color);
-	font-size: 0.9rem;
-	margin-top: 0.5rem;
+.calculate-btn:active {
+	transform: scale(0.98);
 }
 
-/* History block */
-.history-block {
-	margin-top: 2rem;
-	padding-top: 1rem;
-	border-top: 1px solid var(--border-light);
-}
-.history-block ul {
-	list-style: none;
-	padding: 0;
-}
-.history-block li {
-	background: var(--bg-block);
-	margin-bottom: 0.5rem;
-	padding: 0.5rem;
-	border-radius: 4px;
-	font-size: 0.9rem;
-	color: var(--text-main);
-}
-.clear-history-btn {
-	background: transparent;
-	border: 1px solid var(--border-color);
+.calculate-btn:disabled {
+	background-color: var(--border-color);
 	color: var(--text-muted);
-	padding: 0.2rem 0.5rem;
-	font-size: 0.8rem;
-	cursor: pointer;
+	cursor: not-allowed;
+	box-shadow: none;
+}
+
+/* Alerts */
+.salary-info-alert {
+	background: rgba(83, 91, 242, 0.08);
+	border-left: 4px solid var(--primary-color);
+	color: var(--text-main);
+	border-radius: 0.5rem;
+	padding: 1rem;
+	margin-top: 1.5rem;
+	font-size: 0.9rem;
+	line-height: 1.45;
+}
+
+.salary-info-alert.vat-warning {
+	margin-top: 0;
+	margin-bottom: 1rem;
+	background: rgba(239, 68, 68, 0.08);
+	border-left-color: var(--danger-color);
+}
+
+/* Results Placeholder */
+.results-placeholder-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 4rem 2rem;
+	color: var(--text-secondary);
+	height: 100%;
+	min-height: 350px;
+	box-sizing: border-box;
+}
+
+.placeholder-icon {
+	font-size: 3.5rem;
+	margin-bottom: 1.5rem;
+	animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+	0%, 100% { transform: scale(1); opacity: 0.7; }
+	50% { transform: scale(1.08); opacity: 1; }
+}
+
+.results-placeholder-card h4 {
+	font-size: 1.2rem;
+	color: var(--text-main);
+	margin-top: 0;
+	margin-bottom: 0.75rem;
+}
+
+.results-placeholder-card p {
+	font-size: 0.95rem;
+	max-width: 320px;
+	line-height: 1.55;
+	margin: 0;
+}
+
+/* Results block (dashboard style) */
+.results-block-modern {
+	display: flex;
+	flex-direction: column;
+}
+
+.salary-result-primary {
+	background: linear-gradient(135deg, rgba(83, 91, 242, 0.08), rgba(139, 92, 246, 0.08));
+	border: 1px dashed var(--primary-color);
+	border-radius: 0.75rem;
+	padding: 1.5rem;
+	text-align: center;
+	margin-bottom: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.primary-label {
+	color: var(--text-secondary);
+	font-size: 1rem;
+	font-weight: 500;
+}
+
+.primary-value {
+	color: var(--text-main);
+	font-size: 2rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+/* Visual breakdown bar */
+.visual-distribution-bar {
+	display: flex;
+	height: 12px;
+	border-radius: 6px;
+	overflow: hidden;
+	background: var(--bg-body);
 	margin-bottom: 1rem;
 }
-.clear-history-btn:hover {
-	border-color: var(--danger-color);
-	color: var(--danger-color);
+
+.bar-segment {
+	transition: width 0.3s ease;
 }
 
-/* New Table Styles */
+.bar-segment.net {
+	background: #10b981; /* Green */
+}
+
+.bar-segment.taxes {
+	background: #ff9800; /* Orange */
+}
+
+.bar-segment.esv {
+	background: #ef4444; /* Red */
+}
+
+.bar-segment.military {
+	background: #3b82f6; /* Blue */
+}
+
+.visual-distribution-legend {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 1rem 1.5rem;
+	font-size: 0.85rem;
+	color: var(--text-secondary);
+	margin-bottom: 2rem;
+}
+
+.legend-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.dot.net { background: #10b981; }
+.dot.taxes { background: #ff9800; }
+.dot.esv { background: #ef4444; }
+.dot.military { background: #3b82f6; }
+
+/* Table styling */
 .results-table-container {
 	overflow-x: auto;
 	margin-top: 1rem;
+	margin-bottom: 2rem;
 }
 
 .results-table {
 	width: 100%;
 	border-collapse: collapse;
-	margin-bottom: 2rem;
 }
 
 .results-table th,
 .results-table td {
-	padding: 0.75rem 0.5rem;
-	border-bottom: 1px solid var(--border-light);
+	padding: 0.85rem 0.5rem;
+	border-bottom: 1px solid var(--border-color);
 	text-align: right;
 }
 
@@ -180,7 +508,7 @@ input.over-limit {
 
 .results-table td {
 	color: var(--text-main);
-	font-size: 1rem;
+	font-size: 0.95rem;
 }
 
 .results-table .total-row td {
@@ -189,7 +517,7 @@ input.over-limit {
 	font-size: 1.1rem;
 	border-top: 2px solid var(--primary-color);
 	border-bottom: none;
-	padding-top: 1rem;
+	padding-top: 1.25rem;
 }
 
 .results-table .excess-row td {
@@ -197,20 +525,94 @@ input.over-limit {
 	font-weight: bold;
 }
 
-/* Mobile Optimization for Table */
+/* Custom Chart CSS styling */
+.chart-wrapper {
+	margin-top: 2rem;
+	margin-bottom: 2rem;
+	padding: 1.5rem;
+	background: var(--bg-body);
+	border: 1px solid var(--border-color);
+	border-radius: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	align-items: center;
+}
+
+.pie-chart-container {
+	position: relative;
+	width: 100%;
+	max-width: 260px;
+}
+
+.chart-html-legend {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0.75rem;
+	width: 100%;
+}
+
+@media (min-width: 480px) {
+	.chart-html-legend {
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+	}
+}
+
+.chart-legend-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.85rem;
+	color: var(--text-main);
+}
+
+.legend-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.legend-dot.net { background-color: #10b981; }
+.legend-dot.tax-main { background-color: #ff9800; }
+.legend-dot.esv { background-color: #ef4444; }
+.legend-dot.military { background-color: #3b82f6; }
+
+.legend-label {
+	color: var(--text-secondary);
+	flex-grow: 1;
+}
+
+.legend-value {
+	font-weight: 700;
+	color: var(--text-main);
+	white-space: nowrap;
+}
+
+/* Animations */
+.animate-fadeIn {
+	animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; transform: translateY(10px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile responsive fixes */
 @media (max-width: 600px) {
 	.results-table th,
 	.results-table td {
-		padding: 0.5rem 0.25rem; /* Зменшуємо відступи */
-		font-size: 0.9rem; /* Трохи менший шрифт */
+		padding: 0.6rem 0.25rem;
+		font-size: 0.85rem;
 	}
 
 	.results-table th {
-		font-size: 0.75rem; /* Менший заголовок */
+		font-size: 0.75rem;
 	}
 
-	/* Якщо цифри все одно не влазять, можна трохи зменшити їх ще */
 	.results-table td {
-		white-space: nowrap; /* Щоб цифри не переносились на новий рядок */
+		white-space: nowrap;
 	}
 }

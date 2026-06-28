@@ -9,16 +9,20 @@ function ResultsChart({ taxAmount, esvAmount, militaryTaxAmount, netProfit }) {
 	const { theme } = useContext(ThemeContext);
 
 	const isDark = theme === "dark";
-	const textColor = isDark ? "#ffffff" : "#213547";
 	const borderColor = isDark ? "#2d2d2d" : "#ffffff";
+
+	const valNetProfit = Math.max(0, parseFloat(netProfit) || 0);
+	const valTax = Math.max(0, parseFloat(taxAmount) || 0);
+	const valEsv = Math.max(0, parseFloat(esvAmount) || 0);
+	const valMilitary = Math.max(0, parseFloat(militaryTaxAmount) || 0);
 
 	const data = {
 		labels: ["Чистий дохід", "Єдиний податок / ПДФО", "ЄСВ", "Військовий збір"],
 		datasets: [
 			{
 				label: "Сума (грн)",
-				data: [netProfit, taxAmount, esvAmount, militaryTaxAmount],
-				backgroundColor: ["#00e676", "#ff9800", "#f44336", "#29b6f6"],
+				data: [valNetProfit, valTax, valEsv, valMilitary],
+				backgroundColor: ["#10b981", "#ff9800", "#ef4444", "#3b82f6"],
 				borderColor: borderColor,
 				borderWidth: 2,
 			},
@@ -27,17 +31,10 @@ function ResultsChart({ taxAmount, esvAmount, militaryTaxAmount, netProfit }) {
 
 	const options = {
 		responsive: true,
+		maintainAspectRatio: true,
 		plugins: {
 			legend: {
-				position: "bottom",
-				labels: {
-					color: textColor,
-					font: {
-						size: 14,
-						family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-					},
-					padding: 20,
-				},
+				display: false, // Приховуємо вбудовану легенду Chart.js для уникнення обрізання на мобільних
 			},
 			tooltip: {
 				callbacks: {
@@ -58,9 +55,42 @@ function ResultsChart({ taxAmount, esvAmount, militaryTaxAmount, netProfit }) {
 			},
 		},
 	};
+
+	const formatMoney = (amount) =>
+		new Intl.NumberFormat("uk-UA", {
+			style: "currency",
+			currency: "UAH",
+			maximumFractionDigits: 0,
+		}).format(amount);
+
 	return (
-		<div style={{ maxWidth: "400px", margin: "2rem auto" }}>
-			<Pie data={data} options={options} />
+		<div className="chart-wrapper">
+			<div className="pie-chart-container">
+				<Pie data={data} options={options} />
+			</div>
+			
+			<div className="chart-html-legend">
+				<div className="chart-legend-item">
+					<span className="legend-dot net"></span>
+					<span className="legend-label">Чистий дохід:</span>
+					<strong className="legend-value">{formatMoney(valNetProfit)}</strong>
+				</div>
+				<div className="chart-legend-item">
+					<span className="legend-dot tax-main"></span>
+					<span className="legend-label">Податок (ЄП / ПДФО):</span>
+					<strong className="legend-value">{formatMoney(valTax)}</strong>
+				</div>
+				<div className="chart-legend-item">
+					<span className="legend-dot esv"></span>
+					<span className="legend-label">ЄСВ:</span>
+					<strong className="legend-value">{formatMoney(valEsv)}</strong>
+				</div>
+				<div className="chart-legend-item">
+					<span className="legend-dot military"></span>
+					<span className="legend-label">Військовий збір:</span>
+					<strong className="legend-value">{formatMoney(valMilitary)}</strong>
+				</div>
+			</div>
 		</div>
 	);
 }
