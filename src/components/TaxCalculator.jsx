@@ -14,7 +14,7 @@ import "./TaxCalculator.css";
 // НОВІ ІМПОРТИ ДЛЯ FIREBASE
 import { useAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 
 function TaxCalculator() {
 	// Отримуємо поточного користувача
@@ -26,8 +26,30 @@ function TaxCalculator() {
 	const [grossIncomeAmount, setGrossIncomeAmount] = useState("");
 	const [expenseAmount, setExpenseAmount] = useState("");
 	const [taxResult, setTaxResult] = useState(null);
+	const [esvBenefit, setEsvBenefit] = useState("Немає пільги");
 
 	const [searchParams] = useSearchParams();
+
+	// Завантаження пільги ЄСВ з облікової картки ФОП (якщо користувач авторизований)
+	useEffect(() => {
+		const loadUserProfile = async () => {
+			if (!user) return;
+			try {
+				const docRef = doc(db, "userProfiles", user.uid);
+				const docSnap = await getDoc(docRef);
+				if (docSnap.exists()) {
+					const data = docSnap.data();
+					if (data.esvBenefit) {
+						setEsvBenefit(data.esvBenefit);
+					}
+				}
+			} catch (error) {
+				console.error("Помилка завантаження профілю в калькуляторі:", error);
+			}
+		};
+
+		loadUserProfile();
+	}, [user]);
 
 	// Пресет налаштувань групи ФОП з Гіда (URL Query Params)
 	useEffect(() => {
@@ -71,6 +93,7 @@ function TaxCalculator() {
 			taxGroup,
 			incomeToUse,
 			expenseAmount,
+			esvBenefit,
 		);
 		setTaxResult(result);
 
@@ -83,6 +106,7 @@ function TaxCalculator() {
 			esv: result.yearly.esv,
 			military: result.yearly.military || 0,
 			total: result.yearly.total,
+			esvBenefit: esvBenefit,
 		};
 
 		// 🔥 МАГІЯ FIREBASE: Зберігаємо в базу даних, якщо користувач авторизований
@@ -330,7 +354,109 @@ function TaxCalculator() {
 							</>
 						)}
 
-						<button type="submit" className="calculate-btn" disabled={taxSystem === "simplified" && !taxGroup}>
+						{/* Пільги зі сплати ЄСВ */}
+						<div className="salary-form-group" style={{ marginTop: "1.5rem" }}>
+							<label>Пільги зі сплати ЄСВ (звільнення за себе)</label>
+							<div className="benefit-selector-grid">
+								<label className={`benefit-checkbox-card ${esvBenefit === "Немає пільги" ? "checked" : ""}`}>
+									<input
+										type="radio"
+										name="esvBenefit"
+										value="Немає пільги"
+										checked={esvBenefit === "Немає пільги"}
+										onChange={(e) => {
+											setEsvBenefit(e.target.value);
+											setTaxResult(null);
+										}}
+									/>
+									<span className="checkbox-icon">💼</span>
+									<div className="checkbox-text">
+										<strong>Немає пільги</strong>
+										<small>Сплата на загальних підставах</small>
+									</div>
+								</label>
+
+								<label className={`benefit-checkbox-card ${esvBenefit === "Пенсіонер за віком" ? "checked" : ""}`}>
+									<input
+										type="radio"
+										name="esvBenefit"
+										value="Пенсіонер за віком"
+										checked={esvBenefit === "Пенсіонер за віком"}
+										onChange={(e) => {
+											setEsvBenefit(e.target.value);
+											setTaxResult(null);
+										}}
+									/>
+									<span className="checkbox-icon">👴</span>
+									<div className="checkbox-text">
+										<strong>Пенсіонер за віком</strong>
+										<small>Звільнення відповідно до ч. 4 ст. 4 Закону про ЄСВ</small>
+									</div>
+								</label>
+
+								<label className={`benefit-checkbox-card ${esvBenefit === "Особа з інвалідністю" ? "checked" : ""}`}>
+									<input
+										type="radio"
+										name="esvBenefit"
+										value="Особа з інвалідністю"
+										checked={esvBenefit === "Особа з інвалідністю"}
+										onChange={(e) => {
+											setEsvBenefit(e.target.value);
+											setTaxResult(null);
+										}}
+									/>
+									<span className="checkbox-icon">♿</span>
+									<div className="checkbox-text">
+										<strong>Особа з інвалідністю</strong>
+										<small>Звільнення від сплати ЄСВ за себе</small>
+									</div>
+								</label>
+
+								<label className={`benefit-checkbox-card ${esvBenefit === "Офіційно працевлаштований" ? "checked" : ""}`}>
+									<input
+										type="radio"
+										name="esvBenefit"
+										value="Офіційно працевлаштований"
+										checked={esvBenefit === "Офіційно працевлаштований"}
+										onChange={(e) => {
+											setEsvBenefit(e.target.value);
+											setTaxResult(null);
+										}}
+									/>
+									<span className="checkbox-icon">🏢</span>
+									<div className="checkbox-text">
+										<strong>Офіційно працевлаштований</strong>
+										<small>За умови сплати ЄСВ роботодавцем не менше мінімуму</small>
+									</div>
+								</label>
+
+								<label className={`benefit-checkbox-card ${esvBenefit === "Військовослужбовець / Мобілізований" ? "checked" : ""}`}>
+									<input
+										type="radio"
+										name="esvBenefit"
+										value="Військовослужбовець / Мобілізований"
+										checked={esvBenefit === "Військовослужбовець / Мобілізований"}
+										onChange={(e) => {
+											setEsvBenefit(e.target.value);
+											setTaxResult(null);
+										}}
+									/>
+									<span className="checkbox-icon">🎖️</span>
+									<div className="checkbox-text">
+										<strong>Військовослужбовець / Мобілізований</strong>
+										<small>Звільнення від сплати на період воєнного стану</small>
+									</div>
+								</label>
+							</div>
+
+							{esvBenefit === "Офіційно працевлаштований" && (
+								<div className="salary-info-alert text-muted" style={{ marginTop: "1rem" }}>
+									<strong>💡 Звільнення при працевлаштуванні:</strong> ФОП звільняються від сплати ЄСВ за себе за місяці, коли роботодавець сплатив за них внесок у розмірі <strong>не меншому за мінімальний страховий внесок</strong>. Якщо внесок роботодавця був менший (наприклад, робота на півставки), ви маєте право добровільно доплатити ЄСВ до мінімального внеску.
+								</div>
+							)}
+						</div>
+
+						<button type="submit" className="calculate-btn" disabled={taxSystem === "simplified" && !taxGroup} style={{ marginTop: "2rem" }}>
 							Розрахувати податки 📊
 						</button>
 					</form>

@@ -6,11 +6,11 @@ export function calculateNetProfit(income, expenses) {
 	return numIncome - numExpenses;
 }
 
-export function calculateTaxes(system, group, income, expenses) {
+export function calculateTaxes(system, group, income, expenses, esvBenefit = "Немає пільги") {
 	const numIncome = parseFloat(income) || 0;
 
 	let tax = 0;
-	let esv = CALCULATED_CONSTANTS.ESV;
+	let esv = esvBenefit !== "Немає пільги" ? 0 : CALCULATED_CONSTANTS.ESV;
 	let militaryTax = 0;
 	let excessTax = 0; // Податок з перевищення
 
@@ -48,12 +48,16 @@ export function calculateTaxes(system, group, income, expenses) {
 			militaryTax = netProfit * TAX_CONSTANTS.MILITARY_TAX_RATE_GENERAL; // 5%
 
 			// Розрахунок ЄСВ для загальної системи (22% від чистого доходу, обмежено мін/макс)
-			const avgMonthlyProfit = netProfit / 12;
-			const calculatedMonthlyEsv = avgMonthlyProfit * TAX_CONSTANTS.ESV_RATE;
-			const minMonthlyEsv = CALCULATED_CONSTANTS.ESV; // 1902.34 UAH (8647 * 22%)
-			const maxMonthlyEsv = CALCULATED_CONSTANTS.MAX_ESV_BASE * TAX_CONSTANTS.ESV_RATE; // 38046.80 UAH (172940 * 22%)
+			if (esvBenefit !== "Немає пільги") {
+				esv = 0;
+			} else {
+				const avgMonthlyProfit = netProfit / 12;
+				const calculatedMonthlyEsv = avgMonthlyProfit * TAX_CONSTANTS.ESV_RATE;
+				const minMonthlyEsv = CALCULATED_CONSTANTS.ESV; // 1902.34 UAH (8647 * 22%)
+				const maxMonthlyEsv = CALCULATED_CONSTANTS.MAX_ESV_BASE * TAX_CONSTANTS.ESV_RATE; // 38046.80 UAH (172940 * 22%)
 
-			esv = Math.max(minMonthlyEsv, Math.min(maxMonthlyEsv, calculatedMonthlyEsv));
+				esv = Math.max(minMonthlyEsv, Math.min(maxMonthlyEsv, calculatedMonthlyEsv));
+			}
 		} else {
 			tax = 0;
 			militaryTax = 0;

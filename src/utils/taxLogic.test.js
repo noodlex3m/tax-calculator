@@ -63,4 +63,17 @@ describe("Калькулятор податків (taxLogic)", () => {
 		const result = calculateTaxes("simplified", "2", 5000, 0);
 		expect(result.monthly.tax).toBe(CALCULATED_CONSTANTS.GROUP_2_TAX);
 	});
+
+	// Тест 6: Пільги зі сплати ЄСВ
+	test("встановлює ЄСВ в 0 при наявності пільги (для спрощеної та загальної систем)", () => {
+		// Спрощена система з пільгою
+		const resultSimplified = calculateTaxes("simplified", "3", 50000, 0, "Пенсіонер за віком");
+		expect(resultSimplified.yearly.esv).toBe(0);
+		expect(resultSimplified.monthly.esv).toBe(0);
+
+		// Загальна система з пільгою
+		const resultGeneral = calculateTaxes("general", "", 100000, 10000, "Особа з інвалідністю");
+		expect(resultGeneral.yearly.esv).toBe(0);
+		expect(resultGeneral.monthly.esv).toBe(0);
+	});
 });
