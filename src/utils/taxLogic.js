@@ -46,6 +46,18 @@ export function calculateTaxes(system, group, income, expenses) {
 		if (netProfit > 0) {
 			tax = netProfit * TAX_CONSTANTS.GENERAL_TAX_RATE; // 18%
 			militaryTax = netProfit * TAX_CONSTANTS.MILITARY_TAX_RATE_GENERAL; // 5%
+
+			// Розрахунок ЄСВ для загальної системи (22% від чистого доходу, обмежено мін/макс)
+			const avgMonthlyProfit = netProfit / 12;
+			const calculatedMonthlyEsv = avgMonthlyProfit * TAX_CONSTANTS.ESV_RATE;
+			const minMonthlyEsv = CALCULATED_CONSTANTS.ESV; // 1902.34 UAH (8647 * 22%)
+			const maxMonthlyEsv = CALCULATED_CONSTANTS.MAX_ESV_BASE * TAX_CONSTANTS.ESV_RATE; // 38046.80 UAH (172940 * 22%)
+
+			esv = Math.max(minMonthlyEsv, Math.min(maxMonthlyEsv, calculatedMonthlyEsv));
+		} else {
+			tax = 0;
+			militaryTax = 0;
+			esv = 0; // Немає прибутку — сплата ЄСВ не обов'язкова (0 грн)
 		}
 	}
 

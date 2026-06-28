@@ -21,14 +21,29 @@ describe("Калькулятор податків (taxLogic)", () => {
 		expect(result.yearly.tax).toBe(500);
 	});
 
-	// Тест 3: Загальна система
-	it("правильно рахує 18% для загальної системи (Дохід - Витрати)", () => {
+	// Тест 3: Загальна система (ПДФО, ВЗ та ЄСВ)
+	it("правильно рахує ПДФО, Військовий збір та ЄСВ для загальної системи", () => {
 		const system = "general";
 		const group = "";
-		const income = 10000;
-		const expenses = 2000;
-		const result = calculateTaxes(system, group, income, expenses);
-		expect(result.yearly.tax).toBe(1440);
+
+		// 1. Випадок з низьким прибутком (ЄСВ обмежується мінімумом)
+		const resultLow = calculateTaxes(system, group, 10000, 2000);
+		expect(resultLow.yearly.tax).toBe(8000 * 0.18); // 1440
+		expect(resultLow.yearly.military).toBe(8000 * 0.05); // 400
+		expect(resultLow.monthly.esv).toBe(CALCULATED_CONSTANTS.ESV); // 1902.34
+
+		// 2. Випадок з дуже високим прибутком (ЄСВ обмежується максимумом)
+		const resultHigh = calculateTaxes(system, group, 10000000, 0);
+		expect(resultHigh.yearly.tax).toBe(1800000);
+		expect(resultHigh.yearly.military).toBe(500000);
+		expect(resultHigh.monthly.esv).toBe(38046.80);
+		expect(resultHigh.yearly.esv).toBe(38046.80 * 12); // 456561.60
+
+		// 3. Випадок без прибутку (ЄСВ, ПДФО та ВЗ дорівнюють 0)
+		const resultZero = calculateTaxes(system, group, 1000, 2000);
+		expect(resultZero.yearly.tax).toBe(0);
+		expect(resultZero.yearly.military).toBe(0);
+		expect(resultZero.yearly.esv).toBe(0);
 	});
 
 	// Тест 4: 3 група (перевищення)
