@@ -477,7 +477,8 @@ const AdminPanel = () => {
 		// Символи, що підлягають екрануванню: _, *, [, ], ( , ), ~, `, >, #, +, -, =, |, {, }, ., !
 		const escapeMarkdown = (text) => {
 			if (!text) return "";
-			return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
+			// eslint-disable-next-line no-useless-escape
+			return text.replace(/[_*\[\]()~`>#+\-=|{}.!]/g, "\\$&");
 		};
 
 		const escapedTitle = escapeMarkdown(title);
@@ -536,7 +537,8 @@ const AdminPanel = () => {
 		// Для MarkdownV2 треба екранувати спеціальні символи
 		const escapeMarkdown = (text) => {
 			if (!text) return "";
-			return text.replace(/[_*[\]()~`>#+\-=|{}.!]/g, "\\$&");
+			// eslint-disable-next-line no-useless-escape
+			return text.replace(/[_*\[\]()~`>#+\-=|{}.!]/g, "\\$&");
 		};
 
 		const escapedQuestion = escapeMarkdown(question);
